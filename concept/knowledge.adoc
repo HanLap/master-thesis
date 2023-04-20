@@ -1,0 +1,27 @@
+
+:imagesdir: images
+
+## MPA vs SPA
+
+
+## SPA considerations
+
+_Problems_
+* bloated Js framework
+* performance suffers
+* buggy
+* accessiblity issues
+* complex tooling
+* less resilient
+
+_Advantages_
+* State management
+* keep stuff happening between navigations
+* animation for navigation transitions (there is a proposal)
+
+
+image::mpa-vs-spa.png[]
+
+## Transitional App
+
+## Virtual DOM

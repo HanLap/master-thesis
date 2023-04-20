@@ -39,7 +39,7 @@ JavaScript frameworks React, Angular, Vue, and Svelte]
 
 *Potential Directions*:
 
-- typiache ANFORDERUNGEN AUFLISTEN  mit svelte, needs analysieren mit meta frameworks. 
+- typische ANFORDERUNGEN AUFLISTEN  mit svelte, needs analysieren mit meta frameworks. 
 
 - aus bwfps kontext  einen teil rausnehmen und 
 

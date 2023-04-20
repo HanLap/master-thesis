@@ -1,0 +1,24 @@
+
+# Designing a reusable architecture for Business Applications
+
+## What is a Bussiness Application
+
+## Requirements of Business Applications
+
+### Assumed Requirements
+
+* CRUD-style Data Management
+* Database Access
+* Telemetry
+* UI Component Library
+* User Authentication (OAuth and Password)
+* Deployment (Docker, kubernetes, serverless)
+* Translation
+** https://ttag.js.org/
+** https://github.com/cibernox/svelte-intl-precompile
+
+
+### Study 
+
+
+

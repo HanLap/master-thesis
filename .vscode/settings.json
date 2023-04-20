@@ -1,0 +1,14 @@
+{
+  "latex-workshop.latex.outDir": "%DIR%/out",
+  "latex-workshop.view.pdf.viewer": "tab",
+  // "latex-workshop.view.pdf."
+  "ltex.language": "en-US",
+
+  "[latex]": {
+    "editor.formatOnPaste": false,
+    "editor.suggestSelection": "recentlyUsedByPrefix",
+    "editor.rulers": [100],
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 100
+  }  
+}

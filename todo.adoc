@@ -1,0 +1,9 @@
+
+
+### Name der Arbeit Überlegen
+
+*Ideas:*
+
+* Design and Implementation of a modern Software Stack for Business Applications using SvelteKit
+
+* Development and Evaluation of a Technology Stack for Business Applications using SvelteKit

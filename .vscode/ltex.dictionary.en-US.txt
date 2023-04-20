@@ -1,0 +1,4 @@
+SvelteKit
+SPA
+SPAs
+Lappe
