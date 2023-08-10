@@ -1,0 +1,179 @@
+
+\chapter{Fundamentals}
+\label{ch:fundamentals}
+
+This Chapter introduces fundamental knowledge that will be required in the following thesis.
+
+
+\section{Methodology}
+\label{sec:methodology}
+
+This thesis follows the principles of an explorative case study as defined by P. Runeson and M. Höst\cite{runeson_guidelines_2009}. The Authors describe the Process as consisting of five steps:
+
+\begin{enumerate}
+    \item Case study Design: Objectives are defined, and the case study is planned.
+    \item Preparation for data collection: procedures and protocols for data collection are defined.
+    \item Collecting evidence: execution with data collection on the studied case.
+    \item Analysis of the collected data.
+    \item Reporting
+\end{enumerate}
+
+As defined in \ref{sec:purpose-of-this-study}, this study intents to provide evidence that points towards or against SvelteKit's applicability for the development of business applications.
+
+\subsection{Definition of Data Collection}
+\begin{enumerate}
+    \item Performance metrics
+    \item complexity metrics
+\end{enumerate}
+
+\subsection{Collection of evidence}
+
+Metrics applied to all implementations
+
+
+\subsection{Evaluation}
+
+Factual evaluation:
+\begin{enumerate}
+    \item LoC 
+    \item performance
+    \item ecosystem size
+\end{enumerate}
+
+\section{Programmer Experience}
+
+
+\section{Web Development}
+\label{sec:web-development}
+
+\subsection{History}
+
+\subsection{Rendering Patterns}
+
+\subsection{Meta Frameworks}
+
+\section{Svelte}
+
+% Svelte is JavaScript UI Framework, similar to react or angular. It originally released in 2016 but did not garner much attention till it's third major version released in 2019, which greatly overhauled the framework\cite{harris_svelte_2019}. In the State of JavaScript Survey 2022, Svelte ranked as having the second-highest retention rate\cite{noauthor_state_nodate}.
+
+% Svelte, like other component Frameworks such as Angular, and React, allow the user to write UI's in a declarative way. But, Svelte differs in that, optimizes its output code at build time. Thus producing a smaller and more performant JavaScript bundle most of the time\cite{tripon_angular_2021,ollila_modern_2022,acmion_sveltescaling_2023}.
+
+% Svelte uses mostly HTML syntax with some extensions for templating syntax. This has the advantage that it does not fundamentally break existing tools. Furthermore, in Svelte Files, some constructs JavaScript constructs are overloaded with further functionality. For example, Svelte assigns special meaning to labelled statements, a JavaScript construct that is rarely used. Labelled statements indicate that the statement should be reactive (\ref*{fig:svelte-reactive}).
+
+% \begin{figure}
+%     \begin{minted}{html}
+% <script>
+%     let count = 0;
+% </script>
+
+% {#if count > 9000} <!-- Conditional Template -->
+%     <div>
+%         it's over 9000!
+%     </div>
+% {/if}
+% <div>
+%     Count: {count} <!-- {} allows for JS expressions -->
+% </div>
+% <button on:click="{() => (count++)}"> <!-- on:click binds to the click event -->
+%     click me!
+% </button>
+%     \end{minted}
+%     \caption{Showcase of Svelte's Syntax}
+%     \label{fig:svelte-syntax}
+% \end{figure}
+
+% \begin{figure}
+%     \begin{minted}{html}
+% <script>
+%     let count = 2;
+%     $: doubled = count * 2;
+% </script>
+
+% <div>{count}</div>
+% <div>{doubled}</div>
+
+%     \end{minted}
+%     \caption{Showcase of Svelte's Syntax}
+%     \label{fig:svelte-reactive}
+% \end{figure}
+
+In recent years, web development has witnessed a paradigm shift towards component-based architectures that promote reusability, modularity, and maintainability. Traditional component frameworks such as React and Vue have been widely adopted, offering developers powerful abstractions and a rich ecosystem. However, these frameworks often come with a trade-off between development experience and performance, as they rely on a runtime library to manage component state and generate efficient updates to the user interface.
+
+Enter Svelte, a next-generation component framework that takes a fundamentally different approach to building web applications. Developed by Rich Harris, Svelte aims to address the limitations of traditional frameworks by introducing a compile-time approach to web development. Rather than relying on a runtime library, Svelte shifts the heavy lifting of component management from the browser to the build step, resulting in smaller, faster, and more efficient applications.
+
+\subsection{Features of Svelte}
+
+Svelte brings several innovative features to the table, differentiating itself from traditional component frameworks. These features empower developers with enhanced performance, reduced bundle sizes, and a simpler mental model for building web applications. The key features of Svelte include:
+
+\subsubsection{Reactive Declarations}
+
+Svelte embraces a reactive programming model, where changes to component state automatically propagate and trigger updates to the user interface. This declarative approach enables developers to express how the UI should look in response to state changes, without explicitly defining update logic. Svelte achieves this by analyzing the component code during the build step and generating highly optimized JavaScript code that directly manipulates the DOM, eliminating the need for a virtual DOM reconciliation step at runtime.
+
+\subsubsection{Component Compilation}
+
+Unlike traditional frameworks, where components are interpreted at runtime, Svelte compiles components to highly optimized JavaScript code during the build process. This compilation step allows Svelte to eliminate unused code, inline component styles, and perform advanced optimizations such as dead code elimination and tree shaking. Consequently, the resulting bundle sizes are significantly reduced, resulting in faster load times and improved runtime performance.
+
+\subsubsection{Framework-Agnostic Components}
+
+Svelte components are not bound to the Svelte framework itself, but can be compiled into standalone JavaScript modules that can be used in any JavaScript framework or even without a framework. This flexibility makes Svelte an attractive choice for developers working on projects that require integrating components with existing codebases or transitioning from other frameworks.
+
+\subsubsection{Easy Animations and Transitions}
+
+Svelte provides a built-in animation system that simplifies the process of creating smooth transitions and animations in web applications. Developers can easily define animation properties and apply them to components or specific elements, allowing for visually appealing user experiences without the need for external animation libraries.
+
+\subsubsection{Scoped Styles}
+
+Svelte offers scoped styles by default, ensuring that component styles do not leak or interfere with other components or the global CSS scope. This encapsulation mechanism enhances code maintainability and reduces the likelihood of CSS-related conflicts, making it easier to reason about the visual aspects of a component.
+
+\section{Comparative Analysis}
+
+When comparing Svelte with traditional component frameworks, several advantages emerge. Firstly, Svelte's compile-time approach leads to smaller bundle sizes, resulting in faster load times and improved runtime performance. Additionally, Svelte's reactive programming model eliminates the overhead of a virtual DOM and simplifies the mental model for developers, reducing the cognitive load associated with managing complex UI updates. Moreover, the flexibility of Svelte components allows for easy integration with existing codebases and enhances reusability.
+
+However, it is important to note that Svelte's ecosystem is still maturing compared to more established frameworks like React and Vue. As a result, the availability of third-party libraries and community support may be more limited in some cases. Furthermore, the learning curve associated with Svelte may be steeper for developers transitioning from traditional frameworks due to its unique compilation-based approach.
+
+In conclusion, Svelte presents a promising alternative to traditional component frameworks by providing enhanced performance, smaller bundle sizes, and a simpler development model. While there are considerations to be made regarding its ecosystem and learning curve, Svelte's innovative features make it a compelling choice for web developers seeking to optimize their applications for speed, efficiency, and maintainability.
+
+\section{SvelteKit}
+
+In addition to Svelte's core functionality, the Svelte ecosystem has further expanded with the introduction of SvelteKit. Developed as an official framework for building web applications, SvelteKit builds upon the foundations of Svelte and provides additional features and tools that streamline the development process. By leveraging the power of Svelte's compilation-based approach, SvelteKit enhances developer productivity, scalability, and provides a cohesive framework for building robust web applications.
+
+\subsection{Key Features of SvelteKit}
+
+SvelteKit introduces several key features that extend the capabilities of Svelte and facilitate the development of complex web applications:
+
+\subsubsection{Server-Side Rendering (SSR)}
+
+One of the notable additions in SvelteKit is the built-in support for server-side rendering (SSR). SSR enables rendering components on the server, which can improve initial page load performance and enable search engine crawlers to index content more effectively. SvelteKit seamlessly handles the rendering process on the server, allowing developers to build dynamic and interactive applications while benefiting from the performance advantages of SSR.
+
+\subsubsection{Routing and Navigation}
+
+SvelteKit provides a powerful routing system that enables developers to define and manage application routes effortlessly. The framework supports both client-side and server-side routing, allowing for smooth navigation between pages while preserving SEO benefits through SSR. SvelteKit's routing capabilities include dynamic routes, nested routes, and route guards, empowering developers to create sophisticated navigation structures.
+
+\subsubsection{Built-In Data Fetching}
+
+Fetching and managing data is a fundamental aspect of web application development. SvelteKit simplifies this process by offering built-in data fetching capabilities. Developers can easily define data dependencies for each page or component, and SvelteKit handles the data retrieval and synchronization. This feature streamlines the development workflow, reduces boilerplate code, and ensures optimal data fetching strategies, such as parallel or sequential requests, based on the application's needs.
+
+\subsubsection{Preloading and Prefetching}
+
+To optimize the user experience, SvelteKit provides preloading and prefetching mechanisms. Preloading allows the framework to anticipate and fetch resources required for subsequent pages, reducing latency and improving perceived performance. Prefetching, on the other hand, enables developers to specify resources that should be fetched in the background, ensuring that subsequent interactions or navigations are seamless and responsive.
+
+\subsubsection{Serverless Deployment and APIs}
+
+SvelteKit embraces the serverless paradigm, enabling effortless deployment of applications to serverless platforms like Netlify, Vercel, or AWS Lambda. The framework facilitates the creation of serverless functions, allowing developers to define custom server-side endpoints and build APIs without the need for separate server-side code. This streamlined deployment and serverless functionality simplify the scaling and maintenance of web applications, making SvelteKit a suitable choice for modern cloud-native architectures.
+
+\subsection{Advantages of SvelteKit}
+
+By combining the power of Svelte's compilation-based approach with the additional features provided by SvelteKit, developers can benefit from a range of advantages:
+
+Improved performance through server-side rendering and optimized data fetching strategies.
+Enhanced development productivity with built-in routing, data management, and serverless deployment.
+Simplified code organization and maintenance due to the cohesive framework architecture.
+Seamless integration with the Svelte ecosystem, enabling developers to leverage existing Svelte components, libraries, and tools.
+It is worth noting that, similar to Svelte, SvelteKit is a relatively new framework, and its ecosystem is still evolving. While it provides a solid foundation for building web applications, developers should consider the maturity of third-party integrations and community support when selecting SvelteKit for their projects.
+
+In conclusion, SvelteKit expands upon the capabilities of Svelte, offering a comprehensive framework for building web applications. With features such as server-side rendering, routing, data fetching, and serverless deployment, SvelteKit empowers developers to create high-performing and scalable applications with an improved development experience. By leveraging the strengths of Svelte's compilation-based approach, SvelteKit enhances productivity and provides a robust foundation for modern web development.
+
+\section{Business Application}
+\label{sec:business-application}
+
+Our applications usually not public facing $\rightarrow$ SEO not relevant $\rightarrow$ SSR, FCP, TTI not as relevant

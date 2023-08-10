@@ -2,3 +2,5 @@ SvelteKit
 SPA
 SPAs
 Lappe
+contentful
+Runeson

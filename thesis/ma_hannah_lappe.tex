@@ -6,11 +6,53 @@ numbers=noenddot,
 bibliography=totoc,
 BCOR=15mm,
 leqno,
-]{scrarticle}
+]{scrbook}
 
 \usepackage[scaled]{helvet}
 
-\title{Development and Evaluation of a Technology Stack for Business Applications using SvelteKit}
+% be able to include real vector graphics in thesis. You need inkscape installed and your pdflatex command must be called with --shell-escape for this to work.
+% TeXstudio: Options → Configure → Commands → pdflatex = pdflatex -synctex=1 -interaction=nonstopmode --shell-escape %.tex
+% inkscape=newer to avoid re-export if nothing has changed in the svg. inkscapelatex=false for not using latex to render text (which in turn messes up all text in image). inkscapearea = page so that the SVG size is respected and borders in the SVG are not cut off
+\usepackage[inkscape=newer, inkscapelatex=false, inkscapearea=page, inkscapepath=out/_svg]{svg}
+
+% für Texte in deutscher Sprache
+\usepackage[ngerman, USenglish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{bold-extra}
+
+\usepackage{url}
+\usepackage{hyperref}
+
+% Literaturverzeichnis mit BibLaTeX // use Biber as Backend; dashed = false to repeat author names
+\usepackage[babel]{csquotes}
+\usepackage[
+  backend=biber,
+  style=ieee,
+  dashed=false,
+  hyperref,
+  natbib,
+  % block=ragged
+  ]{biblatex}
+\addbibresource{MA.bib}
+
+
+\usepackage[outputdir=out]{minted}
+
+
+\newcommand{\fullname}{Hannah Lappe}
+\newcommand{\email}{hannah.lappe@uni-ulm.de}
+\newcommand{\untertitel}{}
+\newcommand{\jahr}{2023}
+\newcommand{\abgabedatum}{Oktober 2023}
+\newcommand{\abschlussarbeit}{Masterarbeit}
+\newcommand{\matrikelnummer}{922114}
+\newcommand{\gutachterA}{Prof.\ Dr.\ Manfred\ Reichert}
+\newcommand{\gutachterB}{Prof.\ Dr.\ Rüdiger\ Pryss}
+\newcommand{\betreuer}{Jens\ Scheible \\
+                       & Dr.\ Marc\ Schickler}
+
+\title{Case-study for SvelteKit in a Modern Business Application}
 \author{Hannah Lappe}
 \date{\today}
 
@@ -19,26 +61,39 @@ leqno,
 
 \maketitle
 
+\cleardoublepage
+
 \section*{Abstract}
-% Over the past decade, single page applications (SPAs) have been the primary approach for developing websites.  SPAs can provide feature rich software directly through the browser. But classic SPAs tend to lack in certain aspects. Metrics such as time to interactive (TTI) usually suffer because traditional SPAs have huge JavaScript bundles that need to be sent to the web browser. Recent years have seen a trend of multipage applications becoming more Popular again. This trend is enabled by modern web frameworks such as Next.js, Gatsby and SvelteKit. 
+todo\dots
 
-% Svelte is an up-and-coming JavaScript UI Framework that has gained a lot of popularity in recent years. Contrary to established frameworks, Svelte uses code compilation to produce a more efficient JavaScript bundle, thus vastly improving performance.
+\tableofcontents
 
-% SvelteKit is a framework that builds around Svelte and provides common features such as app routing, server side rendering (SSR), and data fetching. SvelteKit is a full stack framework and thus can also be used to handle 
+\include{chapters/01-introduction}
+\include{chapters/02-fundamentals}
+\include{chapters/03-related-work}
+\include{chapters/04-implementation}
+\include{chapters/05-evaluation}
+\include{chapters/06-conclusion}
 
-Over the past decade, single page applications (SPAs) have become the primary approach for developing websites. This development was fueled by JavaScript frameworks such as React, Angular and Vue which made it easy to develop rich web applications. But SPAs tend to suffer in certain metrics, such as initial load times and responsiveness. To amend these issues, recent trends show a return back to a server side rendering (SSR) approach. This transition is enabled by the emergence of so-called meta frameworks. Meta frameworks provide many of the tools required for building modern web applications out of the box. Thus, developers need to spend less time thinking about software architecture and can spend more time thinking about technical requirements.
+% Bibliographie (am besten mit Bibtex oder Biber)
+\cleardoublepage % sonst stimmt die seitennummer im TOC nicht
+\printbibliography
 
-SvelteKit is an up-and-coming JavaScript meta framework that is rapidly gaining popularity. It builds around Svelte, a new competitor to web UI frameworks. SvelteKit claims to handle many of the best practices for modern web applications such as build optimization, offline support, preloading and SSR. Furthermore, as a meta framework SvelteKit makes it possible to develop frontend and backend in the same code base.
+% Declaration of Independance
+\clearpage
+\thispagestyle{empty}
 
-In this work, we investigate if SvelteKit's claimed benefits translate to the development of business to business (B2B) applications. To this end we reimplement parts of an existing B2B application using SvelteKit. We compare the resulting application to the original implementation in terms of performance and development effort. Furthermore, we analyze the feasibility of SvelteKit for B2B applications and provide a blueprint for future projects.
+% LTeX: enabled=false
 
+\noindent Name: \fullname \hfill Matrikelnummer: \matrikelnummer \vspace{2cm}
 
-% In this work, we investigate how SvelteKit can be applied to the development of business applications. To this end, we analyze typical requirements of business to business (B2B) applications and develop a blueprint that can be applied to common business application use cases. We demonstrate this blueprint on a real world scenario. Finally, we compare SvelteKit to a more traditional software stack that leverages Java and React.
+\minisec{Erklärung}
 
+Ich erkläre, dass ich die Arbeitselbständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel verwendet habe.\vspace{2cm}
 
-The driving service for a federal agency with around 150,000 chauffeur rides per year should be carried out smoothly and effectively through appropriate IT support. In accordance with the highest security requirements, a stand-alone application was developed. Based on schedules that are synchronized with SAP-HCM, a vehicle assignment of the chauffeurs and a disposition of the rides are automatically carried out. The chauffeurs receive their working hours and upcoming rides via an Android application. Rides and damages are recorded mobile and immediately processed in the backend systems. The return and return of the vehicle keys takes place via, integrated into the digital process, key safes. 
+\noindent Ulm, den \dotfill
+
+\hspace{10cm} {\footnotesize \fullname}
+
 
 \end{document}
-
-% Der Fahrdienst für eine Bundesbehörde mit rund 150.000 Chauffeurfahrten pro Jahr soll durch eine entsprechende IT-Unterstützung reibungslos und effektiv durchgeführt werden.
-% Unter Einhaltung höchster Sicherheitsanforderungen wurde eine eigenständige Applikation entwickelt. Anhand von Dienstplänen, die mit SAP-HCM synchronisiert werden, erfolgt eine automatische Fahrzeugzuordnung der Chauffeure und eine Disposition der Fahrten. Die Chauffeure erhalten über eine Android Applikation ihre Dienstzeiten und anstehende Fahrten werden per "Notifications" signalisiert. Fahrten und Schäden werden mobil erfasst und umgehend in den Backend Systemen weiterverarbeitet. Die Aus- und Rückgabe der Fahrzeugschlüssel erfolgt über, in den digitalen Prozess integrierte, Schlüsseltresore.
