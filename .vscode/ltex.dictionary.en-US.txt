@@ -4,3 +4,4 @@ SPAs
 Lappe
 contentful
 Runeson
+Vercel

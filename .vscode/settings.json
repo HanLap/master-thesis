@@ -17,7 +17,7 @@
       "name": "latexmk",
       "command": "latexmk",
       "args": [
-        "-synctex=0",
+        "-synctex=1",
         "-interaction=nonstopmode",
         "-file-line-error",
         "-pdf",
@@ -30,7 +30,7 @@
       "name": "pdflatex",
       "command": "pdflatex",
       "args": [
-        "-synctex=0",
+        "-synctex=1",
         "-interaction=nonstopmode",
         "-file-line-error",
         "-shell-escape",

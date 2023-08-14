@@ -1,99 +1,197 @@
-\documentclass[
-a4paper, 
-DIV=15, 
-headsepline, 
-numbers=noenddot,
-bibliography=totoc,
-BCOR=15mm,
-leqno,
+\NeedsTeXFormat{LaTeX2e}
+% LTeX: enabled=false
+\documentclass[a4paper,
+fontsize=12pt,
+headsepline,           % Linie zw. Kopfzeile und Text
+oneside,               % einseitig
+number=noenddot,       % keine Punkte nach den letzten Ziffern in Überschriften
+bibliography=totoc,    % LV im IV
+%DIV=15,               % Satzspiegel auf 15er Raster, schmalere Ränder   
+BCOR=15mm              % Bindekorrektur
+%,draft
 ]{scrbook}
+\KOMAoptions{DIV=last} % Neuberechnung Satzspiegel nach Laden von Paket helvet
+% \usepackage{scrhack}
 
+\pagestyle{headings}
+\usepackage{blindtext}
+
+% für Texte in deutscher Sprache
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Helvetica als Standard-Dokumentschrift
 \usepackage[scaled]{helvet}
+\renewcommand{\familydefault}{\sfdefault} 
+
+\usepackage{graphicx}
 
 % be able to include real vector graphics in thesis. You need inkscape installed and your pdflatex command must be called with --shell-escape for this to work.
 % TeXstudio: Options → Configure → Commands → pdflatex = pdflatex -synctex=1 -interaction=nonstopmode --shell-escape %.tex
 % inkscape=newer to avoid re-export if nothing has changed in the svg. inkscapelatex=false for not using latex to render text (which in turn messes up all text in image). inkscapearea = page so that the SVG size is respected and borders in the SVG are not cut off
 \usepackage[inkscape=newer, inkscapelatex=false, inkscapearea=page, inkscapepath=out/_svg]{svg}
 
-% für Texte in deutscher Sprache
-\usepackage[ngerman, USenglish]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{bold-extra}
-
-\usepackage{url}
-\usepackage{hyperref}
-
-% Literaturverzeichnis mit BibLaTeX // use Biber as Backend; dashed = false to repeat author names
-\usepackage[babel]{csquotes}
-\usepackage[
-  backend=biber,
-  style=ieee,
-  dashed=false,
-  hyperref,
-  natbib,
-  % block=ragged
-  ]{biblatex}
+% Literaturverzeichnis mit BibLaTeX
+\usepackage[babel,german=quotes]{csquotes}
+\usepackage[backend=biber]{biblatex}
 \addbibresource{MA.bib}
+\bibliography{bibliography}
 
+% Alternative mit Paket-Option backend=biber und \addbibresource
+% \usepackage[backend=biber]{biblatex}
+% \addbibresource{bibliography.bib}
 
+% Für Tabellen mit fester Gesamtbreite und variabler Spaltenbreite
+\usepackage{tabularx} 
+
+% Besondere Schriftauszeichnungen
+\usepackage{url}              % \url{http://...} in Schreibmaschinenschrift
+\usepackage{color}            % zum Setzen farbigen Textes
+
+\usepackage{amssymb, amsmath} % Pakete für Mathe-Umgebungen und -Symbole
+
+\usepackage{setspace}         % Paket für div. Abstände, z.B. ZA
+%\onehalfspacing              % nur dann, wenn gefordert; ist sehr groß!!
+\setlength{\parindent}{0pt}   % kein linker Einzug der ersten Absatzzeile
+\setlength{\parskip}{1.4ex plus 0.35ex minus 0.3ex} % Absatzabstand, leicht variabel
+
+% Tiefe, bis zu der Überschriften in das Inhaltsverzeichnis kommen
+\setcounter{tocdepth}{3}      % ist Standard
+
+% Beispiele für Quellcode
+\usepackage{listings}
+\lstset{language=Java,
+  showstringspaces=false,
+  frame=single,
+  numbers=left,
+  basicstyle=\ttfamily,
+  numberstyle=\tiny}
 \usepackage[outputdir=out]{minted}
 
-
+% hier Namen etc. einsetzen
 \newcommand{\fullname}{Hannah Lappe}
 \newcommand{\email}{hannah.lappe@uni-ulm.de}
-\newcommand{\untertitel}{}
+\newcommand{\titel}{Case-study for SvelteKit in a Modern Business Application}
 \newcommand{\jahr}{2023}
-\newcommand{\abgabedatum}{Oktober 2023}
-\newcommand{\abschlussarbeit}{Masterarbeit}
-\newcommand{\matrikelnummer}{922114}
-\newcommand{\gutachterA}{Prof.\ Dr.\ Manfred\ Reichert}
-\newcommand{\gutachterB}{Prof.\ Dr.\ Rüdiger\ Pryss}
-\newcommand{\betreuer}{Jens\ Scheible \\
-                       & Dr.\ Marc\ Schickler}
+\newcommand{\matnr}{922114}
+\newcommand{\gutachterA}{Prof.\,Dr.\,Manfred Reichert}
+\newcommand{\gutachterB}{Prof.\,Dr.\,Rüdiger Pryss}
+\newcommand{\betreuer}{Dr.\,Marc Schickler\\Jens Scheible}
 
-\title{Case-study for SvelteKit in a Modern Business Application}
-\author{Hannah Lappe}
-\date{\today}
+% hier die Fakultät auswählen
+%\newcommand{\fakultaet}{---  Im Quellcode anpassen nicht vergessen! ---}
+\newcommand{\fakultaet}{Ingenieurwissenschaften, Informatik und\\Psychologie}
+%\newcommand{\fakultaet}{Mathematik und\\Wirtschafts-\\wissenschaften}
+%\newcommand{\fakultaet}{Medizin}
+%\newcommand{\fakultaet}{Naturwissenschaften}
 
+% hier das Institut einsetzen
+\newcommand{\institut}{Institut für Datenbanken und Informationssysteme}
+
+% Informationen, die LaTeX in die PDF-Datei schreibt
+\pdfinfo{
+  /Author (\fullname)
+  /Title (\titel)
+  /Producer     (pdfeTex 3.14159-1.30.6-2.2)
+  /Keywords ()
+}
+
+\usepackage{hyperref}
+\hypersetup{
+pdftitle=\titel,
+pdfauthor=\fullname,
+pdfsubject={Masterarbeit},
+pdfproducer={pdfeTex 3.14159-1.30.6-2.2},
+colorlinks=false,
+pdfborder=0 0 0	% keine Box um die Links!
+}
+
+% Trennungsregeln
+\hyphenation{Sil-ben-trenn-ung}
+
+% LTeX: enabled=true
 
 \begin{document}
+\frontmatter
 
-\maketitle
+% Titelseite
+\thispagestyle{empty}
+\begin{addmargin*}[4mm]{-10mm}
 
-\cleardoublepage
+  \hfill
+  \includegraphics[height=1.8cm]{assets/logo_uulm_sw.png}\\[1em]
 
-\section*{Abstract}
-todo\dots
+  % LTeX: language=de-DE
+  {\footnotesize
+  %{\bfseries Universität Ulm} \textbar ~89069 Ulm \textbar ~Germany
+  \hspace*{115mm}\parbox[t]{35mm}{\bfseries Fakultät für\\
+    \fakultaet\\
+    % TODO hier Institut anpassen
+    \mdseries \institut}\\[2cm]
+
+  \parbox{140mm}{\bfseries \LARGE \titel}\\[2.5em]
+  {\footnotesize Abschlussarbeit an der Universität Ulm}\\[3em]
+
+  {\footnotesize \bfseries Vorgelegt von:}\\
+  {\footnotesize \fullname\\ \email}\\ \matnr\\[2em]
+  {\footnotesize \bfseries Gutachter:}\\
+  {\footnotesize \gutachterA\\ \gutachterB}\\[2em]
+  {\footnotesize \bfseries Betreuer:}\\
+  {\footnotesize \betreuer}\\\\
+  {\footnotesize \jahr}
+  }
+\end{addmargin*}
+
+
+% Impressum
+\clearpage
+\thispagestyle{empty}
+{ \small
+  \flushleft
+  Fassung \today \\\vfill
+  \copyright~\jahr~\fullname\\[0.5em]
+  % Wenn Sie Ihre Arbeit unter einer freien Lizenz bereitstellen möchten, können Sie die nächste Zeile in Ihren Code aufnehmen. Bitte beachten Sie, dass Sie hierfür an allen Inhalten, inklusive enthaltener Abbildungen, die notwendigen Rechte benötigen! Beim Veröffentlichungsexemplar Ihrer Dissertation achten Sie bitte darauf, dass der Lizenztext nicht den Angaben in den Metadaten der genutzten Publikationsplattform widerspricht. Nähere Information zu den Creative Commons Lizenzen erhalten Sie hier: https://creativecommons.org/licenses/
+  %This work is licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License. To view a copy of this license, visit \href{https://creativecommons.org/licenses/by/4.0/}{https://creativecommons.org/licenses/by/4.0/} or send a letter to Creative Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105, USA. \\
+  Satz: PDF-\LaTeXe
+}
+
+% ab hier Zeilenabstand etwas größer 
+\setstretch{1.2}
 
 \tableofcontents
 
-\include{chapters/01-introduction}
-\include{chapters/02-fundamentals}
-\include{chapters/03-related-work}
-\include{chapters/04-implementation}
-\include{chapters/05-evaluation}
-\include{chapters/06-conclusion}
+\mainmatter
+\input{chapters/01-introduction}
+\input{chapters/02-fundamentals}
+\input{chapters/03-related-work}
+\input{chapters/04-implementation}
+\input{chapters/05-evaluation}
+\input{chapters/06-conclusion}
 
-% Bibliographie (am besten mit Bibtex oder Biber)
-\cleardoublepage % sonst stimmt die seitennummer im TOC nicht
+\appendix
+% hier Anhänge einbinden
+\input{chapters/sources}
+
+\backmatter
+% \nocite{Knappen2009}
+% \nocite{Mittelbach2005}
+% \nocite{Schlosser2014}
+% \nocite{Sturm2012}
+% \nocite{Voss2010}
+
 \printbibliography
 
-% Declaration of Independance
 \clearpage
 \thispagestyle{empty}
 
-% LTeX: enabled=false
-
-\noindent Name: \fullname \hfill Matrikelnummer: \matrikelnummer \vspace{2cm}
+Name: \fullname \hfill Matrikelnummer: \matnr \vspace{2cm}
 
 \minisec{Erklärung}
 
-Ich erkläre, dass ich die Arbeitselbständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel verwendet habe.\vspace{2cm}
+Ich erkläre, dass ich die Arbeit selbständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel verwendet habe.\vspace{2cm}
 
-\noindent Ulm, den \dotfill
+Ulm, den \dotfill
 
 \hspace{10cm} {\footnotesize \fullname}
-
-
 \end{document}
