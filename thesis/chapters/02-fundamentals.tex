@@ -54,35 +54,6 @@ Factual evaluation:
 
 \section{Svelte}
 \label{sec:svelte}
-% - [ ] Svelte <span style="color: red">[important]</span> 14.8
-% - [ ] What is Svelte
-%     - [ ] origins
-%     - [ ] created by Rich harris
-%     - [ ] successor to Ractive.js
-%     - [ ] most loved framework 2021
-%     - [ ] compiler based approach
-% - [ ] Features
-%     - [ ] svelte files
-%         - modified html
-%         -  similar to vue3 because vue author inspired by svelte predecessor (source?)
-%     - [ ] reactivity
-%         - `$` to make statement reactive
-%         - usual assignment operators to update
-%         - possible because svelte uses compiler
-%         - show example of generated code
-%     - [ ] templating
-%         - very simple
-%         - if
-%         - each
-%     - [ ] events
-%         - on:click
-%     - [ ] bindings
-%         -  bind:value
-%     - [ ] components
-%         - component syntax
-%     - [ ] store
-%     - [ ] scoped styling
-%     - [ ] animations
 
 % svelte is component library
 % created by Rich Harris as successor to Ractive.js \cite{offerzen_origins_svelte_2022}
@@ -95,6 +66,8 @@ Factual evaluation:
 % 
 % compiler means it is possible to do things which would not work in vanilla JS
 
+Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{offerzen_origins_svelte_2022}. It is a framework for developing web user interfaces, similar to React, Angular, and Vue.js. Harris describes Svelte as a framework not to run code but to think about code \cite{offerzen_origins_svelte_2022}. Svelte's key difference compared to other web UI frameworks is, that it uses a Compiler. This makes it possible to shift many rendering steps from the run time into the build time. Therefore, Svelte can ship smaller and more efficient bundles. Furthermore, Svelte's Syntax can do things which would not be possible in vanilla JavaScript.  
+
 \section{Features}
 
 \subsection{Svelte Files}
@@ -105,12 +78,30 @@ Factual evaluation:
 % - {} to use js expressions in html, similar to react.
 % - shorthand attribute syntax
 
+Svelte is a custom language that is very similar to HTML, JavaScript, and CSS, which is colocated inside a \texttt{.svelte} file. In fact, plain HTML syntax is also valid Svelte syntax:
+
+\begin{minted}{html}
+<!-- app.svelte -->
+<h1>Hello World!</h1> 
+\end{minted}
+Logic can be added with a \texttt{<script>}-block and variables can be used outside the HTML with curly-braces:
+
 \begin{minted}{html}
 <script>
-    let count = 2;
+    const name = 'world';
 </script>
 
-<div>count: {count}!</div>
+<div>Hello {name.toUpperCase()}!</div>
+\end{minted}
+
+Similar to React, variables can also be used in element attributes, and Svelte even provides a shorthand when variable name and attribute name are the same: 
+\begin{minted}{html}
+<script>
+    const src = './some/img.svg';
+</script>
+
+<img src={src}>
+<img {src}> 
 \end{minted}
 
 \subsection{Reactivity}
@@ -177,6 +168,8 @@ function Component() {
 
 \subsection{Templates}
 
+% - Templates for if, each
+
 \begin{minted}[highlightlines={11-14}]{html}
 <script>
     let count = 2;
@@ -194,12 +187,73 @@ function Component() {
 {/if}
 \end{minted}
 
+\begin{minted}{html}
+<script>
+    let array = [1, 2, 3, 4];
+</script>
+
+{#each array as value}
+    <div>{value}</div>
+{/each}
+\end{minted}
 
 \subsection{Events}
 
+% - possible to listen to any event with on: 
+% - custom events also
+
+\begin{minted}[highlightlines={7}]{html}
+<script>
+    function handleMove(event) {
+        // ...
+    }
+</script>
+
+<div on:pointermove="{handleMove}" ></div>
+\end{minted}
+
+\begin{minted}{html}
+<script>
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+
+    function sayHello() {
+        dispatch('message', {
+            text: 'Hello!'
+        });
+    }
+</script>
+\end{minted}
+
 \subsection{Bindings}
 
+\begin{minted}{html}
+<script>
+    let value = '';
+</script>
+
+<input bind:value={value} />
+\end{minted}
+
 \subsection{Components}
+\begin{minted}{html}
+<!-- app.svelte -->
+<script>
+    let value = 'hello';
+</script>
+
+<MyComponent {value} />
+\end{minted}
+
+\begin{minted}{html}
+<!-- MyComponent.svelte -->
+<script>
+    export let value;
+</script>
+
+<div>{value}</div>
+\end{minted}
 
 \section{SvelteKit}
 \label{sec:sveltekit}
