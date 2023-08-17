@@ -1,0 +1,81 @@
+
+\section{Svelte}
+
+% Svelte is JavaScript UI Framework, similar to react or angular. It originally released in 2016 but did not garner much attention till it's third major version released in 2019, which greatly overhauled the framework\cite{harris_svelte_2019}. In the State of JavaScript Survey 2022, Svelte ranked as having the second-highest retention rate\cite{noauthor_state_nodate}.
+
+% Svelte, like other component Frameworks such as Angular, and React, allow the user to write UI's in a declarative way. But, Svelte differs in that, optimizes its output code at build time. Thus producing a smaller and more performant JavaScript bundle most of the time\cite{tripon_angular_2021,ollila_modern_2022,acmion_sveltescaling_2023}.
+
+% Svelte uses mostly HTML syntax with some extensions for templating syntax. This has the advantage that it does not fundamentally break existing tools. Furthermore, in Svelte Files, some constructs JavaScript constructs are overloaded with further functionality. For example, Svelte assigns special meaning to labelled statements, a JavaScript construct that is rarely used. Labelled statements indicate that the statement should be reactive (\ref*{fig:svelte-reactive}).
+
+% \begin{figure}
+%     \begin{minted}{html}
+% <script>
+%     let count = 0;
+% </script>
+
+% {#if count > 9000} <!-- Conditional Template -->
+%     <div>
+%         it's over 9000!
+%     </div>
+% {/if}
+% <div>
+%     Count: {count} <!-- {} allows for JS expressions -->
+% </div>
+% <button on:click="{() => (count++)}"> <!-- on:click binds to the click event -->
+%     click me!
+% </button>
+%     \end{minted}
+%     \caption{Showcase of Svelte's Syntax}
+%     \label{fig:svelte-syntax}
+% \end{figure}
+
+% \begin{figure}
+%     \begin{minted}{html}
+% <script>
+%     let count = 2;
+%     $: doubled = count * 2;
+% </script>
+
+% <div>{count}</div>
+% <div>{doubled}</div>
+
+%     \end{minted}
+%     \caption{Showcase of Svelte's Syntax}
+%     \label{fig:svelte-reactive}
+% \end{figure}
+
+In recent years, web development has witnessed a paradigm shift towards component-based architectures that promote reusability, modularity, and maintainability. Traditional component frameworks such as React and Vue have been widely adopted, offering developers powerful abstractions and a rich ecosystem. However, these frameworks often come with a trade-off between development experience and performance, as they rely on a runtime library to manage component state and generate efficient updates to the user interface.
+
+Enter Svelte, a next-generation component framework that takes a fundamentally different approach to building web applications. Developed by Rich Harris, Svelte aims to address the limitations of traditional frameworks by introducing a compile-time approach to web development. Rather than relying on a runtime library, Svelte shifts the heavy lifting of component management from the browser to the build step, resulting in smaller, faster, and more efficient applications.
+
+\subsection{Features of Svelte}
+
+Svelte brings several innovative features to the table, differentiating itself from traditional component frameworks. These features empower developers with enhanced performance, reduced bundle sizes, and a simpler mental model for building web applications. The key features of Svelte include:
+
+\subsubsection{Reactive Declarations}
+
+Svelte embraces a reactive programming model, where changes to component state automatically propagate and trigger updates to the user interface. This declarative approach enables developers to express how the UI should look in response to state changes, without explicitly defining update logic. Svelte achieves this by analyzing the component code during the build step and generating highly optimized JavaScript code that directly manipulates the DOM, eliminating the need for a virtual DOM reconciliation step at runtime.
+
+\subsubsection{Component Compilation}
+
+Unlike traditional frameworks, where components are interpreted at runtime, Svelte compiles components to highly optimized JavaScript code during the build process. This compilation step allows Svelte to eliminate unused code, inline component styles, and perform advanced optimizations such as dead code elimination and tree shaking. Consequently, the resulting bundle sizes are significantly reduced, resulting in faster load times and improved runtime performance.
+
+\subsubsection{Framework-Agnostic Components}
+
+Svelte components are not bound to the Svelte framework itself, but can be compiled into standalone JavaScript modules that can be used in any JavaScript framework or even without a framework. This flexibility makes Svelte an attractive choice for developers working on projects that require integrating components with existing codebases or transitioning from other frameworks.
+
+\subsubsection{Easy Animations and Transitions}
+
+Svelte provides a built-in animation system that simplifies the process of creating smooth transitions and animations in web applications. Developers can easily define animation properties and apply them to components or specific elements, allowing for visually appealing user experiences without the need for external animation libraries.
+
+\subsubsection{Scoped Styles}
+
+Svelte offers scoped styles by default, ensuring that component styles do not leak or interfere with other components or the global CSS scope. This encapsulation mechanism enhances code maintainability and reduces the likelihood of CSS-related conflicts, making it easier to reason about the visual aspects of a component.
+
+\section{Comparative Analysis}
+
+When comparing Svelte with traditional component frameworks, several advantages emerge. Firstly, Svelte's compile-time approach leads to smaller bundle sizes, resulting in faster load times and improved runtime performance. Additionally, Svelte's reactive programming model eliminates the overhead of a virtual DOM and simplifies the mental model for developers, reducing the cognitive load associated with managing complex UI updates. Moreover, the flexibility of Svelte components allows for easy integration with existing codebases and enhances reusability.
+
+However, it is important to note that Svelte's ecosystem is still maturing compared to more established frameworks like React and Vue. As a result, the availability of third-party libraries and community support may be more limited in some cases. Furthermore, the learning curve associated with Svelte may be steeper for developers transitioning from traditional frameworks due to its unique compilation-based approach.
+
+In conclusion, Svelte presents a promising alternative to traditional component frameworks by providing enhanced performance, smaller bundle sizes, and a simpler development model. While there are considerations to be made regarding its ecosystem and learning curve, Svelte's innovative features make it a compelling choice for web developers seeking to optimize their applications for speed, efficiency, and maintainability.

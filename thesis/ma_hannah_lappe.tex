@@ -59,15 +59,19 @@ BCOR=15mm              % Bindekorrektur
 % Tiefe, bis zu der Überschriften in das Inhaltsverzeichnis kommen
 \setcounter{tocdepth}{3}      % ist Standard
 
-% Beispiele für Quellcode
-\usepackage{listings}
-\lstset{language=Java,
-  showstringspaces=false,
-  frame=single,
-  numbers=left,
-  basicstyle=\ttfamily,
-  numberstyle=\tiny}
-\usepackage[outputdir=out]{minted}
+\usepackage{xcolor} % to access the named colour LightGray
+\definecolor{LightGray}{gray}{0.9}
+
+\usepackage[
+  outputdir=out,
+  ]{minted}
+\setminted{
+framesep=2mm,
+baselinestretch=1.0,
+bgcolor=LightGray,
+fontsize=\footnotesize
+% ,linenos
+}
 
 % hier Namen etc. einsetzen
 \newcommand{\fullname}{Hannah Lappe}
