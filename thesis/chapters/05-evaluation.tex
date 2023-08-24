@@ -1,15 +1,46 @@
 \chapter{Evaluation}
 
-Legacy implementation vs. SvelteKit implementation
+\section{Empirical Data}
 
-comparison to nextjs
+\subsection{Performance}
+
+\subsection{Bundle Size}
+
+Smaller, but no data yet...
+
+\subsection{Something else}
 
 \begin{itemize}
     \item SEO
     \item Community support
     \item DX
     \item ecosystem
-    \item performance 
+    \item performance
 \end{itemize}
+
+
+\section{Experience}
+
+\subsection{Cases where Svelte is great}
+
+\begin{itemize}
+    \item Concise / Intuitive Syntax
+    \item reduction of client-server waterfalls
+    \item SPA/SSR/SSG with single framework
+    \item clear data flow (load function $\rightarrow$ svelte, svelte $\rightarrow$ action)
+\end{itemize}
+
+\subsection{Cases where Svelte is bad}
+
+\begin{itemize}
+    \item Centralized load function (compared to RSC's, load where needed)
+    \item Things Which require node.js server (e.g. cron, websockets)
+    \item Big data sets, which need to be shared between routes (virtuelle-fabrik)
+    \item Style is scoped per default, thus it is annoying to pass classes to child component (improved with tailwind, because everything is global)
+    \item Differences between client renderer and server renderer
+    \item No best practices yet
+    \item Problems with Svelte's Custom fetch
+\end{itemize}
+
 
 

@@ -1,0 +1,1 @@
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QAs a basis for our case study we used an application called DSW-FD (Dispositionssoftware-Fahrdienst).\\E$"}

@@ -1,26 +1,45 @@
 \chapter{Implementation}
 
-
 \section{Chauffeur Service}
- beschreiben mit bildern
+
+%  \begin{itemize}
+%     \item Take some Pictures
+%     \item Chauffeur service for German federal agency.
+%     \item Takes new Chauffeur Jobs
+%     \item UI overview of Jobs, and Jobs Details
+%     \item Overview of Chauffeurs and their availability 
+%     \item UI to manage Jobs, assign chauffeurs
+%     \item group Jobs
+%  \end{itemize}
+
+As a basis for our case study we used an application called DSW-FD (Dispositions-software-Fahrdienst). DSW-FD is used to schedule chauffeur rides for a German federal agency. The application provides a rich user interface, with views for managing chauffeur jobs, as well as chauffeur drivers. Clients which need a Chauffeur ride can call a separate hotline, where a handler creates a new chauffeur job, this job is then sent to DSW-FD where it appears in the overview of Jobs, and can then be processed by a Job handler.
+
+Drivers need to be manually assigned to a job by a handling person. To this end, the application provides suggestions for drivers which would be free when the job is schedule and are closest to the job's departure point. Furthermore, the app provides functionality to group together different jobs so that they may be handled by a single driver, determine the return destination for the driver after they finished the job, as well as marking a job as being handled by a pool of drivers.
+
+The application also provides features to directly interact with drivers, such as broadcasting messages to all drivers, reminding a driver to take their mandatory break, and directly calling a driver.
+
+\section{Current Implementation}
+
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=.8\linewidth]{assets/dswfd-architecture}
+    \caption{Root of the \textsc{CouchEdit} configuration metamodel}
+    \label{fig:metamodel-base}
+\end{figure}
+
+\begin{itemize}
+    \item UI5-Frontend
+    \item Java-Backend
+    \item Android app for drivers.
+    \item OIDC
+    \item mssql
+\end{itemize}
 
 
- \begin{figure}[ht]
-  \centering
-  \includesvg[width=.8\linewidth]{assets/dswfd-architecture}
-  \caption{Root of the \textsc{CouchEdit} configuration metamodel}
-  \label{fig:metamodel-base}
-  \end{figure}
+\section{SvelteKit Implementation}
 
-
- \begin{itemize}
-    \item Chauffeur service for German federal agency.
-    
-    \item application architecture
-        \begin{itemize}
-            \item server for icb
-            \item client to auth service / keycloak
-            \item client to dsw
-            \item server / push notifications for dswfahr 
-        \end{itemize}
- \end{itemize}
+\begin{itemize}
+    \item Two approaches (full stack, FE only)
+    \item First try UI5 web components, second try CSS classes
+    \item Authentication
+\end{itemize}

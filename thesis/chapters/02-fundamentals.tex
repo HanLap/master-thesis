@@ -66,11 +66,11 @@ Factual evaluation:
 % 
 % compiler means it is possible to do things which would not work in vanilla JS
 
-Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{offerzen_origins_svelte_2022}. It is a framework for developing web user interfaces, similar to React, Angular, and Vue.js. Harris describes Svelte as a framework not to run code but to think about code \cite{offerzen_origins_svelte_2022}. Svelte's key difference compared to other web UI frameworks is, that it uses a Compiler. This makes it possible to shift many rendering steps from the run time into the build time. Therefore, Svelte can ship smaller and more efficient bundles. Furthermore, Svelte's Syntax can do things which would not be possible in vanilla JavaScript.  
+Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{offerzen_origins_svelte_2022}. It is a framework for developing web user interfaces, similar to React, Angular, and Vue.js. Harris describes Svelte as a framework not to run code but to think about code \cite{offerzen_origins_svelte_2022}. Svelte's key difference compared to other web UI frameworks is, that it uses a Compiler. This makes it possible to shift many rendering steps from the run time into the build time. Therefore, Svelte can ship smaller and more efficient bundles. Furthermore, Svelte's Syntax can do things which would not be possible in vanilla JavaScript.
 
-\section{Features}
+\subsection{Features}
 
-\subsection{Svelte Files}
+\subsubsection{Svelte Files}
 % - Files with .svelte ending
 % - Syntax very similar to regular html with some extensions
 % - standard javascript/Typescript $=>$ existing tools can be more easily integrated
@@ -80,13 +80,13 @@ Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{off
 
 Svelte is a custom language that is very similar to HTML, JavaScript, and CSS, which is colocated inside a \texttt{.svelte} file. In fact, plain HTML syntax is also valid Svelte syntax:
 
-\begin{minted}{html}
+\begin{minted}{svelte}
 <!-- app.svelte -->
 <h1>Hello World!</h1> 
 \end{minted}
 Logic can be added with a \texttt{<script>}-block and variables can be used outside the HTML with curly-braces:
 
-\begin{minted}{html}
+\begin{minted}{svelte}
 <script>
     const name = 'world';
 </script>
@@ -94,8 +94,8 @@ Logic can be added with a \texttt{<script>}-block and variables can be used outs
 <div>Hello {name.toUpperCase()}!</div>
 \end{minted}
 
-Similar to React, variables can also be used in element attributes, and Svelte even provides a shorthand when variable name and attribute name are the same: 
-\begin{minted}{html}
+Similar to React, variables can also be used in element attributes, and Svelte even provides a shorthand when variable name and attribute name are the same:
+\begin{minted}{svelte}
 <script>
     const src = './some/img.svg';
 </script>
@@ -104,23 +104,27 @@ Similar to React, variables can also be used in element attributes, and Svelte e
 <img {src}> 
 \end{minted}
 
-\subsection{Reactivity}
+\subsubsection{Reactivity}
 % - asignments with usual js asignments. would not work in React.
 % - unlike react, svelte runs script just once, for assignments, svelte inserts invalidate blocks to update a variable
 % - compare svelte to equivalent react code.
 
-\begin{minted}[highlightlines={4-6,9}]{html}
+Svelte provides a strong system for reactivity. Mutation of variables is done with regular assignment operations:
+
+\begin{minted}{svelte}
 <script>
-    let count = 2;
+    let count = 0;
 
     function increment() {
         count += 1;
     }
 </script>
 
-<button on:click="{increment}">click me!</button>
 <div>count: {count}!</div>
+<button on:click={increment}>click me!</button>
 \end{minted}
+
+This is possible, because Svelte's compiler replaces assignment operations at build time. The increment function in the prior example would be compiled to this statement:
 
 \begin{minted}{js}
 function increment() {
@@ -128,24 +132,27 @@ function increment() {
 }
 \end{minted}
 
+An equivalent React implementation using function components would have to use more verbose semantics, because without a specialized compiler, assignment operations do not have any special meaning:
+
 \begin{minted}{jsx}
 function Component() {
-
-    const [count, setCount] = useState(2);
+    const [count, setCount] = useState(0);
 
     function increment() {
-        setCount((c) => c + 1);
+        setCount(c => c + 1);
     }
 
     return <>
-        <button onClick={increment}>click me!</button>
         <div>count: {count}!</div>
+        <button onClick={increment}>click me!</button>
     </>
 }
 \end{minted}
 
+React's code runs every time, a component is updated, this means derived values can just be declared, and they are evaluated every time. Svelte's code on the other hand, only runs once on component initialization. Therefore, Svelte introduces custom syntax for defining reactive statements. To This end, Svelte repurposes labeled statements:
 
-\begin{minted}[highlightlines={4}]{html}
+
+\begin{minted}[highlightlines={4}]{svelte}
 <script>
     let count = 2;
 
@@ -166,28 +173,52 @@ function Component() {
 % - used for reactive assignments, conditions, and whole codeblocks
 % - reactive block is rerun everytime a variable used inside the block changes
 
-\subsection{Templates}
+\mintinline{js}{$:} marks a statement as reactive. Every time a value, that is used in a reactive statement, changes, the statement is reevaluated. This can be used for assignments, as seen in the prior example, but it can also be used for conditions and code blocks:
+
+\begin{minted}{svelte}
+<script>
+    let count = 0;
+
+    $: {
+        console.log(`new value of count: ${count}`);
+        console.log('This will also be executed when count changes');
+    }
+
+    $: if(count > 9) {
+        console.log('It is over 9!');
+        count = 0;
+    }
+</script>
+\end{minted}
+
+\subsubsection{Templates}
 
 % - Templates for if, each
 
-\begin{minted}[highlightlines={11-14}]{html}
+HTML does not have a way of expressing logic, thus Svelte introduces its own syntax. To conditionally render some markup, it is wrapped inside an if-block:
+
+\begin{minted}[highlightlines={11-14}]{svelte}
 <script>
-    let count = 2;
+    let count = 0;
 
     function increment() {
         count += 1;
     }
 </script>
 
-<button on:click="{increment}">click me!</button>
+<button on:click={increment}>click me!</button>
 <div>count: {count}!</div>
 {#if count > 9}
     <div>Vegeta what does the scouter say about his power level?</div>
     <div>It's over 9!!</div>
+{:else}
+    <div>The number ir pretty low</div>
 {/if}
 \end{minted}
 
-\begin{minted}{html}
+UI's also often work with lists of data. To this end, Svelte provides an each-block, which can be used to handle repeating data:
+
+\begin{minted}[highlightlines={5-7}]{svelte}
 <script>
     let array = [1, 2, 3, 4];
 </script>
@@ -197,10 +228,43 @@ function Component() {
 {/each}
 \end{minted}
 
-\subsection{Events}
+\subsubsection{Components}
+
+% - Since emergence of React, component driven development became norm.
+% - in Svelte, one file = one component.
+% - Name = Component Name.
+
+% todo: citation needed
+Since the emergence of React in 2013, component-driven user-interfaces have become a widespread approach to web development. In Svelte, a component is represented by a singular \mintinline{html}|.svelte|-file, where the file name determines the component name: 
+
+\begin{minted}{html}
+<!-- MyComponent.svelte -->
+<script>
+    export let value;
+</script>
+
+<div>hello, {value}!</div>
+\end{minted}
+
+To define props on a Component, Svelte repurposes the \mintinline{js}|export| keyword. The Component can than be imported and used like a regular element:
+
+\begin{minted}{svelte}
+<!-- app.svelte -->
+<script>
+    import MyComponent from './MyComponent.svelte';
+
+    let value = 'world';
+</script>
+
+<MyComponent {value} />
+\end{minted}
+
+\subsubsection{Events}
 
 % - possible to listen to any event with on: 
 % - custom events also
+
+In a prior example we already showed usage of \mintinline{svelte}|on:click|. This directive is used to listen to click events. Svelte make sit possible to listen for arbitrary events on an element with the \mintinline{html}|on|-keyword:
 
 \begin{minted}[highlightlines={7}]{html}
 <script>
@@ -211,6 +275,8 @@ function Component() {
 
 <div on:pointermove="{handleMove}" ></div>
 \end{minted}
+
+Furthermore, Svelte provides an event dispatcher, so that components can throw their own custom events:
 
 \begin{minted}{html}
 <script>
@@ -226,75 +292,54 @@ function Component() {
 </script>
 \end{minted}
 
-\subsection{Bindings}
+\subsubsection{Bindings}
 
-\begin{minted}{html}
+% - usually data passed down. Parent can set props of child but not otherway around.
+% - Svelte provides tool to work around that
+% - simpler compared to react
+
+\begin{minted}{svelte}
 <script>
-    let value = '';
+    let name = 'Peter';
 </script>
 
-<input bind:value={value} />
+<input bind:value={name} />
 \end{minted}
 
-\subsection{Components}
-\begin{minted}{html}
-<!-- app.svelte -->
-<script>
-    let value = 'hello';
-</script>
+\begin{minted}{jsx}
+function Component() {
+    const [name, setName] = useState('Peter');
 
-<MyComponent {value} />
-\end{minted}
-
-\begin{minted}{html}
-<!-- MyComponent.svelte -->
-<script>
-    export let value;
-</script>
-
-<div>{value}</div>
+    return ( 
+        <input 
+            value={name}
+            onChange={e => setName(e.currentTarget.value)} 
+        />
+    )
+}
 \end{minted}
 
 \section{SvelteKit}
 \label{sec:sveltekit}
 
-In addition to Svelte's core functionality, the Svelte ecosystem has further expanded with the introduction of SvelteKit. Developed as an official framework for building web applications, SvelteKit builds upon the foundations of Svelte and provides additional features and tools that streamline the development process. By leveraging the power of Svelte's compilation-based approach, SvelteKit enhances developer productivity, scalability, and provides a cohesive framework for building robust web applications.
+% Meta Framework
+% Stable release 2022
+% provides functionality for modern applications
+% Deployable as static files, web server, edge functions
 
-\subsection{Key Features of SvelteKit}
+\subsection{Features}
 
-SvelteKit introduces several key features that extend the capabilities of Svelte and facilitate the development of complex web applications:
+\subsubsection{Loading Data}
 
-\subsubsection{Server-Side Rendering (SSR)}
+Svelte provides standard way for loading data.
 
-One of the notable additions in SvelteKit is the built-in support for server-side rendering (SSR). SSR enables rendering components on the server, which can improve initial page load performance and enable search engine crawlers to index content more effectively. SvelteKit seamlessly handles the rendering process on the server, allowing developers to build dynamic and interactive applications while benefiting from the performance advantages of SSR.
+\subsubsection{Routing}
 
-\subsubsection{Routing and Navigation}
+\subsubsection{Server Actions}
+ 
+\subsubsection{Rendering}
 
-SvelteKit provides a powerful routing system that enables developers to define and manage application routes effortlessly. The framework supports both client-side and server-side routing, allowing for smooth navigation between pages while preserving SEO benefits through SSR. SvelteKit's routing capabilities include dynamic routes, nested routes, and route guards, empowering developers to create sophisticated navigation structures.
-
-\subsubsection{Built-In Data Fetching}
-
-Fetching and managing data is a fundamental aspect of web application development. SvelteKit simplifies this process by offering built-in data fetching capabilities. Developers can easily define data dependencies for each page or component, and SvelteKit handles the data retrieval and synchronization. This feature streamlines the development workflow, reduces boilerplate code, and ensures optimal data fetching strategies, such as parallel or sequential requests, based on the application's needs.
-
-\subsubsection{Preloading and Prefetching}
-
-To optimize the user experience, SvelteKit provides preloading and prefetching mechanisms. Preloading allows the framework to anticipate and fetch resources required for subsequent pages, reducing latency and improving perceived performance. Prefetching, on the other hand, enables developers to specify resources that should be fetched in the background, ensuring that subsequent interactions or navigation are seamless and responsive.
-
-\subsubsection{Serverless Deployment and APIs}
-
-SvelteKit embraces the serverless paradigm, enabling effortless deployment of applications to serverless platforms like Netlify, Vercel, or AWS Lambda. The framework facilitates the creation of serverless functions, allowing developers to define custom server-side endpoints and build APIs without the need for separate server-side code. This streamlined deployment and serverless functionality simplify the scaling and maintenance of web applications, making SvelteKit a suitable choice for modern cloud-native architectures.
-
-\subsection{Advantages of SvelteKit}
-
-By combining the power of Svelte's compilation-based approach with the additional features provided by SvelteKit, developers can benefit from a range of advantages:
-
-Improved performance through server-side rendering and optimized data fetching strategies.
-Enhanced development productivity with built-in routing, data management, and serverless deployment.
-Simplified code organization and maintenance due to the cohesive framework architecture.
-Seamless integration with the Svelte ecosystem, enabling developers to leverage existing Svelte components, libraries, and tools.
-It is worth noting that, similar to Svelte, SvelteKit is a relatively new framework, and its ecosystem is still evolving. While it provides a solid foundation for building web applications, developers should consider the maturity of third-party integrations and community support when selecting SvelteKit for their projects.
-
-In conclusion, SvelteKit expands upon the capabilities of Svelte, offering a comprehensive framework for building web applications. With features such as server-side rendering, routing, data fetching, and serverless deployment, SvelteKit empowers developers to create high-performing and scalable applications with an improved development experience. By leveraging the strengths of Svelte's compilation-based approach, SvelteKit enhances productivity and provides a robust foundation for modern web development.
+\subsubsection{Progressive Enhancement}
 
 \section{Business Application}
 \label{sec:business-application}
