@@ -1,0 +1,33 @@
+% LTeX: enabled=false
+\usepackage[outputdir=out]{minted}
+\usepackage[many,minted]{tcolorbox}% version 3.03 or better
+
+\definecolor{mintedbackground}{rgb}{0.95,0.95,0.95}
+\definecolor{mintedframe}{rgb}{0.70,0.85,0.95}
+
+\setminted{
+framesep=2mm,
+baselinestretch=1.0,
+% bgcolor=LightGray,
+fontsize=\footnotesize
+% ,linenos
+}
+
+\input{mintedfix}
+\renewcommand{\MintedPygmentize}{./pygmentize.py}
+
+\newtcblisting{myminted}[3][]{%
+  listing only,
+  title=#3,
+  minted language=#2,
+  minted options={#1},
+  list entry={\protect\numberline{\thetcbcounter}#3},
+  enhanced,
+  coltitle=mintedbackground!30!black, 
+  fonttitle=\ttfamily\footnotesize,
+  sharp corners, top=0mm, bottom=0mm,
+  title code={\path[draw=mintedframe,dashed, fill=mintedbackground](title.south west)--(title.south east);},
+  frame code={\path[draw=mintedframe, fill=mintedbackground](frame.south west) rectangle (frame.north east);}
+}
+
+\newcommand{\s}[1]{}

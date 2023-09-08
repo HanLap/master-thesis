@@ -1,6 +1,8 @@
-
 \chapter{Fundamentals}
 \label{ch:fundamentals}
+
+
+% todo: React Server Components
 
 This Chapter introduces fundamental knowledge that will be required in the following thesis.
 
@@ -80,29 +82,29 @@ Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{off
 
 Svelte is a custom language that is very similar to HTML, JavaScript, and CSS, which is colocated inside a \texttt{.svelte} file. In fact, plain HTML syntax is also valid Svelte syntax:
 
-\begin{minted}{svelte}
-<!-- app.svelte -->
+\begin{myminted}{svelte}{app.svelte}
 <h1>Hello World!</h1> 
-\end{minted}
+\end{myminted}
+
 Logic can be added with a \texttt{<script>}-block and variables can be used outside the HTML with curly-braces:
 
-\begin{minted}{svelte}
+\begin{myminted}{svelte}{}
 <script>
     const name = 'world';
 </script>
 
 <div>Hello {name.toUpperCase()}!</div>
-\end{minted}
+\end{myminted}
 
 Similar to React, variables can also be used in element attributes, and Svelte even provides a shorthand when variable name and attribute name are the same:
-\begin{minted}{svelte}
+\begin{myminted}{svelte}{}
 <script>
     const src = './some/img.svg';
 </script>
 
 <img src={src}>
 <img {src}> 
-\end{minted}
+\end{myminted}
 
 \subsubsection{Reactivity}
 % - asignments with usual js asignments. would not work in React.
@@ -111,7 +113,7 @@ Similar to React, variables can also be used in element attributes, and Svelte e
 
 Svelte provides a strong system for reactivity. Mutation of variables is done with regular assignment operations:
 
-\begin{minted}{svelte}
+\begin{myminted}{svelte}{}
 <script>
     let count = 0;
 
@@ -122,19 +124,20 @@ Svelte provides a strong system for reactivity. Mutation of variables is done wi
 
 <div>count: {count}!</div>
 <button on:click={increment}>click me!</button>
-\end{minted}
+\end{myminted}
 
 This is possible, because Svelte's compiler replaces assignment operations at build time. The increment function in the prior example would be compiled to this statement:
 
-\begin{minted}{js}
+\begin{myminted}{js}{}
 function increment() {
     $$invalidate('count', count += 1)
 }
-\end{minted}
+\end{myminted}
+\s{$$}
 
 An equivalent React implementation using function components would have to use more verbose semantics, because without a specialized compiler, assignment operations do not have any special meaning:
 
-\begin{minted}{jsx}
+\begin{myminted}{jsx}{}
 function Component() {
     const [count, setCount] = useState(0);
 
@@ -147,12 +150,12 @@ function Component() {
         <button onClick={increment}>click me!</button>
     </>
 }
-\end{minted}
+\end{myminted}
 
 React's code runs every time, a component is updated, this means derived values can just be declared, and they are evaluated every time. Svelte's code on the other hand, only runs once on component initialization. Therefore, Svelte introduces custom syntax for defining reactive statements. To This end, Svelte repurposes labeled statements:
 
 
-\begin{minted}[highlightlines={4}]{svelte}
+\begin{myminted}[highlightlines={4}]{svelte}{}
 <script>
     let count = 2;
 
@@ -166,7 +169,8 @@ React's code runs every time, a component is updated, this means derived values 
 <button on:click="{increment}">click me!</button>
 <div>count: {count}!</div>
 <div>doubled: {doubled}!</div>
-\end{minted}
+\end{myminted}
+\s{$}
 
 % - $: to make reactive statement
 % - repurpose of rarely used js feature
@@ -175,7 +179,7 @@ React's code runs every time, a component is updated, this means derived values 
 
 \mintinline{js}{$:} marks a statement as reactive. Every time a value, that is used in a reactive statement, changes, the statement is reevaluated. This can be used for assignments, as seen in the prior example, but it can also be used for conditions and code blocks:
 
-\begin{minted}{svelte}
+\begin{myminted}{svelte}{}
 <script>
     let count = 0;
 
@@ -189,7 +193,8 @@ React's code runs every time, a component is updated, this means derived values 
         count = 0;
     }
 </script>
-\end{minted}
+\end{myminted}
+\s{$}
 
 \subsubsection{Templates}
 
@@ -197,7 +202,7 @@ React's code runs every time, a component is updated, this means derived values 
 
 HTML does not have a way of expressing logic, thus Svelte introduces its own syntax. To conditionally render some markup, it is wrapped inside an if-block:
 
-\begin{minted}[highlightlines={11-14}]{svelte}
+\begin{myminted}[highlightlines={11-14}]{svelte}{}
 <script>
     let count = 0;
 
@@ -214,11 +219,11 @@ HTML does not have a way of expressing logic, thus Svelte introduces its own syn
 {:else}
     <div>The number ir pretty low</div>
 {/if}
-\end{minted}
+\end{myminted}
 
 UI's also often work with lists of data. To this end, Svelte provides an each-block, which can be used to handle repeating data:
 
-\begin{minted}[highlightlines={5-7}]{svelte}
+\begin{myminted}[highlightlines={5-7}]{svelte}{}
 <script>
     let array = [1, 2, 3, 4];
 </script>
@@ -226,7 +231,7 @@ UI's also often work with lists of data. To this end, Svelte provides an each-bl
 {#each array as value}
     <div>{value}</div>
 {/each}
-\end{minted}
+\end{myminted}
 
 \subsubsection{Components}
 
@@ -237,19 +242,17 @@ UI's also often work with lists of data. To this end, Svelte provides an each-bl
 % todo: citation needed
 Since the emergence of React in 2013, component-driven user-interfaces have become a widespread approach to web development. In Svelte, a component is represented by a singular \mintinline{html}|.svelte|-file, where the file name determines the component name: 
 
-\begin{minted}{html}
-<!-- MyComponent.svelte -->
+\begin{myminted}{html}{MyComponent.svelte}
 <script>
     export let value;
 </script>
 
 <div>hello, {value}!</div>
-\end{minted}
+\end{myminted}
 
 To define props on a Component, Svelte repurposes the \mintinline{js}|export| keyword. The Component can than be imported and used like a regular element:
 
-\begin{minted}{svelte}
-<!-- app.svelte -->
+\begin{myminted}{svelte}{app.svelte}
 <script>
     import MyComponent from './MyComponent.svelte';
 
@@ -257,7 +260,7 @@ To define props on a Component, Svelte repurposes the \mintinline{js}|export| ke
 </script>
 
 <MyComponent {value} />
-\end{minted}
+\end{myminted}
 
 \subsubsection{Events}
 
@@ -266,7 +269,7 @@ To define props on a Component, Svelte repurposes the \mintinline{js}|export| ke
 
 In a prior example we already showed usage of \mintinline{svelte}|on:click|. This directive is used to listen to click events. Svelte make sit possible to listen for arbitrary events on an element with the \mintinline{html}|on|-keyword:
 
-\begin{minted}[highlightlines={7}]{html}
+\begin{myminted}[highlightlines={7}]{html}{}
 <script>
     function handleMove(event) {
         // ...
@@ -274,11 +277,11 @@ In a prior example we already showed usage of \mintinline{svelte}|on:click|. Thi
 </script>
 
 <div on:pointermove="{handleMove}" ></div>
-\end{minted}
+\end{myminted}
 
 Furthermore, Svelte provides an event dispatcher, so that components can throw their own custom events:
 
-\begin{minted}{html}
+\begin{myminted}{html}{}
 <script>
     import { createEventDispatcher } from 'svelte';
 
@@ -290,7 +293,7 @@ Furthermore, Svelte provides an event dispatcher, so that components can throw t
         });
     }
 </script>
-\end{minted}
+\end{myminted}
 
 \subsubsection{Bindings}
 
@@ -298,15 +301,15 @@ Furthermore, Svelte provides an event dispatcher, so that components can throw t
 % - Svelte provides tool to work around that
 % - simpler compared to react
 
-\begin{minted}{svelte}
+\begin{myminted}{svelte}{}
 <script>
     let name = 'Peter';
 </script>
 
 <input bind:value={name} />
-\end{minted}
+\end{myminted}
 
-\begin{minted}{jsx}
+\begin{myminted}{jsx}{}
 function Component() {
     const [name, setName] = useState('Peter');
 
@@ -317,7 +320,7 @@ function Component() {
         />
     )
 }
-\end{minted}
+\end{myminted}
 
 \section{SvelteKit}
 \label{sec:sveltekit}
@@ -330,12 +333,14 @@ function Component() {
 \subsection{Features}
 
 \subsubsection{Loading Data}
+\label{sec:sveltekit-loading}
 
 Svelte provides standard way for loading data.
 
 \subsubsection{Routing}
 
 \subsubsection{Server Actions}
+\label{sec:sveltekit-server-actions}
  
 \subsubsection{Rendering}
 

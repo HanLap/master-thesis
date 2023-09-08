@@ -1,9 +1,9 @@
 {
-  "latex-workshop.latex.autoBuild.run": "never",
-  "latex-workshop.latex.outDir": "%DIR%/out",
-  "latex-workshop.view.pdf.viewer": "tab",
-  "latex-workshop.latex.recipe.default": "pdflatex -> biber -> pdflatex * 2",
   "ltex.language": "en-US",
+  "ltex.latex.environments": {
+    "myminted": "ignore"
+  },
+
   "[latex]": {
     "editor.formatOnPaste": false,
     "editor.suggestSelection": "recentlyUsedByPrefix",
@@ -13,6 +13,17 @@
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 100
   },
+
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.outDir": "%DIR%/out",
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.verbatimEnvs": [
+    "verbatim",
+    "lstlisting",
+    "minted",
+    "myminted"
+  ],
+  "latex-workshop.latex.recipe.default": "pdflatex -> biber -> pdflatex * 2",
   "latex-workshop.latex.tools": [
     {
       "name": "latexmk",
@@ -21,6 +32,7 @@
         "-synctex=1",
         "-interaction=nonstopmode",
         "-file-line-error",
+        "-shell-escape",
         "-pdf",
         "-outdir=%OUTDIR%",
         "%DOC%"

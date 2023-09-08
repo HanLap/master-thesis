@@ -6,3 +6,9 @@ contentful
 Runeson
 Vercel
 DSW-FD
+OData
+Fiori
+Keycloak
+Prisma
+Axios
+templating

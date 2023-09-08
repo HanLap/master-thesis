@@ -34,7 +34,10 @@ BCOR=15mm              % Bindekorrektur
 
 % Literaturverzeichnis mit BibLaTeX
 \usepackage[babel,german=quotes]{csquotes}
-\usepackage[backend=biber]{biblatex}
+\usepackage[
+  backend=biber
+ ,sorting=none
+]{biblatex}
 \addbibresource{MA.bib}
 \bibliography{bibliography}
 
@@ -62,19 +65,7 @@ BCOR=15mm              % Bindekorrektur
 \usepackage{xcolor} % to access the named colour LightGray
 \definecolor{LightGray}{gray}{0.9}
 
-\usepackage[
-  outputdir=out,
-  ]{minted}
-\setminted{
-framesep=2mm,
-baselinestretch=1.0,
-bgcolor=LightGray,
-fontsize=\footnotesize
-% ,linenos
-}
-\input{mintedfix}
-\renewcommand{\MintedPygmentize}{./pygmentize.py}
-
+\input{mintedconfig}
 
 % hier Namen etc. einsetzen
 \newcommand{\fullname}{Hannah Lappe}
