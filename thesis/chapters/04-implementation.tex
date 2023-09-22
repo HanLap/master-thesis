@@ -110,22 +110,22 @@ One problem we encountered with this approach was, that SvelteKit provides no he
 
 \begin{myminted}{svelte}{}
 <script>
-async function handleSubmit({cancel, request}) {
-    cancel();
+    async function handleSubmit({cancel, request}) {
+        cancel();
 
-    const res = await fetch('api/update', {
-        method: 'POST',
-        body: request.body
-    });
+        const res = await fetch('api/update', {
+            method: 'POST',
+            body: request.body
+        });
 
-    if (!res.ok) {
-        // error handling...
+        if (!res.ok) {
+            // error handling...
+        }
+
+        return ({ update }) => {
+            update();
+        }
     }
-
-    return ({ update }) => {
-        update();
-    }
-}
 <script>
 
 <form method="POST" use:enhance={handleSubmit}>

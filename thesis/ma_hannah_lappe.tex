@@ -48,6 +48,9 @@ BCOR=15mm              % Bindekorrektur
 % Für Tabellen mit fester Gesamtbreite und variabler Spaltenbreite
 \usepackage{tabularx} 
 
+\usepackage{pgfplots}
+\usepackage{pgf-umlsd}
+
 % Besondere Schriftauszeichnungen
 \usepackage{url}              % \url{http://...} in Schreibmaschinenschrift
 \usepackage{color}            % zum Setzen farbigen Textes
@@ -107,6 +110,9 @@ pdfborder=0 0 0	% keine Box um die Links!
 
 % Trennungsregeln
 \hyphenation{Sil-ben-trenn-ung}
+
+\input{chapters/data}
+
 
 % LTeX: enabled=true
 
@@ -169,6 +175,7 @@ pdfborder=0 0 0	% keine Box um die Links!
 
 \appendix
 % hier Anhänge einbinden
+\input{chapters/appendix.tex}
 \input{chapters/sources}
 
 \backmatter

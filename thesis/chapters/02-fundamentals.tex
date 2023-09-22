@@ -48,9 +48,35 @@ Factual evaluation:
 \section{Web Development}
 \label{sec:web-development}
 
-\subsection{History}
-
 \subsection{Rendering Patterns}
+\label{sec:rendering-patterns}
+
+\begin{itemize}
+    \item At first only static files
+    \item later SSR (PHP and stuff)
+    \item CSR with dominance of SPA's heralded by React
+    \item now step back to hybrid approach using SSR or SSG with client side hydration.
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \begin{sequencediagram}
+      \newthread{A}{Client}{}
+      \newinst[1]{B}{Server}{}
+      \newinst[1]{C}{Database}{}
+      \begin{call}{A}{vist /auftraege}{B}{index.html}
+      \end{call}
+      \begin{call}{A}{request Data}{B}{}
+        \begin{call}{B}{SELECT *}{C}{}
+        \end{call}
+      \end{call}
+      \begin{callself}{A}{render data}{}
+      \end{callself}
+    \end{sequencediagram}
+
+    \label{fig:timing-spa}
+    \caption{Example load timing for an application using client-side rendering.}
+\end{figure}
 
 \subsection{Meta Frameworks}
 
@@ -106,6 +132,8 @@ Similar to React, variables can also be used in element attributes, and Svelte e
 <img {src}> 
 \end{myminted}
 
+% ToDo: write about TypeScript support.
+
 \subsubsection{Reactivity}
 % - asignments with usual js asignments. would not work in React.
 % - unlike react, svelte runs script just once, for assignments, svelte inserts invalidate blocks to update a variable
@@ -128,12 +156,11 @@ Svelte provides a strong system for reactivity. Mutation of variables is done wi
 
 This is possible, because Svelte's compiler replaces assignment operations at build time. The increment function in the prior example would be compiled to this statement:
 
-\begin{myminted}{js}{}
+\begin{myminted}[escapeinside=||]{js}{}
 function increment() {
-    $$invalidate('count', count += 1)
+    |\$\$|invalidate('count', count += 1)
 }
 \end{myminted}
-\s{$$}
 
 An equivalent React implementation using function components would have to use more verbose semantics, because without a specialized compiler, assignment operations do not have any special meaning:
 
@@ -155,11 +182,11 @@ function Component() {
 React's code runs every time, a component is updated, this means derived values can just be declared, and they are evaluated every time. Svelte's code on the other hand, only runs once on component initialization. Therefore, Svelte introduces custom syntax for defining reactive statements. To This end, Svelte repurposes labeled statements:
 
 
-\begin{myminted}[highlightlines={4}]{svelte}{}
+\begin{myminted}[highlightlines={4},escapeinside=||]{svelte}{}
 <script>
     let count = 2;
 
-    $: doubled = count * 2;
+    |\$|: doubled = count * 2;
 
     function increment() {
         count += 1;
@@ -170,7 +197,6 @@ React's code runs every time, a component is updated, this means derived values 
 <div>count: {count}!</div>
 <div>doubled: {doubled}!</div>
 \end{myminted}
-\s{$}
 
 % - $: to make reactive statement
 % - repurpose of rarely used js feature
@@ -179,22 +205,21 @@ React's code runs every time, a component is updated, this means derived values 
 
 \mintinline{js}{$:} marks a statement as reactive. Every time a value, that is used in a reactive statement, changes, the statement is reevaluated. This can be used for assignments, as seen in the prior example, but it can also be used for conditions and code blocks:
 
-\begin{myminted}{svelte}{}
+\begin{myminted}[escapeinside=||]{svelte}{}
 <script>
     let count = 0;
 
-    $: {
-        console.log(`new value of count: ${count}`);
+    |\$|: {
+        console.log(`new value of count: |\$|{count}`);
         console.log('This will also be executed when count changes');
     }
 
-    $: if(count > 9) {
+    |\$|: if(count > 9) {
         console.log('It is over 9!');
         count = 0;
     }
 </script>
 \end{myminted}
-\s{$}
 
 \subsubsection{Templates}
 
