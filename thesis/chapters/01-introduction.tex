@@ -8,6 +8,7 @@ To address this issue, in recent years the JavaScript ecosystem saw the emergenc
 SvelteKit is an up-and-coming meta framework that is rapidly gaining popularity. It has multiple advantages over traditional SPA frameworks. SvelteKit allows per page control over the rendering strategy. This allows to render different parts of an application with SSR, client side rendering (CSR) or at build time with pre-rendering. Furthermore, SvelteKit uses various compile time optimizations to produce a more efficient and performant JavaScript bundle. Moreover, it provides functionality, such as reactive state management, component composition, and streamlined data fetching, which helps in writing concise and readable code. Overall, SvelteKit promises to make development of modern web applications faster, while simultaneously improving developer experience.
 
 \section{Problem Statement}
+\label{sec:problem-statement}
 
 SvelteKit claims to speed up the development process by handling many common technical requirements of modern web development, but these claims are largely undocumented, furthermore business applications tend to differ in its technical requirements from regular public facing web applications. Thus, it is unclear if SvelteKit would be a good fit for the development of modern business applications
 
@@ -17,23 +18,22 @@ This study provides evidence towards SvelteKit's applicability for the developme
 
 In this study, we investigate how SvelteKit's claimed benefits translate to the development of business applications. To this end we reimplement parts of an application that is used to schedule rides for a chauffeur service provided by a federal agency. We compare the resulting application with the original implementation in terms of performance and development effort. Furthermore, we want to generalize the results from this project to typical business applications and try to provide a blueprint for future projects.
 
-\section{Research Questions}
+% \section{Research Questions}
 
-Broad research questions: Is SvelteKit a good fit for business applications?
-\begin{enumerate}
-    \item How does performance of SvelteKit compare to other frameworks?
-          \begin{enumerate}
-              \item First contentful paint (FCP)?
-              \item Time to interactive (TTI)?
-              \item Bundle size?
-          \end{enumerate}
-    \item How does SvelteKit improve DX compared to a traditional frontend/backend ?
-          \begin{enumerate}
-              \item Lines of code (LoC)?
-              \item Ecosystem?
-          \end{enumerate}
-\end{enumerate}
-
+% Broad research questions: Is SvelteKit a good fit for business applications?
+% \begin{enumerate}
+%     \item How does performance of SvelteKit compare to other frameworks?
+%           \begin{enumerate}
+%               \item First contentful paint (FCP)?
+%               \item Time to interactive (TTI)?
+%               \item Bundle size?
+%           \end{enumerate}
+%     \item How does SvelteKit improve DX compared to a traditional frontend/backend ?
+%           \begin{enumerate}
+%               \item Lines of code (LoC)?
+%               \item Ecosystem?
+%           \end{enumerate}
+% \end{enumerate}
 
 \section{Thesis Structure}
 
