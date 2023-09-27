@@ -347,6 +347,22 @@ function Component() {
 }
 \end{myminted}
 
+\subsubsection{TypeScript}
+
+Svelte has out of the box support for TypeScript. TypeScript can be enabled for a svelte-file by annotating the  script block with a \mintinline{bash}|lang| attribute:
+
+\begin{myminted}{svelte}{}
+<script lang="ts">
+    let value: string = "World"
+</script>
+\end{myminted}
+
+This however, comes with certain restrictions. It is not possible to use TypeScript syntax outside the script block. One might for example want to type the parameters of an inline event handler:
+
+\begin{myminted}{svelte}{}
+<input on:change={(e: InputEvent) => {}}> /* this will not work */ 
+\end{myminted}
+
 \section{SvelteKit}
 \label{sec:sveltekit}
 

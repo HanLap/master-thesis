@@ -14,6 +14,12 @@ autogobble
 % ,linenos
 }
 
+\makeatletter
+\newcommand{\currentfontsize}{\fontsize{\f@size}{\f@baselineskip}\selectfont}
+\makeatother
+
+\setmintedinline{fontsize=\currentfontsize}
+
 \input{mintedfix}
 \renewcommand{\MintedPygmentize}{./pygmentize.py}
 

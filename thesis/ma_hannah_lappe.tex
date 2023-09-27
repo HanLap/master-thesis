@@ -17,7 +17,7 @@ BCOR=15mm              % Bindekorrektur
 \usepackage{blindtext}
 
 % für Texte in deutscher Sprache
-\usepackage[ngerman]{babel}
+\usepackage[ngerman, USenglish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
@@ -81,11 +81,7 @@ BCOR=15mm              % Bindekorrektur
 \newcommand{\betreuer}{Dr.\,Marc Schickler\\Jens Scheible}
 
 % hier die Fakultät auswählen
-%\newcommand{\fakultaet}{---  Im Quellcode anpassen nicht vergessen! ---}
 \newcommand{\fakultaet}{Ingenieurwissenschaften, Informatik und\\Psychologie}
-%\newcommand{\fakultaet}{Mathematik und\\Wirtschafts-\\wissenschaften}
-%\newcommand{\fakultaet}{Medizin}
-%\newcommand{\fakultaet}{Naturwissenschaften}
 
 % hier das Institut einsetzen
 \newcommand{\institut}{Institut für Datenbanken und Informationssysteme}
@@ -108,11 +104,13 @@ colorlinks=false,
 pdfborder=0 0 0	% keine Box um die Links!
 }
 
+% Cleveref so we don't have to write "Section \ref" each time and nameinlink so that the word "Section" also belongs to the PDF link!
+\usepackage[nameinlink]{cleveref}
+
 % Trennungsregeln
 \hyphenation{Sil-ben-trenn-ung}
 
 \input{chapters/data}
-
 
 % LTeX: enabled=true
 
