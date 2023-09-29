@@ -67,7 +67,7 @@ When server rendered or static web pages are sent to the client side they initia
       \newthread{A}{Client}{}
       \newinst[1]{B}{Server}{}
       \newinst[1]{C}{Database}{}
-      \begin{call}{A}{vist /auftraege}{B}{index.html}
+      \begin{call}{A}{visit /home}{B}{index.html}
       \end{call}
       \begin{call}{A}{request Data}{B}{}
         \begin{call}{B}{SELECT *}{C}{}
@@ -110,7 +110,19 @@ When server rendered or static web pages are sent to the client side they initia
 
 % Metrics applied to all implementations
 
-As defined in \Cref{sec:problem-statement} it is unclear if SvelteKit's claimed benefits translate to the development of business applications. To this end, this Study tries to provide evidence for the 
+As defined in \Cref{sec:problem-statement} it is unclear if SvelteKit's claimed benefits translate to the development of real-world applications. To this end, this Study tries to provide evidence that validates SvelteKit's claims. Furthermore, we tried to identify potential shortcomings in SvelteKit's design and feature set. We aim to create a knowledge base of SvelteKit's advantages ad disadvantages which can be used for future technology  choices.
+
+Our primary methodology for achieving this goal involved gaining insights into how SvelteKit behaves in a real-world software project. Therefore, we decided to write an implementation for a real-world use-case existing in an enterprise in the industry. To this end, a project that already has an implementation, which is used in production, was chosen. This has two advantages. Firstly, this makes sure the chosen project is representative for a real-world scenario. Secondly, the existing implementation could serve as a comparison to the created SvelteKit implementation.
+
+The chosen project had to satisfy multiple requirements:
+\begin{itemize}
+    \item It should have a component responsible for management of datasets.
+    \item The application should require authentication.
+    \item It should require database persistence.
+    \item It should require communication with other services.  
+    \item Furthermore, it should have at least one feature that goes beyond basic management of data.
+\end{itemize}
+These requirements where chosen to make sure the use-case is representative for a wide array of business applications. 
 
 \subsection{Evaluation}
 

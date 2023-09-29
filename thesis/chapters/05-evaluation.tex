@@ -65,7 +65,7 @@ Smaller, but no data yet... fuck all
 %     \item reuse of models between UI and business logic or even type inference
 % \end{itemize}
 
-In this section we give our personal experience developing with SvelteKit in an attempt to reason about SvelteKit's expected developer experience. As we noted before, providing a heuristic analysis of SvelteKit's DX is out of scope.
+In this section we give our personal experience developing with SvelteKit in an attempt to reason about SvelteKit's expected developer experience. As we noted in \Cref{sec:methodology}, providing a heuristic analysis of SvelteKit's DX is out of scope.
 
 In our experience both discussed implementations (full stack in SvelteKit and SvelteKit only for frontend) enabled an efficient and pleasant development experience. Especially the full stack approach significantly reduced overhead, because models could be reused between client and server and communication between server and client happened transparently.
 
@@ -80,13 +80,13 @@ In our experience both discussed implementations (full stack in SvelteKit and Sv
 
 \subsection{Project Setup}
 
-\Cref{fig:project-setup}
+SvelteKit provides a command line utility to create new projects (\Cref{fig:project-setup}). This utility provides options to configure TypeScript for type checking, ESLint\footnote{\url{https://eslint.org/}} for code linting, Prettier\footnote{\url{https://prettier.io/}} for code formatting, as well as Vitest\footnote{\url{https://vitest.dev/}} and Playwright\footnote{\url{https://playwright.dev/}} for testing. 
+
 
 % \begin{itemize}
 %     \item Fast, \mintinline{bash}|npm cgeate svelte@latest|
 %     \item missing out-of-the-box features: form validation/parsing
 % \end{itemize}
-
 
 
 \begin{figure}
@@ -174,7 +174,8 @@ In our implementation we experimented with different approaches to structuring o
 \end{itemize}
 
 
-\subsection{Cases where Svelte is bad}
+% \subsection{Cases where Svelte is bad}
+% While SvelteKit can provide an improved development experience, it does not come without its flaws. During out study we identified multiple areas where SvelteKit caused problems, or could become a paint point in larger projects.
 
 % \begin{itemize}
 %     \item Centralized load function (compared to RSC's, load where needed)
@@ -185,8 +186,6 @@ In our implementation we experimented with different approaches to structuring o
 %     \item No best practices yet
 %     \item Problems with Svelte's Custom fetch
 % \end{itemize}
-
-While SvelteKit can provide an improved development experience, it does not come without its flaws. During out study we identified multiple areas where SvelteKit caused problems, or could become a paint point in larger projects.
 
 \subsection{Reactivity Pitfalls}
 
@@ -293,10 +292,21 @@ export async function Page() {
 
 With this approach, the Twitter component becomes truly isolated from the page, because it can fetch its own data. We expect this architecture to scale better in large applications, than SvelteKit's centralized load function.
 
-\subsection{Missing Features}
+
+\subsection{Deployment}
+
+SvelteKit provides first-class adapters that automate creating production deployments for various hosting providers such as Vercel\footnote{\url{https://vercel.com/}}, Netlify\footnote{\url{https://www.netlify.com/}}, Cloudflare Pages\footnote{\url{https://pages.cloudflare.com/}}, and Cloudflare Workers\footnote{\url{https://workers.cloudflare.com/}}. Furthermore, adapters exist to create standalone NodeJS server, or generate a static bundle that can be served from a simple file-base web server. Beyond this, a wide range of community plugins exist which further extend the range of platforms, SvelteKit can be deployed to. This means that SvelteKit generally supports great flexibility for deployment with comparatively little effort.  
+
+But, this wide range of supported platforms creates some shortcomings. SvelteKit does mostly not implement features that require platform specific functionality. One such feature would be a hook that is executed when the application shuts down. This can sometimes be required for example to close open connections. While this can be easily worked around in a NodeJS environment, by using \mintinline{js}|process.on('sigint', ...)|, other features are not added this easily. 
+
+Websockets are another feature that is currently not supported out of the box, because some providers such as Vercel have no support for websockets yet \cite{noauthor_vercel_nodate}. While it is possible to add websocket support to the NodeJS platform this is not possible without shortcomings. By default, the NodeJS adapter creates an entry point that starts a web server to host all handlers required by SvelteKit. It is possible to forego this entry point and instead write a custom server that uses the handlers directly. In this way it is possible to create a web server that uses websockets. But, this approach only works for the production build, in development, another workaround is required that works with hot-module replacement. Furthermore, a separate 
+
+% todo: SvelteKit wants to be a serverless framework\cite{noauthor_expose_nodate} 
+
+
+\subsection{Stability}
 
 \begin{itemize}
-    \item Web Sockets
+    \item Svelte 2 to 3 was big change
+    \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
 \end{itemize}
-
-

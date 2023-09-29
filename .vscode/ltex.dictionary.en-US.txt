@@ -12,3 +12,6 @@ Keycloak
 Prisma
 Axios
 templating
+websockets
+Websockets
+websocket
