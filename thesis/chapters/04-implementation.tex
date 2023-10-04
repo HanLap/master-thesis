@@ -1,6 +1,8 @@
 \chapter{Implementation}
 \label{ch:implementation}
 
+\todo{Write chapter introduction}
+
 \section{Chauffeur Service}
 
 %  \begin{itemize}
@@ -13,25 +15,9 @@
 %     \item group Jobs
 %  \end{itemize}
 
-As a basis for our case study we used an application called DSW-FD (Dispositions-Software-Fahrdienst). DSW-FD is used to schedule chauffeur rides for a German federal agency. The application provides a rich user interface, with views for managing chauffeur jobs, as well as chauffeur drivers. Clients which need a Chauffeur ride can call a separate hotline, where a handler creates a new chauffeur job, this job is then sent to DSW-FD where it appears in the overview of Jobs, and can then be processed by a Job handler.
-
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{assets/current-auftrag-overview}
-    \caption{Overview of chauffeur jobs in current implementation}
-    \label{fig:current-overview-auftrag}
-\end{figure}
-
+As a basis for our case study we used an application called DSW-FD (Dispositions-software-Fahrdienst). DSW-FD is used to schedule chauffeur rides for a German federal agency. The application provides a rich user interface with views for managing chauffeur jobs, as well as chauffeur drivers. Clients which need a Chauffeur ride can call a separate hotline, where a handler creates a new chauffeur job, this job is then sent to DSW-FD where it appears in the overview of Jobs and can then be processed by a Job handler.
 
 Drivers need to be manually assigned to a job by a handling person. To this end, the application provides suggestions for drivers which would be free when the job is schedule and are closest to the job's departure point. Furthermore, the app provides functionality to group together different jobs so that they may be handled by a single driver, determine the return destination for the driver after they finished the job, as well as marking a job as being handled by a pool of drivers.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{assets/current-auftrag-details}
-    \caption{Chauffeur job details view in current implementation}
-    \label{fig:current-details-auftrag}
-\end{figure}
 
 The application also provides features to directly interact with drivers, such as broadcasting messages to all drivers, reminding a driver to take their mandatory break, and directly calling a driver.
 
@@ -45,9 +31,9 @@ The application also provides features to directly interact with drivers, such a
 %     \item mssql
 % \end{itemize}
 
-The current Implementation is realized as a classic frontend, backend architecture. The backend is implemented using the Java framework Spring Boot. It provides a SOAP web server on which new Jobs are submitted. Data is persisted in a MSSQL database. The backend also provides Multiple REST API's and an OData API for communication with the frontend. Furthermore, the backend has to interact with Firebase.
+The current Implementation is realized as a classic frontend, backend architecture. The backend is implemented using the Java web framework Spring\footnote{\url{https://spring.io/}}. It provides a SOAP web server on which new Jobs are submitted. Data is persisted in a MSSQL database. The backend also provides Multiple REST API's and an OData API for communication with the frontend. Furthermore, the backend has to interact with Firebase to trigger push notifications on smartphone devices.
 
-The System provides two frontends, an android application, which is used by the chauffeur drivers to receive jobs and communication from headquarters and a web client which is used by handlers to manage jobs and drivers. The web client is implemented using OpenUI5. OpenUI5 is a frontend framework published by SAP, it is intended to develop enterprise applications which follow SAP's Fiori design guidelines. All APIs of the backend require authentication. To this end the frontend has to authenticate with a Keycloak instance using OpenID Connect (OIDC).
+The System provides two frontends, an android application, which is used by the chauffeur drivers to receive jobs and communication from headquarters and a web client which is used by handlers to manage jobs and drivers. The web client is implemented using OpenUI5\footnote{\url{https://openui5.org/}}. OpenUI5 is a frontend framework published by SAP, it is intended to develop enterprise applications which follow SAP's Fiori design guidelines. All APIs of the backend require authentication. To this end the frontend has to authenticate with a Keycloak\footnote{\url{https://www.keycloak.org/}} instance using OpenID Connect (OIDC). An overview of the system architecture is provided in \Cref{fig:dswfd-architecture}.
 
 \begin{figure}[ht]
     \centering
@@ -64,7 +50,24 @@ The System provides two frontends, an android application, which is used by the 
 %     \item Authentication
 % \end{itemize}
 
-We experimented with two different implementations. One where SvelteKit replaces Backend and frontend and one where SvelteKit only replaces the Frontend.
+Our study focused on the core of DSW-FD's system landscape, comprised of the Spring backend and the OpenUI5 web frontend. We experimented with two different implementations. One where SvelteKit replaces backend and frontend and one where SvelteKit only replaces the frontend. Both our implementations had to communicate with the Keycloak service to authenticate. The full stack implementation also had to interact with the MSSQL database. As to not widen the scope too much, API's for the android application, Firebase communication, and the SOAP API for ICB was not implemented.
+
+We focused our implementation on a subset of features required to manage chauffeur jobs. To this end we implemented three pages. The overview page that shows all currently relevant chauffeur jobs (\Cref{fig:current-overview-auftrag}). The detail page for chauffeur jobs (\Cref{fig:current-details-auftrag}). And a view that is used to create new (internal) chauffeur jobs.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{assets/current-auftrag-overview}
+    \caption{Overview of chauffeur jobs in current implementation}
+    \label{fig:current-overview-auftrag}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{assets/current-auftrag-details}
+    \caption{Chauffeur job details view in current implementation}
+    \label{fig:current-details-auftrag}
+\end{figure}
+
 
 \subsection{Full Stack Implementation}
 
@@ -72,10 +75,11 @@ We experimented with two different implementations. One where SvelteKit replaces
 %     \item prisma 
 %     \item easier Authentication
 % \end{itemize}
+Our first approach was the full stack implementation. This implementation has to replace the UI5 frontend as well as the Spring backend (\Cref{fig:dswfd-architecture-fullstack}). To this end business logic, database communication and API's all have to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database using introspection. This allowed us to save time on defining models.
 
-For the full stack implementation SvelteKit has to replace frontend as well as backend, to this end business logic, database communication and API's all have to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database through introspection. This allowed us to save time on defining models. 
+\todo{I feel like this chapter needs more text}
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
     \includegraphics[width=.8\linewidth]{assets/dswfd-architecture-fullstack}
     \caption{Architecture overview of the implementation using SvelteKit both as frontend and as backend}
@@ -90,13 +94,13 @@ For the full stack implementation SvelteKit has to replace frontend as well as b
 %     \item load on server during SSR,
 %     \item then client takes over.
 %     \item approach would make it possible to run app in SPA mode
-          
+
 %     \item Also tried to route all client requests through SvelteKit backend
 %     \item easier because use of locales makes authentication simpler and no problems with custom fetch
 %     \item enables usage of form actions, otherwise SvelteKit does not really provide any help with post requests.
 % \end{itemize}
 
-We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility, as backend technology can be chosen individually. Communication to the backend is primarily handled using web API's. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\ref{sec:sveltekit-loading}). This means that the backend is only used for fetching, during SSR. After the browser has loaded the page, universal load functions are executed client-side and thus the client redirects its requests directly to the backend, instead of sending  a request to the SvelteKit server, which then requests the data, from the backend, overall saving one step of indirection. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing dedicated SvelteKit server code. This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar. 
+We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility, as backend technology can be chosen individually. Communication to the backend is primarily handled using web API's. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\ref{sec:sveltekit-loading}). This means that the backend is only used for fetching, during SSR. After the browser has loaded the page, universal load functions are executed client-side and thus the client redirects its requests directly to the backend, instead of sending  a request to the SvelteKit server, which then requests the data, from the backend, overall saving one step of indirection. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing dedicated SvelteKit server code. This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar.
 
 \begin{figure}[ht]
     \centering
@@ -108,38 +112,38 @@ We also decided to explore an approach where SvelteKit is only used as a fronten
 One problem we encountered with this approach was, that SvelteKit provides no help for sending data to the backend. While data loading is streamlined through universal load functions. Server actions, as used in the full stack implementation, can only be used server side. This means, that implementation for submitting data has to be implemented manually. One way this can be done, is by using the form enhance action which is used to progressively enhance form actions (see \ref{sec:sveltekit-server-actions}):
 
 \begin{myminted}{svelte}{}
-<script>
+    <script>
     async function handleSubmit({cancel, request}) {
-        cancel();
+    cancel();
 
-        const res = await fetch('api/update', {
+    const res = await fetch('api/update', {
             method: 'POST',
             body: request.body
         });
 
-        if (!res.ok) {
+    if (!res.ok) {
             // error handling...
         }
 
-        return ({ update }) => {
-            update();
-        }
+    return ({ update }) => {
+    update();
     }
-<script>
+    }
+    <script>
 
-<form method="POST" use:enhance={handleSubmit}>
+    <form method="POST" use:enhance={handleSubmit}>
     <button type="submit">send</button>
-</form>
+    </form>
 \end{myminted}
 
 It has to also be noted, that forgoing the usage of server actions will mean, that data submission will never work without JavaScript, because the form enhance action can only run when JavaScript is enabled. Instead, the form will make a request to the backend, which then will probably return an error because it is not configured to handle post request.
 
-During this approach we also realized further complications. Firstly, authentication with the backend API becomes more complex, because both client and server need the access token for the API. 
+During this approach we also realized further complications. Firstly, authentication with the backend API becomes more complex, because both client and server need the access token for the API.
 % could this be fixed by passing through the api token??
 
 Furthermore, Svelte's custom fetch function further increased complexity. SvelteKit's implementation of fetch makes sure that fetch behaves similarly on the client and server. Therefore, it enables relative URL paths on the server, which would ordinarily not be possible.
 
-When a page with a universal load function is accessed, the load function is first run on the server during SSR, and the result is sent to the client. During hydration on the client side, the load function is then run again. This means, that ordinarily all fetch calls executed in the load function would run two times, once on the server and once on the client. To prevent this, SvelteKit's implementation inlines fetch responses on the server side, and then uses the inlined response on the client during hydration. This means, that it is necessary to use SvelteKit's fetch implementation. But, as this special fetch function is only exposed as an argument in load functions, one has to always pass this fetch function on any delegates, which require network communication. Furthermore, it is not possible to use custom HTTP-clients, such as Axios\footnote{\url{https://axios-http.com/}}.  
+When a page with a universal load function is accessed, the load function is first run on the server during SSR, and the result is sent to the client. During hydration on the client side, the load function is then run again. This means, that ordinarily all fetch calls executed in the load function would run two times, once on the server and once on the client. To prevent this, SvelteKit's implementation inlines fetch responses on the server side, and then uses the inlined response on the client during hydration. This means, that it is necessary to use SvelteKit's fetch implementation. But, as this special fetch function is only exposed as an argument in load functions, one has to always pass this fetch function on any delegates, which require network communication. Furthermore, it is not possible to use custom HTTP-clients, such as Axios\footnote{\url{https://axios-http.com/}}.
 
 \subsubsection{redirect through server}
 
