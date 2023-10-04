@@ -13,7 +13,7 @@
     "editor.wordWrapColumn": 100,
     "editor.defaultFormatter": null
   },
-  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.latex.outDir": "%DIR%/out",
   "latex-workshop.view.pdf.viewer": "tab",
   "latex-workshop.latex.verbatimEnvs": [

@@ -1,9 +1,11 @@
 \chapter{Evaluation}
 \label{ch:evaluation}
 
-\section{Empirical Data}
+\todo{Chapter intro}
 
-\subsection{Performance}
+\section{Performance}
+
+\todo{Benchmark SvelteKit without SSR, maybe NextJS Benchmark}
 
 We tested the existing ui5 implementation and the new SvelteKit Implementations, in multiple metrics. We were especially interested in responsiveness to navigation events. To this end we measured first contentful paint (FCP), the time until the page settled, and cumulative layout shift (CLS). Furthermore, we measured time until the page settled, for a navigation from the chauffeur job overview, to the details view of a chauffeur job.
 
@@ -17,7 +19,7 @@ Our measurements (fig. \ref{fig:benchmark}) show, while our implementations took
         \begin{axis}[
                 ybar,
                 bar width=.7cm,
-                width=\textwidth,
+                width=.9\textwidth,
                 height=.5\textwidth,
                 legend style={at={(0,1)},
                     anchor=north west,legend columns=1},
@@ -42,11 +44,11 @@ Our measurements (fig. \ref{fig:benchmark}) show, while our implementations took
 
 Levlin, has shown, that SvelteKit can provide significant improvements in certain areas over frameworks like react and angular.  
 
-\subsection{Bundle Size}
+\section{Bundle Size}
 
 Smaller, but no data yet... fuck all 
 
-\subsection{Something else}
+\section{Something else}
 
 % \begin{itemize}
 %     \item SEO
@@ -76,8 +78,6 @@ In our experience both discussed implementations (full stack in SvelteKit and Sv
 %     \item clear data flow (load function $\rightarrow$ svelte, svelte $\rightarrow$ action)
 % \end{itemize}
 
-% todo: reactivity pitfalls (e.g. dependencies in functions)
-
 \subsection{Project Setup}
 
 SvelteKit provides a command line utility to create new projects (\Cref{fig:project-setup}). This utility provides options to configure TypeScript for type checking, ESLint\footnote{\url{https://eslint.org/}} for code linting, Prettier\footnote{\url{https://prettier.io/}} for code formatting, as well as Vitest\footnote{\url{https://vitest.dev/}} and Playwright\footnote{\url{https://playwright.dev/}} for testing. 
@@ -88,10 +88,9 @@ SvelteKit provides a command line utility to create new projects (\Cref{fig:proj
 %     \item missing out-of-the-box features: form validation/parsing
 % \end{itemize}
 
-
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth,trim={0 15cm 0 1.5cm},clip]{assets/sveltekit-project-setup}
+    \includegraphics[width=.95\linewidth,trim={0 15cm 0 1.5cm},clip]{assets/sveltekit-project-setup}
     \caption{Process for creating a new SvelteKit project}
     \label{fig:project-setup}
 \end{figure}
@@ -151,13 +150,17 @@ Simple Reactive Statements:
     \item Svelte Code is valid HTML/JS/CSS Syntax $\rightarrow$ Tools work out of the box (e.g Prettier, ESLint)
 \end{itemize}
 
-\subsection{File base Routing}
 
-\begin{itemize}
-    \item Good: It is immediately clear which file does what
-    \item Bad: a lot of \mintinline{svelte}|+page|-files
-    \item bad: Simple Changes can suddenly cause a lot of file moves: e.g. adding a custom layout around a group of routes.
-\end{itemize}
+\subsection{Routing}
+SvelteKit decided to integrate a filesystem-based routing system. This comes with some inherit advantages and disadvantages. Probably the biggest advantages is, that this approach makes immediately clear what the purpose of a file is. Especially for simple cases this routing system works with no overhead and makes it possible to work very fast, when adding new routes. But some problems become apparent in more complex examples. Projects with a large amount of routes will inevitably have many files with the same name. In our experience this could make it harder sometimes to use IDE search functions to quickly navigate between many files, because searching most of the time returned more than one \mintinline{bash}|+page.svelte| or \mintinline{bash}|+page.js| file. Furthermore, solutions to some problems can cause a lot of file changes in a version control system. During our implementation efforts, we found the need to wrap multiple routes in a layout group. This meant, all files hat to be moved to a new subdirectory. This caused a lot of noise in the version control system for a change that was simple in nature. With a declarative routing solution the same problem could have been solved by simple changing the router configuration.
+
+It has also to be noted that this filesystem-based approach to routing makes it effectively impossible to split a singular SvelteKit application into multiple smaller projects. Because routing is strictly bound to the filesytem, it is only possible to configure routing in the root project.
+
+% \begin{itemize}
+%     \item Good: It is immediately clear which file does what
+%     \item Bad: a lot of \mintinline{svelte}|+page|-files
+%     \item bad: Simple Changes can suddenly cause a lot of file moves: e.g. adding a custom layout around a group of routes.
+% \end{itemize}
 
 \subsection{Clear data flow}
 
@@ -165,13 +168,17 @@ Clear direction: +page.server.js $\rightarrow$ +page.js $\rightarrow$ +page.svel
 
 \subsection{Svelte works best with plain HTML}
 
-In our implementation we experimented with different approaches to structuring our UI-code
+As described in \Cref{sec:implementation-ui}, the implementation was required to follow the SAP Fiori Design Guidelines. To this end we tried using both UI5 web components and a plain CSS classes approach using SAP Fundamental Styles. In either case we decided to create a library of Svelte components that wraps the actual UI utility. This decision was made to reduce the amount of boilerplate code and repetition required to use some UI elements. Furthermore, this decision made it easier to migrate from UI5 web components to fundamental styles, because only the Component library hat to be changed. 
 
-\begin{itemize}
-    \item Most directives do not work on Components (use:, class:, style: )
-    \item Scoped styles means, it is annoying to pass down locally defined CSS-classes to children.
-    \item But, Tailwind CSS can make things better (because everything is defined globally anyway).
-\end{itemize}
+
+
+% In our implementation we experimented with different approaches to structuring our UI-code
+
+% \begin{itemize}
+%     \item Most directives do not work on Components (use:, class:, style: )
+%     \item Scoped styles means, it is annoying to pass down locally defined CSS-classes to children.
+%     \item But, Tailwind CSS can make things better (because everything is defined globally anyway).
+% \end{itemize}
 
 
 % \subsection{Cases where Svelte is bad}
@@ -186,6 +193,14 @@ In our implementation we experimented with different approaches to structuring o
 %     \item No best practices yet
 %     \item Problems with Svelte's Custom fetch
 % \end{itemize}
+
+\subsection{Universal vs. Server Load Functions}
+
+
+% - problems with universal
+% - SvelteKit fetch weird
+% - auth more complicated
+% - 
 
 \subsection{Reactivity Pitfalls}
 
@@ -219,26 +234,16 @@ One could for example imagine a simple component which displays a Twitter feed, 
 
 \begin{myminted}{html}{}
 routes/
-    a/
-        +page.js
-        +page.svelte
-    b/
-        +page.js
-        +page.svelte
-    TwitterComponent.svelte
+  a/
+    +page.js
+    +page.svelte
+  b/
+    +page.js
+    +page.svelte
+  TwitterComponent.svelte
 \end{myminted}
 
-Both route a and b need to use the twitter component. The way to implement this would be the following:
-
-\begin{myminted}{svelte}{TwitterComponent.svelte}
-<script>
-    export let data
-</script>
-
-{#each data as tweet}
-    <!-- ... -->
-{/each}
-\end{myminted}
+Both route a and b need to use the twitter component. The way to implement this in SvelteKit would be to fetch the data in the load function of both routes and pass it to the twitter component as a prop:
 
 \begin{myminted}{js}{\string{a,b\string}/+page.js}
 export async function load({ fetch }) {
@@ -250,6 +255,7 @@ export async function load({ fetch }) {
         // other page data...
     }
 }
+
 \end{myminted}
 
 \begin{myminted}{svelte}{\string{a,b\string}/+page.svelte}
@@ -259,11 +265,21 @@ export async function load({ fetch }) {
     export let data;
 </script>
 
-<TwitterComponent data={data.twitterFeed} />
+<TwitterComponent feed={data.twitterFeed} />
 <!-- other page markup... -->
 \end{myminted}
 
-This has to be implemented for all pages, which want to use the Twitter component. This problem becomes even more severe in an application which is going through rigorous refactoring. One can easily imagine a case where a component is not required in a page anymore and is deleted. But because the data fetching is detached from where the data is actually used, the data fetching could accidentally be left in.
+\begin{myminted}{svelte}{TwitterComponent.svelte}
+<script>
+    export let feed
+</script>
+
+{#each feed as tweet}
+    <!-- ... -->
+{/each}
+\end{myminted}
+
+This pattern needs to be repeated for each route that wants to use the twitter component. This not only results in unnecessary code duplication, but can also cause problems later in a project's lifecycle. If the twitter component is to be removed later on, it is imaginable that one of the fetch calls is left in by accident, because the data fetching is detached from where the data is actually used, thus causing unnecessary traffic.
 
 Other approaches circumvent this problem by coupling data fetching more closely to its usage. For example, a similar implementation using React Server Components could look something like this:
 
@@ -306,7 +322,40 @@ Websockets are another feature that is currently not supported out of the box, b
 
 \subsection{Stability}
 
-\begin{itemize}
-    \item Svelte 2 to 3 was big change
-    \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
-\end{itemize}
+% \begin{itemize}
+%     \item Svelte 2 to 3 was big change
+%     \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
+% \end{itemize}
+
+Version 1.0 of SvelteKit released only recently in December 2023 \cite{team_announcing_2022}, thus it is not possible to tell how stable the APIs of the framework will be going forward. Svelte on the other hand has reached its fourth major version. So far, version 3 made changes to its API, which caused a need for manual migrations. 
+
+
+\subsection{Future of Svelte}
+
+On 20. September 2023, The Svelte team gave a first preview of the next major new API planned for version 5 of Svelte, called runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte. With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}|$state| rune:
+
+\begin{myminted}[escapeinside=||]{svelte}{}
+<script>
+    let count = |\$|state(0);
+</script>
+\end{myminted}
+
+While initially being more verbose, this has multiple advantages. Firstly, this syntax is more explicit, clearly marking which variable is reactive and which is not. Secondly, this syntax is not limited to the top-level of a svelte file, further, it will even be possible to place state-runes in JavaScript files. This will make it easier to move out state in to separate files. Where as before, stores were required to place state in separate files, with this new syntax it will be possible to use the same syntax in svelte-files and in js-files.
+
+Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|$:| syntax, \mintinline{svelte}|$derived| and \mintinline{svelte}|$effect|:
+
+\begin{myminted}[escapeinside=||]{svelte}{}
+<script>
+    let count = |\$|state(0);
+
+    const doubled = |\$|derived(count * 2);
+
+    |\$|effect(() => {
+        console.log(`new value of count: ${count}`);
+    })    
+</script>
+\end{myminted}
+\s{$}
+
+
+% svelte likely wont go away

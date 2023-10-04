@@ -112,6 +112,8 @@ pdfborder=0 0 0	% keine Box um die Links!
 
 \input{chapters/data}
 
+\newcommand{\todo}[1]{{\color{orange}ToDo: #1}}
+
 % LTeX: enabled=true
 
 \begin{document}
@@ -129,7 +131,6 @@ pdfborder=0 0 0	% keine Box um die Links!
   %{\bfseries Universität Ulm} \textbar ~89069 Ulm \textbar ~Germany
   \hspace*{115mm}\parbox[t]{35mm}{\bfseries Fakultät für\\
     \fakultaet\\
-    % TODO hier Institut anpassen
     \mdseries \institut}\\[2cm]
 
   \parbox{140mm}{\bfseries \LARGE \titel}\\[2.5em]
@@ -174,7 +175,6 @@ pdfborder=0 0 0	% keine Box um die Links!
 \appendix
 % hier Anhänge einbinden
 \input{chapters/appendix.tex}
-\input{chapters/sources}
 
 \backmatter
 % \nocite{Knappen2009}

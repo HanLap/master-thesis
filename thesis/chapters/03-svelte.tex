@@ -5,6 +5,8 @@ Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{off
 
 \subsection{Features}
 
+\todo{Write something here}
+
 \subsubsection{Svelte Files}
 % - Files with .svelte ending
 % - Syntax very similar to regular html with some extensions
@@ -115,7 +117,7 @@ React's code runs every time, a component is updated, this means derived values 
     let count = 0;
 
     |\$|: {
-        console.log(`new value of count: |\$|{count}`);
+        console.log(`new value of count: ${count}`);
         console.log('This will also be executed when count changes');
     }
 
@@ -125,6 +127,7 @@ React's code runs every time, a component is updated, this means derived values 
     }
 </script>
 \end{myminted}
+\s{$}
 
 \subsubsection{Templates}
 
@@ -271,6 +274,10 @@ This however, comes with certain restrictions. It is not possible to use TypeScr
 \section{SvelteKit}
 \label{sec:sveltekit}
 
+SvelteKit is a framework that builds around Svelte to provide a toolkit for rapidly developing web applications \cite{noauthor_sveltekit_nodate}. It can be used out of the box to develop full stack applications, server rendered frontend applications, static web pages, and traditional single page applications without any server rendering. It provides multiple basic, as well as advanced features, required for the development of modern web applications. Features include routing, support for different rendering patterns, build optimization, data preloading, and zero-configuration deployments. Furthermore, SvelteKit uses Vite\footnote{https://vitejs.dev/} to enable a good development experience, with fast startup times and quick hot module replacement.
+
+In the following we give an overview of multiple SvelteKit concepts and features, that will be relevant for the rest of this study. 
+
 % Meta Framework
 % Stable release 2022
 % provides functionality for modern applications
@@ -278,16 +285,148 @@ This however, comes with certain restrictions. It is not possible to use TypeScr
 
 \subsection{Features}
 
+\todo{Write something here}
+
+\subsubsection{Routing}
+\label{sec:sveltekit-routing}
+
+SvelteKit provides out-of-the-box support for Routing. To this end, SvelteKit utilizes a file-system-based routing system. This means that the URL's that a user can access on the web application, directly maps to the directory structure in the project's file system. A SvelteKit project contains a \mintinline{bash}|routes|-directory. This directory marks the root of the URL, e.g.: \mintinline{bash}|http://example.com/|. Respectively, the directory structure \mintinline{bash}|routes/about| would map to \mintinline{bash}|http://example.com/about|. This system ca also be used to create parameterized routes. The directory structure \mintinline{bash}|routes/blog/[slug]| would create a route, where \mintinline{bash}|slug| serves as a wildcard (e.g.: \mintinline{bash}|/blog/hello-world|, \mintinline{bash}|/blog/123|).
+
+The actual content of a page is defined in a \mintinline{bash}|+page.svelte| file:
+\begin{myminted}{svelte}{routes/+page.svelte}
+<h1>My Website</h1>
+<p>Welcome to my website...</p>
+\end{myminted}
+\begin{myminted}{svelte}{routes/about/+page.svelte}
+<h1>About</h1>
+<p>about this site...</p>
+<a href="/home">Home</a>
+\end{myminted}
+
+SvelteKit uses the HTML \mintinline{svelte}|<a>|-tag to navigate between pages, rather than a framework specific \mintinline{svelte}|<Link>|-component. This has the advantage of being progressively enhanceable. If JavaScript is not available on the client-side, the anchor-tag's navigation event can be handled by the browser, and the browser will do a regular full page reload to reach the navigation target. In the case of JS being available, SvelteKit's runtime router will intercept the navigation event and perform an in-app navigation to the target, without causing a full page reload.
+
+Most websites have some elements that should be displayed across multiple pages, such as a navigation bar or a footer. To this end, SvelteKit's router has the concept of layouts. A layout is placed alongside the pages inside the \mintinline{bash}|routes|-directory, inside a \mintinline{bash}|+layout.svelte|-file. This layout will automatically be applied to all route and all sub-routes of the directory, where the layout-file is placed. The place where the actual page content should be rendered inside the layout is defined by a \mintinline{svelte}|<slot>|-element:
+
+\begin{myminted}{svelte}{routes/+layout.svelte}
+<nav>
+    <a href="/home">home</a>
+    <a href="/blog">blog</a>
+    <a href="/about">about</a>
+</nav>
+
+<slot/>
+\end{myminted}
+
+In some cases an application may have multiple routes, that should live on the same route as others, but should have their own shared layout. One could for example imaging a website, where the user authentication pages should have a different layout than the authenticated area of the app. Therefore, SvelteKit provides a mechanism to group routes together without this route being reflected in the URL by wrapping the group name in parentheses:
+\begin{myminted}[highlightlines={2,6}]{bash}{}
+routes/
+  (app)/
+    dashboard/
+    details/
+    +layout.svelte
+  (auth)/
+    signin/
+    register/
+    +layout.svelte
+\end{myminted}
+
 \subsubsection{Loading Data}
 \label{sec:sveltekit-loading}
 
-Svelte provides standard way for loading data.
+SvelteKit facilitates a standard way for fetching dynamic content that is to be rendered on a page. This is required to enable SSR and SSG. To this end, every page can have a dedicated load function, that is defined in a \mintinline{bash}|+page.js|-file. When a user requests a page, this load function is executed, and the returned data is passed to the \mintinline{bash}|+page.svelte|-file:
 
-\subsubsection{Routing}
+\begin{myminted}{js}{routes/+page.js}
+export async function load() {
+    const todos = (await fetch('/api/todos')).json();
 
-\subsubsection{Server Actions}
+    return { todos };
+}
+\end{myminted}
+\begin{myminted}{svelte}{routes/+page.svelte}
+<script>
+    export let data;
+</script>
+
+{#each data.todos as todo}
+    <div>{todo.name}</div>
+{/each}
+\end{myminted} 
+
+In SSR mode, when a user first requests a page, the load function is executed on the server. Afterwards the Svelte-file is rendered once, before being sent to the user as populated HTML. In the browser, SvelteKit then hydrates the page. During hydration, SvelteKit runs the load function a second time on the client to create a consistent data model. 
+
+After the app has finished hydrating, all following navigation events will be handled by SvelteKit's runtime router. When the user now navigates to a different page the load function now is invoked on the client-side directly, therefore saving an unnecessary roundtrip to the server. Because these load functions run on both server and the client, they are called universal load functions.
+
+Some data fetching can only take place on the server-side, for example database access. Therefore, SvelteKit also provides a second form of load function, that is only executed on the server. These server load function are placed in \mintinline{bash}|+page.server.js|-files:
+
+\begin{myminted}{js}{routes/+page.server.js}
+import db from '$lib/server/db';
+
+export async function load() {
+    const todos = await db.getTodos();
+
+    return { todos };
+}
+\end{myminted}
+\s{$}
+
+In the same way as universal load functions, server load functions are executed on the server when a user initially requests a page. But, because they can only run on the server, when a user navigates inside the app, instead of running the load function client-side, the client sends a request to the server for new data. The server then executes the load function and sends the resulting data back to the frontend as JSON. 
+
+This behavior also highlights another difference between universal and server load functions. Because server load functions need to be able to send JSON to the client, all data they return must be serializable. This restriction does not apply to universal load functions. Therefore, they can return arbitrary data such as class instances:
+
+\begin{myminted}{js}{routes/+page.js}
+export async function load() {
+    const todos =  [ new Todo(`finish master's thesis`) ]
+
+    return { todos };
+}
+\end{myminted}
+
+\subsubsection{Form Actions}
 \label{sec:sveltekit-server-actions}
+
+The previous section discussed how SvelteKit applications send dynamic data to the client. But, many applications also need a way to send data to the server. To this end, SvelteKit provides Form actions. \mintinline{bash}|+page.server.js|-files can export actions, which make it possible to post data to the server using HTML's \mintinline{svelte}|<form>|-elements.
+
+\begin{myminted}{svelte}{routes/+page.server.js}
+export const actions = {
+    postTodo: async () => {
+        // post Todo
+    }
+}
+\end{myminted}    
+\begin{myminted}{svelte}{routes/+page.svelte}
+<form method="POST" action="?/postTodo">
+    <label>
+        Todo name:
+        <input name="todoName">
+    </label>
+</form>
+\end{myminted}
+
+The name of the action, the form should post to, is specified as a query parameter. This makes it possible to have multiple actions per route. Because the implementation, uses only default HTML forms, it is again possible to progressively enhance this feature. In Fact, in the shown implementation, submitting, would cause a full page reload, because the browser is sending post request to the server. To progressively enhance this form, one can add the \mintinline{bash}|enhance| action:
+
+\begin{myminted}{svelte}{routes/+page.svelte}
+<script>
+    import { enhance } from '$app/forms';
+</script>
+
+<form method="POST" action="?/postTodo" use:enhance>
+\end{myminted}  
+\s{$}
+
+This action intercepts form submit events and instead posts them to the server as an asynchronous request. This way the UI can provide better user experience, by foregoing the full page refresh. 
  
 \subsubsection{Rendering}
 
-\subsubsection{Progressive Enhancement}
+SvelteKit provides the functionality to define the rendering strategy for each route independently.
+By exporting the constants \mintinline{bash}|ssr|, \mintinline{bash}|csr| and \mintinline{bash}|prerender| the rendering behavior of page can be precisely changed:
+\begin{myminted}{js}{routes/page.js}
+export const prerender = false;
+export const ssr = true;
+export const csr = true;
+\end{myminted}
+
+\begin{itemize}
+    \item Setting \mintinline{bash}|prerender| to true, the page will render this page during the build process and serve this route as static files. This also means this route cannot have form actions, because SvelteKit will not provide handlers for a pre-rendered route.
+    \item \mintinline{bash}|ssr| determines if the page should be rendered on the server site when the user first requests the page. This does not mean the page cannot specify a server load function. Instead, the client will simply request the data from the server load function as soon as the runtime is initialized on the client side. This option can sometimes be useful, when a page requires certain features that require access to browser exclusive API's to render its content. But, most of the time it is possible to defer access to these browser-specific API's by running the code after the function has been mounted. 
+    \item With \mintinline{bash}|csr| it is possible to completely disable client-side JavaScript. But this has certain side effects. For example, given an application has a layout that contains a navigation bar which needs JavaScript to work. If the user first loads the website on a page that has CSR disabled, the navigation bar will not work. On the other hand, if the user loads the website on a page that has CSR enabled and then navigates to a page with CSR set to false, the navigation bar will work. 
+\end{itemize}

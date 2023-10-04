@@ -13,7 +13,7 @@
 %     \item group Jobs
 %  \end{itemize}
 
-As a basis for our case study we used an application called DSW-FD (Dispositions-software-Fahrdienst). DSW-FD is used to schedule chauffeur rides for a German federal agency. The application provides a rich user interface, with views for managing chauffeur jobs, as well as chauffeur drivers. Clients which need a Chauffeur ride can call a separate hotline, where a handler creates a new chauffeur job, this job is then sent to DSW-FD where it appears in the overview of Jobs, and can then be processed by a Job handler.
+As a basis for our case study we used an application called DSW-FD (Dispositions-Software-Fahrdienst). DSW-FD is used to schedule chauffeur rides for a German federal agency. The application provides a rich user interface, with views for managing chauffeur jobs, as well as chauffeur drivers. Clients which need a Chauffeur ride can call a separate hotline, where a handler creates a new chauffeur job, this job is then sent to DSW-FD where it appears in the overview of Jobs, and can then be processed by a Job handler.
 
 
 \begin{figure}
@@ -73,8 +73,7 @@ We experimented with two different implementations. One where SvelteKit replaces
 %     \item easier Authentication
 % \end{itemize}
 
-For the full stack implementation SvelteKit has to replace frontend as well as backend, to this end business logic, database communication and API's all have to be implemented in SvelteKit. We used Prisma \cite{noauthor_prisma_nodate} as an ORM to communicate with the database, because Prisma provides functionality to generate its data model from an existing database through introspection. This allowed us to save time on defining models. 
-
+For the full stack implementation SvelteKit has to replace frontend as well as backend, to this end business logic, database communication and API's all have to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database through introspection. This allowed us to save time on defining models. 
 
 \begin{figure}[ht]
     \centering
@@ -97,7 +96,7 @@ For the full stack implementation SvelteKit has to replace frontend as well as b
 %     \item enables usage of form actions, otherwise SvelteKit does not really provide any help with post requests.
 % \end{itemize}
 
-We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility, as backend technology can be chosen individually. Communication to the backend is primarily handled using Web API's. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are a something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\ref{sec:sveltekit-loading}). This means that the backend is only used for fetching, during SSR. After the browser has loaded the page, universal load functions are executed client-side and thus the client redirects its requests directly to the backend, instead of sending  a request to the SvelteKit server, which then requests the data, from the backend, overall saving one step of indirection. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing dedicated SvelteKit server code. This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar. 
+We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility, as backend technology can be chosen individually. Communication to the backend is primarily handled using web API's. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\ref{sec:sveltekit-loading}). This means that the backend is only used for fetching, during SSR. After the browser has loaded the page, universal load functions are executed client-side and thus the client redirects its requests directly to the backend, instead of sending  a request to the SvelteKit server, which then requests the data, from the backend, overall saving one step of indirection. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing dedicated SvelteKit server code. This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar. 
 
 \begin{figure}[ht]
     \centering
@@ -157,6 +156,7 @@ This approach has multiple advantages. It uses much of the in built functionalit
 
 
 \subsection{UI considerations}
+\label{sec:implementation-ui}
 
 The user interface is required to follow the SAP Fiori design guidelines. Our first approach was to use SAP's UI5 Web components. Web components promise to be a framework-agnostic approach to UI components. But we encountered some problems early on:
 

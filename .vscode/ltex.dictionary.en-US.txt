@@ -15,3 +15,6 @@ templating
 websockets
 Websockets
 websocket
+Vite
+filesystem-based
+filesytem
