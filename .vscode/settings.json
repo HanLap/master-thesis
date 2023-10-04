@@ -1,4 +1,6 @@
 {
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
   "ltex.language": "en-US",
   "ltex.latex.environments": {
     "myminted": "ignore"
