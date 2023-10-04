@@ -109,6 +109,8 @@ export function Component() {
 
 This example clearly shows how Svelte simplifies a common use case, by utilizing its compiler based approach.
 
+\todo{}
+
 Simple Store API:
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>
@@ -131,16 +133,14 @@ Simple Reactive Statements:
 </script>
 \end{myminted}
 
-\todo{}
+% \subsection{Library Interoperability}
 
-\subsection{Library Interoperability}
+% \todo{}
 
-\todo{}
-
-\begin{itemize}
-    \item Nice interop because Svelte is close to vanilla HTML/JS/CSS
-    \item Svelte Code is valid HTML/JS/CSS Syntax $\rightarrow$ Tools work out of the box (e.g Prettier, ESLint)
-\end{itemize}
+% \begin{itemize}
+%     \item Nice interop because Svelte is close to vanilla HTML/JS/CSS
+%     \item Svelte Code is valid HTML/JS/CSS Syntax $\rightarrow$ Tools work out of the box (e.g Prettier, ESLint)
+% \end{itemize}
 
 
 \subsection{Routing}
@@ -182,43 +182,41 @@ As described in \Cref{sec:implementation-ui}, the implementation was required to
 % \end{itemize}
 
 \subsection{Universal vs. Server Load Functions}
+\label{sec:evaluation-universal}
 
-One problem we encountered with this approach was, that SvelteKit provides no help for sending data to the backend. While data loading is streamlined through universal load functions. Server actions, as used in the full stack implementation, can only be used server side. This means, that implementation for submitting data has to be implemented manually. One way this can be done, is by using the form enhance action which is used to progressively enhance form actions (\Cref{sec:sveltekit-server-actions}):
+As noted in \Cref{sec:implementation-redirect}, we encountered multiple problems with the frontend only implementation that utilizes universal. The primary problem is, that SvelteKit provides no help for sending data to the backend. While data loading is streamlined through universal load functions. Server actions, as used in the full stack implementation, can only be used server side. This means, that submitting data has to be handled manually. Furthermore, this means that submitting data will only work when JavaScript is enabled. This is likely the main reason why SvelteKit provides no support for this use case, because prioritizes progressive enhancement.
 
-\begin{myminted}{svelte}{}
-<script>
-  async function handleSubmit({cancel, request}) {
-    cancel();
+% \begin{myminted}{svelte}{}
+% <script>
+%   async function handleSubmit({cancel, request}) {
+%     cancel();
 
-    const res = await fetch('api/update', {
-        method: 'POST',
-        body: request.body
-    });
+%     const res = await fetch('api/update', {
+%         method: 'POST',
+%         body: request.body
+%     });
 
-    if (!res.ok) {
-      // error handling...
-    }
+%     if (!res.ok) {
+%       // error handling...
+%     }
 
-    return ({ update }) => {
-      update();
-    }
-  }
-<script>
+%     return ({ update }) => {
+%       update();
+%     }
+%   }
+% <script>
 
-<form method="POST" use:enhance={handleSubmit}>
-  <button type="submit">send</button>
-</form>
-\end{myminted}
+% <form method="POST" use:enhance={handleSubmit}>
+%   <button type="submit">send</button>
+% </form>
+% \end{myminted}
 
-It has to also be noted, that forgoing the usage of server actions will mean, that data submission will never work without JavaScript, because the form enhance action can only run when JavaScript is enabled. Instead, the form will make a request to the backend, which then will probably return an error because it is not configured to handle post request.
-
-During this approach we also realized further complications. Firstly, authentication with the backend API becomes more complex, because both client and server need the access token for the API.
+% During this approach we also realized further complications. Firstly, authentication with the backend API becomes more complex, because both client and server need the access token for the API.
 % could this be fixed by passing through the api token??
 
-Furthermore, Svelte's custom fetch function further increased complexity. SvelteKit's implementation of fetch makes sure that fetch behaves similarly on the client and server. Therefore, it enables relative URL paths on the server, which would ordinarily not be possible.
+Furthermore, using fetch in universal load functions, requires usage of a special fetch function supplied by SvelteKit. This special fetch function makes sure that fetching data behaves the ame way on the client and server. Additionally, When a page with a universal load function is accessed, the load function is first run on the server during SSR, and the result is sent to the client. During hydration on the client side, the load function is then run again. This means, that ordinarily all fetch calls executed in the load function would run two times, once on the server and once on the client. To prevent this, SvelteKit's implementation inlines fetch responses on the server side, and then uses the inlined response on the client during hydration. This means, that it is necessary to use SvelteKit's fetch implementation. But, as this special fetch function is only exposed as an argument in load functions, one has to always pass this fetch function on any delegates, which require network communication. Furthermore, it is not possible to use custom HTTP-clients, such as Axios\footnote{\url{https://axios-http.com/}}.
 
-When a page with a universal load function is accessed, the load function is first run on the server during SSR, and the result is sent to the client. During hydration on the client side, the load function is then run again. This means, that ordinarily all fetch calls executed in the load function would run two times, once on the server and once on the client. To prevent this, SvelteKit's implementation inlines fetch responses on the server side, and then uses the inlined response on the client during hydration. This means, that it is necessary to use SvelteKit's fetch implementation. But, as this special fetch function is only exposed as an argument in load functions, one has to always pass this fetch function on any delegates, which require network communication. Furthermore, it is not possible to use custom HTTP-clients, such as Axios\footnote{\url{https://axios-http.com/}}.
-
+% Svelte's custom fetch function further increased complexity. SvelteKit's implementation of fetch makes sure that fetch behaves similarly on the client and server. Therefore, it enables relative URL paths on the server, which would ordinarily not be possible.
 
 % - problems with universal
 % - SvelteKit fetch weird

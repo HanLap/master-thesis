@@ -109,9 +109,10 @@ We also decided to explore an approach where SvelteKit is only used as a fronten
     \label{fig:dswfd-architecture-fe-only}
 \end{figure}
 
-\subsubsection{redirect through server}
+\subsubsection{Redirect Through Server}
+\label{sec:implementation-redirect}
 
-To amend these issues we further experimented with an implementation where we only used server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server sided code, the server side is primarily used as middleware that sends REST requests to the Java backend.
+But, this approach has several shortcomings explained in \Cref{sec:evaluation-universal}. Therefore we further experimented with an implementation that again uses server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server side code, the server side is primarily used as middleware that sends REST requests to the Spring backend.
 
 \begin{figure}[ht]
     \centering
