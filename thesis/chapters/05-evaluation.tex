@@ -35,7 +35,8 @@ Our measurements (\Cref{fig:benchmark}) show, while the SvelteKit implementation
             \addplot table[x=type,y=ui5]{\benchmarkdata};
             \addplot table[x=type,y=sk-fs]{\benchmarkdata};
             \addplot table[x=type,y=sk-fe]{\benchmarkdata};
-            \legend{UI5, SvelteKit Full Stack, SveleKit FE-only}
+            \addplot table[x=type,y=sk-spa]{\benchmarkdata};
+            \legend{UI5, SvelteKit Full Stack, SveleKit FE-only, SvelteKit SPA}
         \end{axis}
     \end{tikzpicture}
     \label{fig:benchmark}
