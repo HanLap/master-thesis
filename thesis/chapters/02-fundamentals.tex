@@ -44,14 +44,14 @@ The rendering of web pages has evolved significantly over the years, with variou
 \subsubsection{Static HTML}
 Static HTML represents the most basic form of web page rendering. In this approach, the entire HTML content is generated on the server and sent to the client as a complete document. Static HTML offers exceptional performance, as there is minimal processing required on the client and server side. However, it lacks dynamic content updates and interactivity, making it suitable primarily for simple, non-interactive websites.
 
-\subsubsection{Server Side Rendering}
+\subsubsection{Server-Side Rendering}
 Server-side Rendering (SSR) involves rendering web pages on the server, where both HTML and initial data are generated. The server delivers a fully populated HTML page to the client, improving initial load times and SEO performance. SSR is well-suited for content-heavy and dynamic websites, as it combines good performance with dynamic data capabilities. However, it may still require additional client-side processing for interactive features.
 
-\subsubsection{Client Side Rendering}
+\subsubsection{Client-Side Rendering}
 Client-side rendering (CSR) shifts the rendering process to the client's browser. Initially, the server sends a minimal HTML template and JavaScript code. The browser then takes responsibility for rendering and fetching data, making CSR ideal for highly interactive web applications. However, CSR can result in slower initial page load times and worse SEO due to delayed rendering and indexing.
 
-\subsubsection{Static Side Generation}
-Static side Generation (SSG) is a more extreme form of SSR. Instead of rendering the content when the page is requested, it is instead rendered when the site is initially built. This result in a page with similar performance to static HTML and therefore improved SEO. But, because the page has to be rebuilt, every time content should change, it is only usable for content that rarely changes. This approach also does not scale well with the amount of different pages, because for every page, a separate resource has to be generated.
+\subsubsection{Static-Site Generation}
+Static-site Generation (SSG) is a more extreme form of SSR. Instead of rendering the content when the page is requested, it is instead rendered when the site is initially built. This result in a page with similar performance to static HTML and therefore improved SEO. But, because the page has to be rebuilt, every time content should change, it is only usable for content that rarely changes. This approach can also cause scaling issues in projects with a large amount of different pages. When using SSR these pages could be handled by a dynamic route which fetches the pages content from a headless content management system. With SSG model on the other hand, for each page a separate HTML file is generated during build-time. In extreme cases, this can mean large storage requirements. 
 
 \subsubsection{Hydration}
 When server rendered or static web pages are sent to the client side they initially are not interactive beyond the scope of default HTML functionality. Hydration refers to the process of turning this "dumb" web page into a fully interactive client-side Application. With hydration an application can benefit from the fast render times and improved SEO of SSR and SSG, while simultaneously providing the user experience improvements of client-side applications.

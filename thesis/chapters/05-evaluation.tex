@@ -1,60 +1,64 @@
 \chapter{Evaluation}
 \label{ch:evaluation}
-
 \todo{Chapter intro}
 
 \section{Performance}
+\label{sec:evaluation-performance}
+\todo{Maybe Next.js Benchmark}
 
-\todo{Benchmark SvelteKit without SSR, maybe Next.js Benchmark}
+To gain insights into SvelteKit's performance, we ran benchmarks on all existing implementations. Levlin already tested Svelte's performance in DOM manipulation tasks \cite{levlin_dom_2020}, thus we were primarily interested how SvelteKit would fare when loading pages, as well as navigating between pages. To this end, we intended to measure the time to first byte (TTFB), first contentful paint (FCP), largest contentful paint (LCP), and time until a new view has rendered after navigation. Following the definitions of web.dev \cite{noauthor_webdev_nodate}, TTFB describes the time it takes until the first byte of data reaches the browser, after first loading a website. First contentful paint describes the time it takes until the browser first renders part of the application to the screen, while largest contentful paint describes the time it takes until the largest image or text block visible within the viewport is rendered. Ordinarily Lighthouse, a tool for measuring website performance integrated in Chromium would have been used to measure TTFB, FCP, and LCP. But, we realized that Lighthouse's automated measurement of LCP did not provide a realistic measurement for how long the UI5 implementation took to render its content. Therefore, we resorted to using Chromium's performance tool, to create performance recordings. We then took measurements of LCP directly from the recording by checking when all content has been rendered to the screen. The detailed benchmarking process is documented in \Cref{app:benchmark-setup}.  
 
-We tested the existing UI5 implementation and the new SvelteKit Implementations, in multiple metrics. We were especially interested in responsiveness to navigation events. To this end we measured first contentful paint (FCP), the time until the page settled, and cumulative layout shift (CLS). Furthermore, we measured time until the page settled, for a navigation from the chauffeur job overview, to the details view of a chauffeur job \todo{This paragraph could use some work}.
+% We tested the existing UI5 implementation and the new SvelteKit Implementations, in multiple metrics. We were especially interested in responsiveness to navigation events. To this end we measured first contentful paint (FCP), the time until the page settled, and cumulative layout shift (CLS). Furthermore, we measured time until the page settled, for a navigation from the chauffeur job overview, to the details view of a chauffeur job \todo{This paragraph could use some work}.
 
-All measurements were conducted on a Lenovo ThinkPad T480, with an Intel Core i7-8550U, and 16 GB RAM, running Windows 11. The measurements where taken using the developer tools of Google Chrome 116.0. The benchmark setup is described in app. \Cref{app:benchmark-setup}.
-
-Our measurements (\Cref{fig:benchmark}) show, while the SvelteKit implementations take longer to send content to the client, they reduced time until the relevant data is being shown, significantly. These results align with the expected effects of server side rendering outlined in \Cref{sec:rendering-patterns}. Furthermore, SvelteKit shows significant improvements when navigating between two pages. This is improved even further by SvelteKit's preloading capabilities. In our benchmark, preloading was set to "tap", meaning, the data is being fetched as soon as a \mintinline{html}|mousedown| event is triggered.  
+All measurements were conducted on a Lenovo ThinkPad T480, with an Intel Core i7-8550U, and 16 GB RAM, running Windows 11. The measurements where taken using the developer tools of Google Chrome 116.0. We benchmarked the existing UI5 implementation, the SvelteKit full stack implementation (SK-FS), and the SvelteKit implementation, using SvelteKit primarily as a frontend framework, but redirecting requests through the SvelteKit server (SK-FE). Furthermore, we were interested how SvelteKit would fare when deploying it as static files in form of a classic SPA (SK-SPA). 
 
 \begin{figure}
     \centering
     \begin{tikzpicture}
         \begin{axis}[
                 ybar,
-                bar width=.7cm,
+                bar width=.5cm,
                 width=.9\textwidth,
                 height=.5\textwidth,
                 legend style={at={(0,1)},
                     anchor=north west,legend columns=1},
                 legend cell align={left},
-                symbolic x coords={TTFB,FCP,CP,Nav},
+                symbolic x coords={TTFB,FCP,LCP,Nav},
                 xtick=data,
                 enlarge x limits={0.15},
                 nodes near coords,
                 nodes near coords align={vertical},
+                node near coords style={rotate=60,xshift=0.4cm,yshift=-0.2cm},
                 ymin=0,ymax=4000,
                 ylabel={duration (ms)},
             ]
             \addplot table[x=type,y=ui5]{\benchmarkdata};
             \addplot table[x=type,y=sk-fs]{\benchmarkdata};
             \addplot table[x=type,y=sk-fe]{\benchmarkdata};
-            \legend{UI5, SvelteKit Full Stack, SveleKit FE-only}
+            \addplot table[x=type,y=sk-spa]{\benchmarkdata};
+            \legend{UI5, SvelteKit Full Stack, SveleKit FE-only, SvelteKit SPA}
         \end{axis}
     \end{tikzpicture}
-    \label{fig:benchmark}
     \caption{Benchmark Results for TTFB, FCP, CP and Nav}
+    \label{fig:benchmark}
 \end{figure}
 
-\section{Bundle Size}
+The benchmark results shown in \Cref{fig:benchmark}, mostly confirm our expectations that SvelteKit would perform better in the LCP and navigation metrics. An interesting anomaly form the results of SK-SPA. As expected of forgoing SSR, It shows the fastest TTFB of all three SvelteKit implementations. Furthermore, it takes slightly longer than the other two implementations to render its content. This confirms the assumption that SSR improves FCP outlined in \Cref{sec:rendering-patterns}. But despite its fast TTFB, the SPA implementation still has the slowest FCP of all implementations. This is a result of how SvelteKit loads its data. The UI5 implementation shows a loading spinner immediately after its FCP, before fetching data from the backend. The SK-SPA implementation on the other hand, first awaits the results of all load functions relevant to the current page, before rendering anything to the screen. While this approach makes sense for a server rendered application, if the application is being rendered in the browser exclusively, this can mean a prolonged blank screen before data is shown. Nonetheless, in our implementation the load times proved to be fast enough to barely matter. 
 
+The Benchmarks also show that all SvelteKit implementations perform faster when navigating, then the UI5 implementation. It has to be noted that SvelteKit provides out of the box support for preloading all required code and data for a page as soon as the user hovers over a link to that page. This can make page loads appear instantaneous to a user in some cases. For our benchmarks we disabled this feature to make comparisons consistent.
+
+% Our measurements (\Cref{fig:benchmark}) show, while the SvelteKit implementations take longer to send content to the client, they reduced time until the relevant data is being shown, significantly. These results align with the expected effects of server side rendering outlined in \Cref{sec:rendering-patterns}. Furthermore, SvelteKit shows significant improvements when navigating between two pages. This is improved even further by SvelteKit's preloading capabilities. In our benchmark, preloading was set to "tap", meaning, the data is being fetched as soon as a \mintinline{html}{mousedown} event is triggered.  
+
+\section{Bundle Size}
 \todo{SvelteKit is way smaller because of tree shaking and code splitting}
 
 \section{Experience}
-
 % \begin{itemize}
 %     \item Both approaches (full stack and frontend only) worked great
 %     \item advantage of full-stack: 
 %     \item no API definition required
 %     \item reuse of models between UI and business logic or even type inference
 % \end{itemize}
-
 In this section we give our personal experience developing with SvelteKit in an attempt to reason about SvelteKit's expected developer experience. As we noted in \Cref{sec:methodology}, providing a heuristic analysis of SvelteKit's DX is out of scope.
 
 In our experience both discussed implementations (full stack in SvelteKit and SvelteKit frontend only) enabled an efficient and pleasant development experience. Especially the full stack approach significantly reduced overhead, because models could be reused between client and server and communication between server and client happened transparently.
@@ -67,12 +71,10 @@ In our experience both discussed implementations (full stack in SvelteKit and Sv
 % \end{itemize}
 
 \subsection{Project Setup}
-
 SvelteKit provides a command line utility to create new projects (\Cref{fig:project-setup}). This utility provides options to configure TypeScript for type checking, ESLint\footnote{\url{https://eslint.org/}} for code linting, Prettier\footnote{\url{https://prettier.io/}} for code formatting, as well as Vitest\footnote{\url{https://vitest.dev/}} and Playwright\footnote{\url{https://playwright.dev/}} for testing. 
 
-
 % \begin{itemize}
-%     \item Fast, \mintinline{bash}|npm cgeate svelte@latest|
+%     \item Fast, \mintinline{bash}{npm cgeate svelte@latest}
 %     \item missing out-of-the-box features: form validation/parsing
 % \end{itemize}
 
@@ -84,7 +86,6 @@ SvelteKit provides a command line utility to create new projects (\Cref{fig:proj
 \end{figure}
 
 \subsection{Syntax}
-
 We experienced Svelte's syntax as easy to grasp. This is because Svelte's syntax closely adheres to HTML with some added features for templating and reactivity.
 
 Svelte's decision to reuse assignment operators for reactivity, not only makes for a less verbose, but also more intuitive syntax. Something, something code snippet:
@@ -144,7 +145,7 @@ Simple Reactive Statements:
 
 
 \subsection{Routing}
-SvelteKit decided to integrate a filesystem-based routing system. This comes with some inherit advantages and disadvantages. Probably the biggest advantages is, that this approach makes immediately clear what the purpose of a file is. Especially for simple cases this routing system works with no overhead and makes it possible to work very fast, when adding new routes. But some problems become apparent in more complex examples. Projects with a large amount of routes will inevitably have many files with the same name. In our experience this could make it harder sometimes to use IDE search functions to quickly navigate between many files, because searching most of the time returned more than one \mintinline{bash}|+page.svelte| or \mintinline{bash}|+page.js| file. Furthermore, solutions to some problems can cause a lot of file changes in a version control system. During our implementation efforts, we found the need to wrap multiple routes in a layout group. This meant, all files hat to be moved to a new subdirectory. This caused a lot of noise in the version control system for a change that was simple in nature. With a declarative routing solution the same problem could have been solved by simple changing the router configuration.
+SvelteKit decided to integrate a filesystem-based routing system. This comes with some inherit advantages and disadvantages. Probably the biggest advantages is, that this approach makes immediately clear what the purpose of a file is. Especially for simple cases this routing system works with no overhead and makes it possible to work very fast, when adding new routes. But some problems become apparent in more complex examples. Projects with a large amount of routes will inevitably have many files with the same name. In our experience this could make it harder sometimes to use IDE search functions to quickly navigate between many files, because searching most of the time returned more than one \mintinline{bash}|+page.svelte| or \mintinline{bash}{+page.js} file. Furthermore, solutions to some problems can cause a lot of file changes in a version control system. During our implementation efforts, we found the need to wrap multiple routes in a layout group. This meant, all files hat to be moved to a new subdirectory. This caused a lot of noise in the version control system for a change that was simple in nature. With a declarative routing solution the same problem could have been solved by simple changing the router configuration.
 
 It has also to be noted that this filesystem-based approach to routing makes it effectively impossible to split a singular SvelteKit application into multiple smaller projects. Because routing is strictly bound to the filesytem, it is only possible to configure routing in the root project.
 
@@ -154,7 +155,6 @@ It has also to be noted that this filesystem-based approach to routing makes it 
 
 \subsection{Svelte works best with plain HTML}
 \label{sec:evaluation-ui-libs}
-
 As described in \Cref{sec:implementation-ui}, the implementation was required to follow the SAP Fiori Design Guidelines. To this end we tried using both UI5 web components and a plain CSS classes approach using SAP Fundamental Styles. In either case we decided to create a library of Svelte components that wraps the actual UI utility. This decision was made to reduce the amount of boilerplate code and repetition required to use some UI elements. Furthermore, this decision made it easier to migrate from UI5 web components to fundamental styles, because only the Component library had to be changed. 
 
 \todo{Finish section}
@@ -183,7 +183,6 @@ As described in \Cref{sec:implementation-ui}, the implementation was required to
 
 \subsection{Universal vs. Server Load Functions}
 \label{sec:evaluation-universal}
-
 As noted in \Cref{sec:implementation-redirect}, we encountered multiple problems with the frontend only implementation that utilizes universal. The primary problem is, that SvelteKit provides no help for sending data to the backend. While data loading is streamlined through universal load functions. Server actions, as used in the full stack implementation, can only be used server side. This means, that submitting data has to be handled manually. Furthermore, this means that submitting data will only work when JavaScript is enabled. This is likely the main reason why SvelteKit provides no support for this use case, because prioritizes progressive enhancement.
 
 % \begin{myminted}{svelte}{}
@@ -224,20 +223,18 @@ Furthermore, using fetch in universal load functions, requires usage of a specia
 % - 
 
 \subsection{Reactivity Pitfalls}
-
 While Svelte's reactivity is overall very intuitive, it nonetheless has some pitfalls.
 
-Svelte's reactive blocks work by analyzing all local variables that are used in this block. If one of those variables changes, the reactive block is rerun. But, this only works if the dependent variable is used directly in the reactive block. In cases where the dependency is used in a function for example, the dependency cannot be analyzed and therefore will not trigger executions of the reactive block:
+Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at compile time which variables are referenced inside a reactive statement. These variables are tracked as dependencies and every time one of these dependencies changes, Svelte reevaluates the reactive statement. But in cases where the dependency is used indirectly, for example through a function call, the dependency cannot be seen by Svelte's compiler. Therefore, updates to the dependency will not trigger reevaluation of the reactive-statement:
 
 \begin{myminted}[escapeinside=||, autogobble]{svelte}{}
 <script>
     let count = 1;
 
-    let doubled;
-    |\$|: calcDoubled();
+    |\$|: doubled = calcDoubled();
 
     function calcDoubled() {
-    doubled = count * 2;
+        return count * 2;
     }
 </script>
 
@@ -245,10 +242,9 @@ Svelte's reactive blocks work by analyzing all local variables that are used in 
 <div>{count} * 2 = {doubled}</div>
 \end{myminted}
 
-In this example, the function \mintinline{svelte}|calcDoubled|, calculates the value of \mintinline{svelte}|double| in correspondence to \mintinline{svelte}|count|. But because \mintinline{svelte}|count| is not directly used in the reactive statement, the reactive statement will not trigger when \mintinline{svelte}|count| is updated.
+In this example, the function \mintinline{svelte}|calcDoubled| calculates the value of \mintinline{svelte}|doubled| in correspondence to \mintinline{svelte}|count|. But, because \mintinline{svelte}|count| is not directly referenced in the reactive statement, it is not tracked as a dependency. Therefore, \mintinline{bash}|doubled| will not be updated when \mintinline{bash}{count} changes.
 
 \subsection{Centralized load function}
-
 SvelteKit's architecture enforces that all asynchronous data has to be acquired inside a pages load function, for it to be available during server side rendering. This provides a clean and easy to understand flow for simple implementations. But it can increase complexity in cases where a single isolated component has to be reused in multiple different routes.
 
 One could for example imagine a simple component which displays a Twitter feed, which has to be used in multiple places. Given following file hierarchy:
@@ -331,30 +327,26 @@ With this approach, the Twitter component becomes truly isolated from the page, 
 
 
 \subsection{Deployment}
-
 SvelteKit provides first-class adapters that automate creating production deployments for various hosting providers such as Vercel\footnote{\url{https://vercel.com/}}, Netlify\footnote{\url{https://www.netlify.com/}}, Cloudflare Pages\footnote{\url{https://pages.cloudflare.com/}}, and Cloudflare Workers\footnote{\url{https://workers.cloudflare.com/}}. Furthermore, adapters exist to create standalone NodeJS server, or generate a static bundle that can be served from a simple file-base web server. Beyond this, a wide range of community plugins exist which further extend the range of platforms, SvelteKit can be deployed to. This means that SvelteKit generally supports great flexibility for deployment with comparatively little effort.  
 
-But, this wide range of supported platforms creates some shortcomings. SvelteKit does mostly not implement features that require platform specific functionality. One such feature would be a hook that is executed when the application shuts down. This can sometimes be required for example to close open connections. While this can be easily worked around in a NodeJS environment, by using \mintinline{js}|process.on('sigint', ...)|, other features are not added this easily. 
+But, this wide range of supported platforms creates some shortcomings. SvelteKit does mostly not implement features that require platform specific functionality. One such feature would be a hook that is executed when the application shuts down. This can sometimes be required for example to close open connections. While this can be easily worked around in a NodeJS environment, by using \mintinline{js}{process.on('sigint', ...)}, other features are not added this easily. 
 
 Websockets are another feature that is currently not supported out of the box, because some providers such as Vercel have no support for websockets yet \cite{noauthor_vercel_nodate}. While it is possible to add websocket support to the NodeJS platform this is not possible without shortcomings. By default, the NodeJS adapter creates an entry point that starts a web server to host all handlers required by SvelteKit. It is possible to forego this entry point and instead write a custom server that uses the handlers directly. In this way it is possible to create a web server that uses websockets. But, this approach only works for the production build, in development, another workaround is required that works with hot-module replacement. Furthermore, a separate 
 
 \todo{SvelteKit wants to be a serverless framework\cite{noauthor_expose_nodate}}
 
 \subsection{Stability}
-
 % \begin{itemize}
 %     \item Svelte 2 to 3 was big change
 %     \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
 % \end{itemize}
-
 Version 1.0 of SvelteKit released only recently in December 2023 \cite{team_announcing_2022}, thus it is not possible to tell how stable the APIs of the framework will be going forward. Svelte on the other hand has reached its fourth major version. So far, version 3 made changes to its API, which caused a need for manual migrations. 
 
 \todo{Finish section}
 
 
 \subsection{Future of Svelte}
-
-On 20. September 2023, The Svelte team gave a first preview of the next major new API planned for version 5 of Svelte, called runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte. With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}|$state| rune:
+On 20. September 2023, The Svelte team gave a first preview of the next major new API planned for version 5 of Svelte, called runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte. With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune:
 
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>
@@ -364,7 +356,7 @@ On 20. September 2023, The Svelte team gave a first preview of the next major ne
 
 While initially being more verbose, this has multiple advantages. Firstly, this syntax is more explicit, clearly marking which variable is reactive and which is not. Secondly, this syntax is not limited to the top-level of a svelte file, further, it will even be possible to place state-runes in JavaScript files. This will make it easier to move out state in to separate files. Where as before, stores were required to place state in separate files, with this new syntax it will be possible to use the same syntax in svelte-files and in js-files.
 
-Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|$:| syntax, \mintinline{svelte}|$derived| and \mintinline{svelte}|$effect|:
+Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|$:| syntax, \mintinline{svelte}|$derived| and \mintinline{svelte}{$effect}:
 
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>

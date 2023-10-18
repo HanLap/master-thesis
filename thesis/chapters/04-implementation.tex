@@ -1,10 +1,9 @@
 \chapter{Implementation}
 \label{ch:implementation}
 
-\todo{Write chapter introduction}
+This chapter goes into details of the use case the implemented artifact satisfies. We give an overview of the current implementation as well as all implementation variants we produced for this study. \todo{Don't like this section yet...}
 
 \section{Chauffeur Service}
-
 %  \begin{itemize}
 %     \item Take some Pictures
 %     \item Chauffeur service for German federal agency.
@@ -15,14 +14,13 @@
 %     \item group Jobs
 %  \end{itemize}
 
-As a basis for our case study we used an application called DSW-FD (Dispositions-software-Fahrdienst). DSW-FD is used to schedule chauffeur rides for a German federal agency. The application provides a rich user interface with views for managing chauffeur jobs, as well as chauffeur drivers. Clients which need a Chauffeur ride can call a separate hotline, where a handler creates a new chauffeur job, this job is then sent to DSW-FD where it appears in the overview of Jobs and can then be processed by a Job handler.
+As a basis for our case study we used an application called DSW-FD (Dispositions-software-Fahrdienst). DSW-FD is used to schedule chauffeur rides for a German federal agency. The application provides a rich user interface with views for managing chauffeur jobs, as well as chauffeur drivers. Clients which need a chauffeur ride can call a separate hotline, where a handler creates a new chauffeur job, this job is then sent to DSW-FD where it appears in the overview of jobs and can then be processed by a dispatcher.
 
-Drivers need to be manually assigned to a job by a handling person. To this end, the application provides suggestions for drivers which would be free when the job is schedule and are closest to the job's departure point. Furthermore, the app provides functionality to group together different jobs so that they may be handled by a single driver, determine the return destination for the driver after they finished the job, as well as marking a job as being handled by a pool of drivers.
+Drivers need to be manually assigned to a job by a handling person. To this end, the application provides suggestions for drivers which would be free when the job is scheduled and are closest to the job's departure point. Furthermore, the app provides functionality to group together different jobs so that they may be handled by a single driver, determine the return destination for the driver after they finished the job, as well as marking a job as being handled by a pool of drivers.
 
 The application also provides features to directly interact with drivers, such as broadcasting messages to all drivers, reminding a driver to take their mandatory break, and directly calling a driver.
 
 \section{Current Implementation}
-
 % \begin{itemize}
 %     \item UI5-Frontend
 %     \item Java-Backend
@@ -43,16 +41,15 @@ The System provides two frontends, an android application, which is used by the 
 \end{figure}
 
 \section{SvelteKit Implementation}
-
 % \begin{itemize}
 %     \item Two approaches (full stack, FE only)
 %     \item First try UI5 web components, second try CSS classes
 %     \item Authentication
 % \end{itemize}
 
-Our study focused on the core of DSW-FD's system landscape, comprised of the Spring backend and the OpenUI5 web frontend. We experimented with two different implementations. One where SvelteKit replaces both the backend and frontend and one where SvelteKit only replaces the frontend. Both our implementations had to communicate with the Keycloak service to authenticate. The full stack implementation also had to interact with the MSSQL database. As to not widen the scope too much, API's for the android application, Firebase communication, and the SOAP API for ICB was not implemented. We also decided to use TypeScript instead of regular JavaScript. This provided a better developer experience with little extra overhead. Because SvelteKit can infer types for most of its internal functionality. Extra types had to be only defined for external API's.
+Our study focused on the core of DSW-FD's system landscape, comprised of the Spring backend and the OpenUI5 web frontend. We experimented with two different implementations. One where SvelteKit replaces both the backend and frontend and one where SvelteKit only replaces the frontend. Both our implementations had to communicate with the Keycloak service to authenticate. The full stack implementation also had to interact with the MSSQL database. As to focus on the most relevant parts, APIs for the android application, Firebase communication, and the SOAP API for ICB were not implemented. We also decided to use TypeScript instead of regular JavaScript. This provided a better developer experience with little extra overhead. Because SvelteKit can infer types for most of its internal functionality extra types had to be only defined for external API's.
 
-We focused our implementation on a subset of features required to manage chauffeur jobs. To this end we implemented three pages. The overview page that shows all currently relevant chauffeur jobs (\Cref{fig:current-overview-auftrag}). The detail page for chauffeur jobs (\Cref{fig:current-details-auftrag}). And a view that is used to create new (internal) chauffeur jobs.
+We focused our implementation on a subset of features required to manage chauffeur jobs. To this end we implemented three pages: the overview page that shows all currently relevant chauffeur jobs (\Cref{fig:current-overview-auftrag}), the detail page for chauffeur jobs (\Cref{fig:current-details-auftrag}), and a view that is used to create new (internal) chauffeur jobs.
 
 \begin{figure}
     \centering
@@ -70,12 +67,13 @@ We focused our implementation on a subset of features required to manage chauffe
 
 
 \subsection{Full Stack Implementation}
-
 % \begin{itemize}
 %     \item prisma 
 %     \item easier Authentication
 % \end{itemize}
-Our first approach was the full stack implementation. This implementation has to replace the UI5 frontend as well as the Spring backend (\Cref{fig:dswfd-architecture-fullstack}). To this end business logic, database communication and API's all have to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database using introspection. This allowed us to save time on defining models.
+Our first approach was the full stack implementation. This implementation has to replace the UI5 frontend as well as the Spring backend (\Cref{fig:dswfd-architecture-fullstack}). To this end business logic, database communication and API's all had to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database using introspection. This allowed us to save time on defining models. 
+
+Business logic could be ported directly from Java to TypeScript, which made it a primarily laborious task. 
 
 \todo{I feel like this section needs more text}
 
@@ -87,7 +85,6 @@ Our first approach was the full stack implementation. This implementation has to
 \end{figure}
 
 \subsection{Frontend Implementation}
-
 % \begin{itemize}
 %     \item Experimented with direct communication to backend.
 %     \item Using universal load functions
@@ -109,10 +106,9 @@ We also decided to explore an approach where SvelteKit is only used as a fronten
     \label{fig:dswfd-architecture-fe-only}
 \end{figure}
 
-\subsubsection{Redirect Through Server}
+\subsection{SPA Implementation}
 \label{sec:implementation-redirect}
-
-But, this approach has several shortcomings explained in \Cref{sec:evaluation-universal}. Therefore we further experimented with an implementation that again uses server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server side code, the server side is primarily used as middleware that sends REST requests to the Spring backend.
+But, this approach has several shortcomings explained in \Cref{sec:evaluation-universal}. Therefore, further experimented with an implementation that again uses server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server side code, the server side is primarily used as middleware that sends REST requests to the Spring backend.
 
 \begin{figure}[ht]
     \centering
@@ -126,7 +122,6 @@ This approach has multiple advantages. It uses much of the built-in functionalit
 
 \subsection{UI Considerations}
 \label{sec:implementation-ui}
-
 One of the clients requirements for the current implementation was that the frontend follows the SAP Fiori design guidelines. While not strictly necessary for our study, we decided to adhere to this requirement in our SvelteKit implementations. We hoped to gain insights into how SvelteKit behaves, when interacting with UI libraries. The current implementation uses UI5 which has SAP Fiori components built into the framework itself. As it is not possible to use these components outside the framework, we had to use alternatives.   
 
 We first tried to use UI5 Web Components\footnote{\url{https://sap.github.io/ui5-webcomponents/}}. These premade components promise to be a feature rich and framework-agnostic implementation of the Fiori Design Guidelines. In practice, we noticed multiple issues which made use consider alternative solutions. 
