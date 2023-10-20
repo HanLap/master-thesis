@@ -68,12 +68,12 @@ We focused our implementation on a subset of features required to manage chauffe
 
 \subsection{Full Stack Implementation}
 % \begin{itemize}
-%     \item prisma 
 %     \item easier Authentication
+%     \item business logic stuff
 % \end{itemize}
 Our first approach was the full stack implementation. This implementation has to replace the UI5 frontend as well as the Spring backend (\Cref{fig:dswfd-architecture-fullstack}). To this end business logic, database communication and API's all had to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database using introspection. This allowed us to save time on defining models. 
 
-Business logic could be ported directly from Java to TypeScript, which made it a primarily laborious task. 
+% Business logic could be ported directly from Java to TypeScript, which made it a primarily laborious task. 
 
 \todo{I feel like this section needs more text}
 
