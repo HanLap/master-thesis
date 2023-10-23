@@ -6,7 +6,7 @@
 \label{sec:evaluation-performance}
 \todo{Maybe Next.js Benchmark}
 
-To gain insights into SvelteKit's performance, we ran benchmarks on all existing implementations. Levlin already tested Svelte's performance in DOM manipulation tasks \cite{levlin_dom_2020}, thus we were primarily interested how SvelteKit would fare when loading pages, as well as navigating between pages. To this end, we intended to measure the time to first byte (TTFB), first contentful paint (FCP), largest contentful paint (LCP), and time until a new view has rendered after navigation. Following the definitions of web.dev \cite{noauthor_webdev_nodate}, TTFB describes the time it takes until the first byte of data reaches the browser, after first loading a website. First contentful paint describes the time it takes until the browser first renders part of the application to the screen, while largest contentful paint describes the time it takes until the largest image or text block visible within the viewport is rendered. Ordinarily Lighthouse, a tool for measuring website performance integrated in Chromium would have been used to measure TTFB, FCP, and LCP. But, we realized that Lighthouse's automated measurement of LCP did not provide a realistic measurement for how long the UI5 implementation took to render its content. Therefore, we resorted to using Chromium's performance tool, to create performance recordings. We then took measurements of LCP directly from the recording by checking when all content has been rendered to the screen. The detailed benchmarking process is documented in \Cref{app:benchmark-setup}.  
+To gain insights into SvelteKit's performance, we ran benchmarks on all existing implementations. Levlin already tested Svelte's performance in DOM manipulation tasks \cite{levlin_dom_2020}, thus we were primarily interested how SvelteKit would fare when loading pages, as well as navigating between pages. To this end, we intended to measure the time to first byte (TTFB), first contentful paint (FCP), largest contentful paint (LCP), and time until a new view has rendered after navigation. Following the definitions of web.dev \cite{noauthor_webdev_nodate}, TTFB describes the time it takes until the first byte of data reaches the browser, after first loading a website. First contentful paint describes the time it takes until the browser first renders part of the application to the screen, while largest contentful paint describes the time it takes until the largest image or text block visible within the viewport is rendered. Ordinarily Lighthouse, a tool for measuring website performance integrated in Chromium would have been used to measure TTFB, FCP, and LCP. But we realized that Lighthouse's automated measurement of LCP did not provide a realistic measurement for how long the UI5 implementation took to render its content. Therefore, we resorted to using Chromium's performance tool to create performance recordings. We then took measurements of LCP manually from the recording by checking when all content has been rendered to the screen. The detailed benchmarking process is documented in \Cref{app:benchmark-setup}.  
 
 % We tested the existing UI5 implementation and the new SvelteKit Implementations, in multiple metrics. We were especially interested in responsiveness to navigation events. To this end we measured first contentful paint (FCP), the time until the page settled, and cumulative layout shift (CLS). Furthermore, we measured time until the page settled, for a navigation from the chauffeur job overview, to the details view of a chauffeur job \todo{This paragraph could use some work}.
 
@@ -39,20 +39,22 @@ All measurements were conducted on a Lenovo ThinkPad T480, with an Intel Core i7
             \legend{UI5, SvelteKit Full Stack, SveleKit FE-only, SvelteKit SPA}
         \end{axis}
     \end{tikzpicture}
-    \caption{Benchmark Results for TTFB, FCP, CP and Nav}
+    \caption{Benchmark Results for TTFB, FCP, LCP and Nav}
     \label{fig:benchmark}
 \end{figure}
 
-The benchmark results shown in \Cref{fig:benchmark}, mostly confirm our expectations that SvelteKit would perform better in the LCP and navigation metrics. An interesting anomaly form the results of SK-SPA. As expected of forgoing SSR, It shows the fastest TTFB of all three SvelteKit implementations. Furthermore, it takes slightly longer than the other two implementations to render its content. This confirms the assumption that SSR improves FCP outlined in \Cref{sec:rendering-patterns}. But despite its fast TTFB, the SPA implementation still has the slowest FCP of all implementations. This is a result of how SvelteKit loads its data. The UI5 implementation shows a loading spinner immediately after its FCP, before fetching data from the backend. The SK-SPA implementation on the other hand, first awaits the results of all load functions relevant to the current page, before rendering anything to the screen. While this approach makes sense for a server rendered application, if the application is being rendered in the browser exclusively, this can mean a prolonged blank screen before data is shown. Nonetheless, in our implementation the load times proved to be fast enough to barely matter. 
+The benchmark results shown in \Cref{fig:benchmark} mostly confirm our expectations that SvelteKit would perform better in the LCP and navigation metrics. The results of SK-SPA are particularly interesting. As expected by forgoing SSR, it shows the fastest TTFB of all three SvelteKit implementations. Furthermore, it takes slightly longer than the other two implementations to render its content. This confirms the assumption that SSR improves FCP outlined in \Cref{sec:rendering-patterns}. But despite its fast TTFB, the SPA implementation still has the slowest FCP of all implementations. This is a result of how SvelteKit loads its data. The UI5 implementation shows a loading spinner immediately after its FCP, before fetching data from the backend. The SK-SPA implementation on the other hand first awaits the results of all load functions relevant to the current page before rendering anything to the screen. While this approach makes sense for a server rendered application, if the application is being rendered in the browser exclusively, this can mean a prolonged blank screen before data is shown. Nonetheless, in our implementation the load times proved to be fast enough to barely matter. 
 
-The Benchmarks also show that all SvelteKit implementations perform faster when navigating, then the UI5 implementation. It has to be noted that SvelteKit provides out of the box support for preloading all required code and data for a page as soon as the user hovers over a link to that page. This can make page loads appear instantaneous to a user in some cases. For our benchmarks we disabled this feature to make comparisons consistent.
+The Benchmarks also show that all SvelteKit implementations perform faster when navigating, compared to the UI5 implementation. Furthermore, SvelteKit provides out of the box support for preloading all required code and data for a page as soon as the user hovers over a link to that page. This can make page loads appear instantaneous to a user in some cases. For our benchmarks we disabled this feature to make comparisons more meaningful.
+
+Overall, our performance analysis shows that SvelteKit can significantly improve initial page load times compared to UI5. This metric is most relevant for conversion rate \cite{noauthor_load_nodate}, a metric for public facing-pages, such as e-commerce platforms. Nonetheless, fast page load times can contribute to the overall user experience for all types of applications. 
 
 % Our measurements (\Cref{fig:benchmark}) show, while the SvelteKit implementations take longer to send content to the client, they reduced time until the relevant data is being shown, significantly. These results align with the expected effects of server side rendering outlined in \Cref{sec:rendering-patterns}. Furthermore, SvelteKit shows significant improvements when navigating between two pages. This is improved even further by SvelteKit's preloading capabilities. In our benchmark, preloading was set to "tap", meaning, the data is being fetched as soon as a \mintinline{html}{mousedown} event is triggered.  
 
 \section{Bundle Size}
 \todo{SvelteKit is way smaller because of tree shaking and code splitting}
 
-\section{Experience}
+\section{Findings}
 % \begin{itemize}
 %     \item Both approaches (full stack and frontend only) worked great
 %     \item advantage of full-stack: 
@@ -81,7 +83,7 @@ SvelteKit provides a command line utility to create new projects (\Cref{fig:proj
 \begin{figure}
     \centering
     \includegraphics[width=.95\linewidth,trim={0 15cm 0 1.5cm},clip]{assets/sveltekit-project-setup}
-    \caption{Process for creating a new SvelteKit project}
+    \caption{Tool for creating a new SvelteKit project}
     \label{fig:project-setup}
 \end{figure}
 
@@ -223,6 +225,7 @@ Furthermore, using fetch in universal load functions, requires usage of a specia
 % - 
 
 \subsection{Reactivity Pitfalls}
+\label{sec:evaluation-reactivity pitfalls}
 While Svelte's reactivity is overall very intuitive, it nonetheless has some pitfalls.
 
 Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at compile time which variables are referenced inside a reactive statement. These variables are tracked as dependencies and every time one of these dependencies changes, Svelte reevaluates the reactive statement. But in cases where the dependency is used indirectly, for example through a function call, the dependency cannot be seen by Svelte's compiler. Therefore, updates to the dependency will not trigger reevaluation of the reactive-statement:
@@ -340,13 +343,13 @@ Websockets are another feature that is currently not supported out of the box, b
 %     \item Svelte 2 to 3 was big change
 %     \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
 % \end{itemize}
-Version 1.0 of SvelteKit released only recently in December 2023 \cite{team_announcing_2022}, thus it is not possible to tell how stable the APIs of the framework will be going forward. Svelte on the other hand has reached its fourth major version. So far, version 3 made changes to its API, which caused a need for manual migrations. 
+Version 1.0 of SvelteKit released only recently in December 2022 \cite{team_announcing_2022}, thus it is not possible to tell how stable the APIs of the framework will be going forward. Svelte on the other hand has reached its fourth major version. So far, version 3 made changes to its API, which caused a need for manual migrations. 
 
 \todo{Finish section}
 
 
 \subsection{Future of Svelte}
-On 20. September 2023, The Svelte team gave a first preview of the next major new API planned for version 5 of Svelte, called runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte. With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune:
+In September 2023, The Svelte team gave a first preview of the next major API revision planned for version 5 of Svelte \cite{team_introducing_2023}. This new Feature is called Runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte (\Cref{sec:svelte-reactivity}). With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune:
 
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>
@@ -354,9 +357,29 @@ On 20. September 2023, The Svelte team gave a first preview of the next major ne
 </script>
 \end{myminted}
 
-While initially being more verbose, this has multiple advantages. Firstly, this syntax is more explicit, clearly marking which variable is reactive and which is not. Secondly, this syntax is not limited to the top-level of a svelte file, further, it will even be possible to place state-runes in JavaScript files. This will make it easier to move out state in to separate files. Where as before, stores were required to place state in separate files, with this new syntax it will be possible to use the same syntax in svelte-files and in js-files.
+While initially being more verbose, this has multiple advantages. Firstly, this syntax is more explicit, clearly marking which variable is reactive and which is not. Secondly, this syntax is not limited to the top-level of a svelte file, further, it will even be possible to place state-runes in JavaScript files. This will make it easier to move out state in to separate files. Whereas before, stores were required to place state in separate files, with this new syntax it will be possible to use the same syntax in Svelte-files and in JS-files.
 
-Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|$:| syntax, \mintinline{svelte}|$derived| and \mintinline{svelte}{$effect}:
+% \begin{myminted}{svelte}{counter.js}
+% export function createCounter() {
+%     let value = $state(0);
+
+%     return {
+%         get value() { return value },
+%         set value(val) { value = val }
+%     }
+% }
+% \end{myminted}
+% \s{$}
+% \begin{myminted}{svelte}{app.svelte}
+% <script>
+%     import { createCounter } from './counter';
+
+%     const counter = createCounter();
+% </script>
+% <input bind:value={counter.value}>
+% \end{myminted}
+
+Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|$:|-syntax, \mintinline{svelte}|$derived| and \mintinline{svelte}{$effect}:
 
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>
@@ -371,6 +394,7 @@ Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|
 \end{myminted}
 \s{$}
 
+In the current version of Svelte, \mintinline{svelte}|$:| is used to handle two different problems. Reactive binding of variables and defining side-effects.   
 \todo{Finish section}
 
 % svelte likely wont go away

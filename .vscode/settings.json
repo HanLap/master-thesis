@@ -5,6 +5,15 @@
   "ltex.latex.environments": {
     "myminted": "ignore"
   },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/out/*[^.pdf]": true,
+  },
   "[latex]": {
     "editor.formatOnPaste": false,
     "editor.suggestSelection": "recentlyUsedByPrefix",
