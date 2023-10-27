@@ -54,6 +54,112 @@ Overall, our performance analysis shows that SvelteKit can significantly improve
 \section{Bundle Size}
 \todo{SvelteKit is way smaller because of tree shaking and code splitting}
 
+\section{Syntax}
+
+\subsection{Components}
+
+\begin{myminted}{svelte}{App.svelte}
+<script>
+    function onShowHello() {
+        alert("Hello World");
+    }
+</script>
+
+<button on:click={onShowHello}>Say Hello</button>
+\end{myminted}
+
+\begin{myminted}{xml}{App.view.xml}
+<mvc:View
+    controllerName="ui5.example.App"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+>
+<Button
+    text="Say Hello"
+    press=".onShowHello"
+/>
+</mvc:View>
+\end{myminted}
+\begin{myminted}{js}{App.controller.js}
+sap.ui.define([
+    "sap/ui/core/mvc/Controller"
+], (Controller) => {
+    "use strict";
+
+    return Controller.extend("ui5.example.App", {
+        onShowHello() {
+            alert("Hello World");
+        }
+    });
+});
+\end{myminted}
+
+
+
+\begin{myminted}{svelte}{App.svelte}
+<script>
+    let value = "World";
+<script>
+<input bin:value> 
+\end{myminted}
+\begin{myminted}{xml}{App.view.xml}
+<mvc:View
+    controllerName="ui5.example.App"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+>
+<Input
+    text="{/value}"
+    press=".onShowHello"
+/>
+</mvc:View>
+\end{myminted}
+\begin{myminted}{js}{App.controller.js}
+sap.ui.define([
+  "sap/ui/core/mvc/Controller"
+], (Controller) => {
+  "use strict";
+
+  return Controller.extend("ui5.example.App", {
+    onInit() {
+      const oData = {
+        value : "World"
+      };
+      const oModel = new JSONModel(oData);
+      this.getView().setModel(oModel);
+    }
+    });
+});
+\end{myminted}
+
+\subsection{Routing}
+
+
+\begin{myminted}{json}{manifest.json}
+{
+  "sap.ui5": {
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "path": "sap.ui.core.sample.RoutingFullscreen.routingApp.view",
+        "controlId": "rootControl",
+        "controlAggregation": "pages",
+        "type": "View",
+        "viewType": "XML",
+        "async": true
+      },
+      "routes": [
+        {
+          "name": "Home",
+          "pattern": "",
+          "target": "Home"
+        }
+      ]
+    }
+  }
+}
+\end{myminted}
+
 \section{Findings}
 % \begin{itemize}
 %     \item Both approaches (full stack and frontend only) worked great
@@ -91,6 +197,9 @@ SvelteKit provides a command line utility to create new projects (\Cref{fig:proj
 We experienced Svelte's syntax as easy to grasp. This is because Svelte's syntax closely adheres to HTML with some added features for templating and reactivity.
 
 Svelte's decision to reuse assignment operators for reactivity, not only makes for a less verbose, but also more intuitive syntax. Something, something code snippet:
+
+
+
 
 \begin{myminted}{svelte}{Svelte}
 <script>
@@ -228,8 +337,9 @@ Furthermore, using fetch in universal load functions, requires usage of a specia
 \label{sec:evaluation-reactivity pitfalls}
 While Svelte's reactivity is overall very intuitive, it nonetheless has some pitfalls.
 
-Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at compile time which variables are referenced inside a reactive statement. These variables are tracked as dependencies and every time one of these dependencies changes, Svelte reevaluates the reactive statement. But in cases where the dependency is used indirectly, for example through a function call, the dependency cannot be seen by Svelte's compiler. Therefore, updates to the dependency will not trigger reevaluation of the reactive-statement:
+Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at compile time which variables are referenced inside a reactive statement. These variables are tracked as dependencies and every time one of these dependencies changes, Svelte reevaluates the reactive statement. But in cases where the dependency is used indirectly, for example through a function call, the dependency cannot be seen by Svelte's compiler. Therefore, updates to the dependency will not trigger reevaluation of the reactive-statement.
 
+\begin{listing}[h!]
 \begin{myminted}[escapeinside=||, autogobble]{svelte}{}
 <script>
     let count = 1;
@@ -244,14 +354,16 @@ Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at
 <button on:click={() => (count++)}>+</button>
 <div>{count} * 2 = {doubled}</div>
 \end{myminted}
+\caption{\mintinline{bash}{doubled} will not be recalculated when \mintinline{bash}{count} changes.}
+\label{fig:evaluation-reactivity-hidden-dependency}
+\end{listing}
 
-In this example, the function \mintinline{svelte}|calcDoubled| calculates the value of \mintinline{svelte}|doubled| in correspondence to \mintinline{svelte}|count|. But, because \mintinline{svelte}|count| is not directly referenced in the reactive statement, it is not tracked as a dependency. Therefore, \mintinline{bash}|doubled| will not be updated when \mintinline{bash}{count} changes.
+\Cref{fig:evaluation-reactivity-hidden-dependency} illustrates this behavior. In this example, the function \mintinline{svelte}|calcDoubled| calculates the value of \mintinline{svelte}|doubled| in correspondence to \mintinline{svelte}|count|. But, because \mintinline{svelte}|count| is not directly referenced in the reactive statement, it is not tracked as a dependency. Therefore, \mintinline{bash}|doubled| will not be updated when \mintinline{bash}{count} changes.
 
 \subsection{Centralized load function}
 SvelteKit's architecture enforces that all asynchronous data has to be acquired inside a pages load function, for it to be available during server side rendering. This provides a clean and easy to understand flow for simple implementations. But it can increase complexity in cases where a single isolated component has to be reused in multiple different routes.
 
-One could for example imagine a simple component which displays a Twitter feed, which has to be used in multiple places. Given following file hierarchy:
-
+\begin{listing}[h]
 \begin{myminted}{html}{}
 routes/
   a/
@@ -262,10 +374,15 @@ routes/
     +page.svelte
   TwitterComponent.svelte
 \end{myminted}
+\caption{Directory hierarchy that has a reusable component.}
+\label{fig:evaluation-reusable-file-hierarchy}
+\end{listing}
 
-Both route a and b need to use the twitter component. The way to implement this in SvelteKit would be to fetch the data in the load function of both routes and pass it to the twitter component as a prop:
+One could for example imagine a simple component which displays a Twitter feed, which has to be used in multiple places. \Cref{fig:evaluation-reusable-file-hierarchy} outlines the directory structure for an example where both route a and b need to use a shared component that fetches and renders a Twitter feed. The way to implement this in SvelteKit would be to fetch the data in the load function of both routes and pass it to the twitter component as a prop (\Cref{fig:evaluation-reusable-sveltekit}).
 
-\begin{myminted}{js}{\string{a,b\string}/+page.js}
+
+\begin{listing}[h!]
+\begin{myminted}{js}{a/+page.js b/+page.js}
 export async function load({ fetch }) {
 
     const twitterFeed = (await fetch('/api/twitterfeed')).json();
@@ -277,8 +394,7 @@ export async function load({ fetch }) {
 }
 
 \end{myminted}
-
-\begin{myminted}{svelte}{\string{a,b\string}/+page.svelte}
+\begin{myminted}{svelte}{a/+page.svelte b/+page.svelte}
 <script>
     import TwitterComponent from '../TwitterComponent.svelte';
 
@@ -288,7 +404,6 @@ export async function load({ fetch }) {
 <TwitterComponent feed={data.twitterFeed} />
 <!-- other page markup... -->
 \end{myminted}
-
 \begin{myminted}{svelte}{TwitterComponent.svelte}
 <script>
     export let feed
@@ -298,11 +413,15 @@ export async function load({ fetch }) {
     <!-- ... -->
 {/each}
 \end{myminted}
+\caption{Example Implementation of a reusable component in SvelteKit}
+\label{fig:evaluation-reusable-sveltekit}
+\end{listing}
 
 This pattern needs to be repeated for each route that wants to use the twitter component. This not only results in unnecessary code duplication, but can also cause problems later in a project's lifecycle. If the twitter component is to be removed later on, it is imaginable that one of the fetch calls is left in by accident, because the data fetching is detached from where the data is actually used, thus causing unnecessary traffic.
 
 Other approaches circumvent this problem by coupling data fetching more closely to its usage. For example, a similar implementation using React Server Components could look something like this:
 
+\begin{listing}[h!]
 \begin{myminted}{jsx}{TwitterComponent.jsx}
 export async function TwitterComponent() {
     const twitterFeed = await (await fetch('/api/twitterfeed')).json();
@@ -314,8 +433,7 @@ export async function TwitterComponent() {
     </>
 }
 \end{myminted}
-
-\begin{myminted}{jsx}{\string{a,b\string}/page.jsx}
+\begin{myminted}{jsx}{a/page.jsx b/page.jsx}
 import TwitterComponent from '../TwitterComponent';
 
 export async function Page() {
@@ -325,6 +443,9 @@ export async function Page() {
     </>
 }
 \end{myminted}
+\caption{Example of a reusable component using React server components.}
+\label{fig:evaluation-reusable-rsc}
+\end{listing}
 
 With this approach, the Twitter component becomes truly isolated from the page, because it can fetch its own data. We expect this architecture to scale better in large applications, than SvelteKit's centralized load function.
 
@@ -339,6 +460,7 @@ Websockets are another feature that is currently not supported out of the box, b
 \todo{SvelteKit wants to be a serverless framework\cite{noauthor_expose_nodate}}
 
 \subsection{Stability}
+\label{sec:evaluation-stability}
 % \begin{itemize}
 %     \item Svelte 2 to 3 was big change
 %     \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
@@ -349,13 +471,17 @@ Version 1.0 of SvelteKit released only recently in December 2022 \cite{team_anno
 
 
 \subsection{Future of Svelte}
-In September 2023, The Svelte team gave a first preview of the next major API revision planned for version 5 of Svelte \cite{team_introducing_2023}. This new Feature is called Runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte (\Cref{sec:svelte-reactivity}). With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune:
+In September 2023, The Svelte team gave a first preview of the next major API revision planned for version 5 of Svelte \cite{team_introducing_2023}. This new Feature is called Runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte (\Cref{sec:svelte-reactivity}). With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune (\Cref{fig:svelte-state-rune}).
 
+\begin{listing}[h!]
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>
     let count = |\$|state(0);
 </script>
 \end{myminted}
+\caption{The \mintinline{bash}{$state}-rune will be used in Svelte 5 to mark a variable as reactive.}
+\label{fig:svelte-state-rune}
+\end{listing}
 
 While initially being more verbose, this has multiple advantages. Firstly, this syntax is more explicit, clearly marking which variable is reactive and which is not. Secondly, this syntax is not limited to the top-level of a svelte file, further, it will even be possible to place state-runes in JavaScript files. This will make it easier to move out state in to separate files. Whereas before, stores were required to place state in separate files, with this new syntax it will be possible to use the same syntax in Svelte-files and in JS-files.
 

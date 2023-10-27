@@ -80,6 +80,24 @@ When server rendered or static web pages are sent to the client side they initia
 
 \input{chapters/03-svelte.tex}
 
+\section{UI5}
+UI5 is a JavaScript-based web frontend-framework. It Was Developed by SAP, a German enterprise software company. The framework was first open-sourced in 2013 under the title OpenUI5 \cite{kurz_brief_2020}. It is focused on development of enterprise-ready applications. UI5's main selling points are a wide range of integrated features, such as data-bindings, OData-API\footnote{\url{https://www.odata.org/}} support, and localization. Furthermore, UI5 provides many ready-made UI-Components with support for accessibility, keyboard navigation and right-to-left languages \cite{kunz_what_2013}.   
+
+UI5's UI-Components are tightly integrated with Fiori\footnote{\url{https://experience.sap.com/fiori-design/}} a set of UI design guidelines that is optimized for the development of enterprise applications.
+
+\begin{figure}
+  \begin{myminted}{xml}{App.view.xml}
+    <blub/>
+  \end{myminted}
+  \begin{myminted}{js}{App.controller.js}
+    sap.m.define([], () => {
+
+    })
+  \end{myminted}
+  \caption{Example of a Component in UI5}
+  \label{fig:ui5-mvc}
+\end{figure}
+
 \section{Methodology}
 \label{sec:methodology}
 
