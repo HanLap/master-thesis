@@ -263,9 +263,7 @@ In a prior example we already showed usage of \mintinline{svelte}{on:click}. Thi
   const dispatch = createEventDispatcher();
 
   function sayHello() {
-    dispatch('message', {
-      text: 'Hello!'
-    });
+    dispatch('message', { text: 'Hello!' });
   }
 </script>
 \end{myminted}
@@ -280,19 +278,32 @@ In a prior example we already showed usage of \mintinline{svelte}{on:click}. Thi
 \label{fig:svelte-custom-event}
 \end{listing}
 
+\subsubsection{Styling}
+\label{sec:svelte-styling}
+Like any sane web framework, Svelte uses CSS to style content. To this end, it is possible to use style-tags to define CSS similar to HTML (\Cref{fig:svelte-style-tag}). Svelte automatically scopes defined styles. This means, the style will only affect markup that is in the same file as the style. This can prevent unexpected styling behavior in growing code bases, because one does not have to worry about unexpected styles. 
+
+\begin{listing}[H]
+\begin{myminted}{svelte}{}
+<button>Click me!</button>
+
+<style>
+  button:hover {
+    background: red;
+  }
+</style>
+\end{myminted}
+\caption{Example usage of style-tag to add CSS.}
+\label{fig:svelte-style-tag}
+\end{listing}
+
 \subsubsection{Directives}
 \label{sec:svelte-directives}
-
-\todo{Section not done...}
-
-% - usually data passed down. Parent can set props of child but not otherway around.
-% - Svelte provides tool to work around that
-% - simpler compared to react
-
 In the previous section we introduced the \mintinline{bash}{on:}-keyword to react to events. This keyword is called a directive. Svelte provides multiple directives to control the behavior of components in some ways.
 
-The \mintinline{svelte}{bind:}-directive can be used to create two-way bindings between parent and child element. In Svelte, data usually flows from parent to child, with the child having no way of directly mutating the data that it is being passed. By passing a property using the \mintinline{svelte}{bind:}-directive, Svelte enables data to flow the other way:
+The \mintinline{svelte}{bind:}-directive can be used to create two-way bindings between parent and child elements. In Svelte, data usually flows from parent to child with the child having no way of directly mutating the data that it is being passed. By passing a property using the \mintinline{svelte}{bind:}-directive, Svelte enables data to flow the other way:
+ (\Cref{fig:svelte-bind-directive}).
 
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script>
   let name = 'Peter';
@@ -300,37 +311,86 @@ The \mintinline{svelte}{bind:}-directive can be used to create two-way bindings 
 
 <input bind:value={name} />
 \end{myminted}
+\caption{Two-way binding with the \mintinline{bash}{bind:}-directive.}
+\label{fig:svelte-bind-directive}
+\end{listing}
 
-The \mintinline{svelte}{class:}-directive provides a more concise syntax to toggle CSS-classes on elements:
+The \mintinline{svelte}{class:}-directive is a utility that can be used to dynamically set CSS-classes on an element. This directive takes an expression that when evaluation to true, will set the given class on the element. This directive also provides a shorthand in cases where a variable is used to set a class of the same name (\Cref{fig:svelte-class-directive}).
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
-<div class={isActive ? 'active' : ''} />
-<div class:active={isActive} />
+<script>
+  let active = true;
+</script>
+
+<!-- all tree declarations are equivalent -->
+<div class={active ? 'active' : ''} />
+<div class:active={active} />
+<div class:active />
 \end{myminted}
-In this example, both elements will behave the same.
+\caption{Example usage of the \mintinline{bash}{class:}-directive.}
+\label{fig:svelte-class-directive}
+\end{listing}
 
-The \mintinline{svelte}{style:}-directive provides a shorthand syntax to set CSS-styles on elements:
+Similar to the previous directive, the \mintinline{svelte}{style:}-directive provides a utility for dynamically setting CSS-styles on an element. The directive takes a value that is used to set the style attribute, where \mintinline{bash}{undefined} and \mintinline{bash}{null} means that the attribute should not be set. In cases where a variable is used to set a style attribute of the same name, Svelte also provides a shorthand (\Cref{fig:svelte-style-directive}).
+
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
+<script>
+  let color = "red";
+  let color = "20rem";
+</script>
+
+<!-- all tree declarations are equivalent -->
+<div style="color:red; width:20rem" />
 <div style:color="red" style:width="20rem" />
+<div style:color style:width />
 \end{myminted}
+\caption{Example usage of the \mintinline{bash}{style:}-directive.}
+\label{fig:svelte-style-directive}
+\end{listing}
+
+The \mintinline{bash}{use:}-directive is used to register an action on an HTML-element. An action is a function that is called when the element is created. The function receives a reference to the element and can thus be used to augment behavior of an element. In \Cref{fig:svelte-use-directive} the \mintinline{bash}{use:}-directive is used to register event listeners that log to the console when a mouse enters the element. While this functionality can be easily implemented using the \mintinline{bash}{on:}-directive, actions become especially useful when more complex behavior has to be configured in a reusable way. \Cref{sec:sveltekit-form-actions} will introduce an action that progressively enhances form-elements.
+
+\begin{listing}[H]
+\begin{myminted}{svelte}{}
+<script>
+  function listen(node) {
+    node.addEventListener('mouseenter', () => console.log("mouse enter"))
+    node.addEventListener('mouseleave', () => console.log("mouse leave"))
+  }
+</script>
+
+<button use:listen>Click me!</button>
+\end{myminted}
+\caption{Example usage of actions to register an event listener.}
+\label{fig:svelte-use-directive}
+\end{listing}
+
 
 \subsubsection{TypeScript}
-
-Svelte has out of the box support for TypeScript. TypeScript can be enabled for a svelte-file by annotating the  script block with a \mintinline{bash}{lang} attribute:
-
+TypeScript is a programming language that has gained a lot of popularity in recent years \cite{noauthor_stack_nodate}. It is a super set of JavaScript that adds typing and type annotations to the language. Svelte has out of the box support for TypeScript. TypeScript can be enabled for a Svelte-file by annotating the script block with a \mintinline{bash}{lang}-attribute (\Cref{fig:svelte-ts-usage}). 
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script lang="ts">
   let value: string = "World"
+
+  function sum(a: number, b: number): number {
+    return a + b;
+  }
 </script>
 \end{myminted}
+\caption{Svelte-file that uses TypeScript.}
+\label{fig:svelte-ts-usage}
+\end{listing}
 
-This however, comes with certain restrictions. It is not possible to use TypeScript syntax outside the script block \cite{noauthor_proposal_nodate}. One might for example want to type the parameters of an inline event handler:
-
+However, TypeScript currently has technical restrictions. It is not possible to use TypeScript syntax outside the script-block \cite{noauthor_proposal_nodate}. One might for example want to type the parameters of an inline event handler (\Cref{fig:svelte-ts-inline-error}). But, in most cases this can reasonably be fixed by refactoring the inline function to a function definition in the script-block.
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
-<input on:change={(e: InputEvent) => {}}> /* this will not work */
+<input on:change={(e: InputEvent) => {}}> /* Syntax Error */
 \end{myminted}
-
-\todo{Finish section / Fix syntax highlighting}
-
+\caption{TypeScript-syntax in inline functions is currently possible.}
+\label{fig:svelte-ts-inline-error}
+\end{listing}
 
 \section{SvelteKit}
 \label{sec:sveltekit}
@@ -473,7 +533,7 @@ export async function load() {
 \end{listing}
 
 \subsubsection{Form Actions}
-\label{sec:sveltekit-server-actions}
+\label{sec:sveltekit-form-actions}
 
 The previous section discussed how SvelteKit applications send dynamic data to the client. But, many applications also need a way to send data to the server. To this end, SvelteKit provides form actions. \mintinline{bash}|+page.server.js|-files can export actions which make it possible to post data to the server using HTML's \mintinline{svelte}{<form>}-elements (\Cref{fig:sveltekit-server-action}).
 

@@ -1,15 +1,13 @@
 \chapter{Related Work}
 \label{ch:related-work}
 
-Because of Svelte's relative novelty, not much scientific work has been published about the language. Nonetheless, we found two works comparing Svelte to other contemporary JavaScript frameworks. \todo{Some more...}
+In this chapter we introduce related research that discusses Svelte or SvelteKit. Because Svelte only recently gained notoriety, not much scientific work has been published about the technology. Nonetheless, two works compare Svelte to contemporary JavaScript frameworks. Furthermore, one survey investigates trends in the JavaScript ecosystem and thus also discusses Svelte and SvelteKit.
 
 \section{Angular and Svelte Frameworks: a Comparative Analysis}
-
-\todo{Don't like this paper...}
+In their work Tripon et al. compare Angular and Svelte \cite{tripon_angular_2021}. To this end, they implemented an example application in both technologies and compared time to set up the project as well as performance. Their results showed that the Svelte implementation performed better than the Angular implementation in terms of performance. Furthermore, they showed that the project setup was fast for Svelte than for Angular. But, they noted that Svelte did not configure a testing environment out of the box. This has since then been remedied, the current setup process for SvelteKit provides the option to configure unit test and integration test environments. Overall they concluded that Svelte is a good fit for small to medium-sized projects, while Angular is best suited for large projects.  
 
 \section{DOM benchmark comparison of the front-end JavaScript frameworks React, Angular, Vue, and Svelte}
-In their work Levlin conducted a performance analysis comparing React\footnote{\url{https://react.dev/}}, Angular\footnote{\url{https://angular.io/}}, Vue\footnote{\url{https://vuejs.org/}}, and Svelte \cite{levlin_dom_2020}. These performance benchmarks primarily focused on DOM manipulations and compared the frameworks speed when inserting, editing, and deleting DOM nodes. Levlin's results show that Svelte is among the fastest of the compared frameworks when manipulating only few nodes. On the other hand, Svelte struggles when manipulating large amounts of elements.    
-\todo{finish...}
+In their work Levlin conducted a performance analysis comparing React\footnote{\url{https://react.dev/}}, Angular\footnote{\url{https://angular.io/}}, Vue\footnote{\url{https://vuejs.org/}}, and Svelte \cite{levlin_dom_2020}. These performance benchmarks primarily focused on DOM manipulations and compared the frameworks speed when inserting, editing, and deleting DOM nodes. Levlin's results show that Svelte is among the fastest of the compared frameworks when manipulating only few nodes. On the other hand, Svelte struggles when manipulating large amounts of elements. Levlin determined React as the overall winner of their study because it performed well in the benchmark section as well as being popular in the State of JS survey (\Cref{sec:state-of-js}) and providing large amount for resources. Notably, Levlin perceived Svelte as very easy to use and noted that it is primarily held back by its comparatively small user base.   
 
 % \begin{itemize}
 %     \item Levlin\cite{levlin_dom_2020}
@@ -20,13 +18,7 @@ In their work Levlin conducted a performance analysis comparing React\footnote{\
 % \end{itemize}
 
 \section{State of JavaScript}
-State of JavaScript is a yearly Survey run by S. Greif and E. Burel \cite{greif_state_2022}. The survey intends to identify trends in the web development. Therefore, helping developers when making technology choices. It asks questions about JavaScript language features, frontend-frameworks, meta-frameworks, and build tools. As an openly accessible survey, it can not guarantee to be representative for the entire developer ecosystem. Instead, it shows results for a subset of developers.
+\label{sec:state-of-js}
+State of JavaScript is a yearly Survey run by S. Greif and E. Burel \cite{greif_state_2022}. The survey intends to identify trends in the web development, therefore helping developers when making technology choices. It asks questions about JavaScript language features, frontend-frameworks, meta-frameworks and build tools. It is an openly accessible survey that allows everybody to answer. Survey participants were mostly from past surveys and social media traffic. Furthermore, respondents where not filtered in any way. Thus, the survey cannot guarantee to be representative for the entire developer community. Instead, it shows results for a specific subset of developers.
 
-The results for 2022 show Svelte as the fourth most used frontend framework with 21.1\%, behind React (81.8\%), Angular (48.8\%), and Vue (46.2\%). In terms of retention (participants that would use the framework again), Svelte placed second (89.7\%), behind Solid (90.9\%). SvelteKit also ranked fourth in terms of usage (11.9\%) behind Next.js\footnote{\url{https://nextjs.org/}} (48.6\%), Gatsby\footnote{\url{https://www.gatsbyjs.com/}} (23\%), and Nuxt\footnote{\url{https://nuxt.com/}} (18.1\%). SvelteKit too placed second in for retention (\todo{percent}), behind Astro (92.8\%).    
-\todo{finish...}
-
-
-
-% \begin{itemize}
-%     \item \cite{noauthor_state_nodate}
-% \end{itemize}
+The results for 2022 show Svelte as the fourth most used frontend framework with 21.1\%, behind React (81.8\%), Angular (48.8\%), and Vue (46.2\%). In terms of retention (participants that would use the framework again), Svelte placed second (89.7\%), behind Solid (90.9\%). SvelteKit also ranked fourth in terms of usage (11.9\%) behind Next.js\footnote{\url{https://nextjs.org/}} (48.6\%), Gatsby\footnote{\url{https://www.gatsbyjs.com/}} (23\%), and Nuxt\footnote{\url{https://nuxt.com/}} (18.1\%). SvelteKit too placed second in for retention (92.5\%), behind Astro\footnote{\url{https://astro.build/}} (92.8\%). While these results are not representative for the software development community as a whole it still shows that SvelteKit is an up and coming technology that is worth to be investigated further.

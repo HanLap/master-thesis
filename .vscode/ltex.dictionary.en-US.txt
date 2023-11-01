@@ -19,3 +19,6 @@ Vite
 filesystem-based
 filesytem
 Levlin
+Astro
+zod
+Zod

@@ -13,6 +13,8 @@ BCOR=15mm              % Bindekorrektur
 \KOMAoptions{DIV=last} % Neuberechnung Satzspiegel nach Laden von Paket helvet
 % \usepackage{scrhack}
 
+\usepackage{pdfpages}
+
 \pagestyle{headings}
 \usepackage{blindtext}
 \usepackage{float}
@@ -192,16 +194,18 @@ Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
 
 \printbibliography
 
-\clearpage
-\thispagestyle{empty}
+\includepdf[pages={1}]{assets/signature.pdf}
 
-Name: \fullname \hfill Matrikelnummer: \matnr \vspace{2cm}
+% \clearpage
+% \thispagestyle{empty}
 
-\minisec{Erklärung}
+% Name: \fullname \hfill Matrikelnummer: \matnr \vspace{2cm}
 
-Ich erkläre, dass ich die Arbeit selbständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel verwendet habe.\vspace{2cm}
+% \minisec{Erklärung}
 
-Ulm, den \dotfill
+% Ich erkläre, dass ich die Arbeit selbständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel verwendet habe.\vspace{2cm}
 
-\hspace{10cm} {\footnotesize \fullname}
+% Ulm, den \dotfill
+
+% \hspace{10cm} {\footnotesize \fullname}
 \end{document}

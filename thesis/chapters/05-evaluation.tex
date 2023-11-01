@@ -1,16 +1,12 @@
 \chapter{Evaluation}
 \label{ch:evaluation}
-\todo{Chapter intro}
+In this chapter we go over our evaluation results. We discuss the outcome of our performance benchmarks. Afterwards, we compare SvelteKit and UI5 on the basis of multiple different code examples to find out how they perform in terms of developer experience. Finally, we discuss further notes and findings about Svelte and SvelteKit we uncovered during our study.
 
 \section{Performance}
 \label{sec:evaluation-performance}
-\todo{Maybe Next.js Benchmark}
+To gain insights into SvelteKit's performance, we ran benchmarks on all existing implementations. Levlin already tested Svelte's performance in DOM manipulation tasks \cite{levlin_dom_2020}, thus we were primarily interested how SvelteKit would fare when loading pages as well as navigating between pages. To this end, we intended to measure the time to first byte (TTFB), first contentful paint (FCP), largest contentful paint (LCP), and time until a new view has rendered after navigation. Following the definitions of web.dev \cite{noauthor_webdev_nodate}, TTFB describes the time it takes until the first byte of data reaches the browser, after first loading a website. First contentful paint describes the time it takes until the browser first renders part of the application to the screen, while largest contentful paint describes the time it takes until the largest image or text block visible within the viewport is rendered. Ordinarily Lighthouse a tool for measuring website performance integrated in Chromium would have been used to measure TTFB, FCP, and LCP. But, we realized that Lighthouse's automated measurement of LCP did not provide a realistic measurement for how long the UI5 implementation took to render its content. Therefore, we resorted to using Chromium's performance tool to create performance recordings. We then took measurements of LCP manually from the recording by checking when all content has been rendered to the screen. The detailed benchmarking process is documented in \Cref{app:benchmark-setup}.  
 
-To gain insights into SvelteKit's performance, we ran benchmarks on all existing implementations. Levlin already tested Svelte's performance in DOM manipulation tasks \cite{levlin_dom_2020}, thus we were primarily interested how SvelteKit would fare when loading pages, as well as navigating between pages. To this end, we intended to measure the time to first byte (TTFB), first contentful paint (FCP), largest contentful paint (LCP), and time until a new view has rendered after navigation. Following the definitions of web.dev \cite{noauthor_webdev_nodate}, TTFB describes the time it takes until the first byte of data reaches the browser, after first loading a website. First contentful paint describes the time it takes until the browser first renders part of the application to the screen, while largest contentful paint describes the time it takes until the largest image or text block visible within the viewport is rendered. Ordinarily Lighthouse, a tool for measuring website performance integrated in Chromium would have been used to measure TTFB, FCP, and LCP. But we realized that Lighthouse's automated measurement of LCP did not provide a realistic measurement for how long the UI5 implementation took to render its content. Therefore, we resorted to using Chromium's performance tool to create performance recordings. We then took measurements of LCP manually from the recording by checking when all content has been rendered to the screen. The detailed benchmarking process is documented in \Cref{app:benchmark-setup}.  
-
-% We tested the existing UI5 implementation and the new SvelteKit Implementations, in multiple metrics. We were especially interested in responsiveness to navigation events. To this end we measured first contentful paint (FCP), the time until the page settled, and cumulative layout shift (CLS). Furthermore, we measured time until the page settled, for a navigation from the chauffeur job overview, to the details view of a chauffeur job \todo{This paragraph could use some work}.
-
-All measurements were conducted on a Lenovo ThinkPad T480, with an Intel Core i7-8550U, and 16 GB RAM, running Windows 11. The measurements where taken using the developer tools of Google Chrome 116.0. We benchmarked the existing UI5 implementation, the SvelteKit full stack implementation (SK-FS), and the SvelteKit implementation, using SvelteKit primarily as a frontend framework, but redirecting requests through the SvelteKit server (SK-FE). Furthermore, we were interested how SvelteKit would fare when deploying it as static files in form of a classic SPA (SK-SPA). 
+All measurements were conducted on a Lenovo ThinkPad T480 with an Intel Core i7-8550U and 16 GB RAM running Windows 11. The measurements where taken using the developer tools of Google Chrome 116.0. We benchmarked the existing UI5 implementation, the SvelteKit full stack implementation (SK-FS), and the SvelteKit implementation, using SvelteKit primarily as a frontend framework, but redirecting requests through the SvelteKit server (SK-FE). Furthermore, we were interested how SvelteKit would fare when deploying it as static files in form of a classic SPA (SK-SPA). 
 
 \begin{figure}
     \centering
@@ -36,7 +32,7 @@ All measurements were conducted on a Lenovo ThinkPad T480, with an Intel Core i7
             \addplot table[x=type,y=sk-fs]{\benchmarkdata};
             \addplot table[x=type,y=sk-fe]{\benchmarkdata};
             \addplot table[x=type,y=sk-spa]{\benchmarkdata};
-            \legend{UI5, SvelteKit Full Stack, SveleKit FE-only, SvelteKit SPA}
+            \legend{UI5, SvelteKit Full Stack, SveleKit Frontend, SvelteKit SPA}
         \end{axis}
     \end{tikzpicture}
     \caption{Benchmark Results for TTFB, FCP, LCP and Nav}
@@ -49,91 +45,75 @@ The Benchmarks also show that all SvelteKit implementations perform faster when 
 
 Overall, our performance analysis shows that SvelteKit can significantly improve initial page load times compared to UI5. This metric is most relevant for conversion rate \cite{noauthor_load_nodate}, a metric for public facing-pages, such as e-commerce platforms. Nonetheless, fast page load times can contribute to the overall user experience for all types of applications. 
 
-% Our measurements (\Cref{fig:benchmark}) show, while the SvelteKit implementations take longer to send content to the client, they reduced time until the relevant data is being shown, significantly. These results align with the expected effects of server side rendering outlined in \Cref{sec:rendering-patterns}. Furthermore, SvelteKit shows significant improvements when navigating between two pages. This is improved even further by SvelteKit's preloading capabilities. In our benchmark, preloading was set to "tap", meaning, the data is being fetched as soon as a \mintinline{html}{mousedown} event is triggered.  
-
-\section{Bundle Size}
-\todo{SvelteKit is way smaller because of tree shaking and code splitting}
-
-\section{Syntax}
+\section{Development Comparison}
+In this chapter we compare SvelteKit and UI5 in terms of ergonomics and developer experience. To this end, we show implementations of common use-cases for both frameworks.
 
 \subsection{Components}
+Creation of custom components is an essential feature in many modern UI Frameworks, It enables composition and reuse of isolated UI pieces such as buttons and inputs. As noted in \Cref{sec:implementation-ui}, we initially tried to use UI5 web components as a component library in Svelte. But, after realizing multiple shortcomings with this approach, we pivoted to writing our own component library in Svelte using a predefined CSS style library. This provided multiple insights into Svelte's applicability for creating custom UI components.
 
-\begin{myminted}{svelte}{App.svelte}
+In the following we show an example component that provides a button which triggers an alert when clicked. The alert shows a custom text that is passed to the control.
+ 
+\begin{listing}[h!]
+\begin{myminted}{svelte}{AlertButton.svelte}
 <script>
-    function onShowHello() {
-        alert("Hello World");
+  export let text;
+
+    function onShowAlert() {
+        alert(text);
     }
 </script>
 
-<button on:click={onShowHello}>Say Hello</button>
+<div>
+  <button on:click={onShowAlert}>Show Alert</button>
+</div>
 \end{myminted}
+\caption{Custom component in Svelte.}
+\label{fig:evulation-component-syntax}
+\end{listing}
 
-\begin{myminted}{xml}{App.view.xml}
-<mvc:View
-    controllerName="ui5.example.App"
-    xmlns="sap.m"
-    xmlns:mvc="sap.ui.core.mvc"
->
-<Button
-    text="Say Hello"
-    press=".onShowHello"
-/>
-</mvc:View>
-\end{myminted}
-\begin{myminted}{js}{App.controller.js}
+\begin{listing}[h!]
+\begin{myminted}{js}{AlertButton.js}
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
-], (Controller) => {
-    "use strict";
-
-    return Controller.extend("ui5.example.App", {
-        onShowHello() {
-            alert("Hello World");
-        }
-    });
-});
-\end{myminted}
-
-
-
-\begin{myminted}{svelte}{App.svelte}
-<script>
-    let value = "World";
-<script>
-<input bin:value> 
-\end{myminted}
-\begin{myminted}{xml}{App.view.xml}
-<mvc:View
-    controllerName="ui5.example.App"
-    xmlns="sap.m"
-    xmlns:mvc="sap.ui.core.mvc"
->
-<Input
-    text="{/value}"
-    press=".onShowHello"
-/>
-</mvc:View>
-\end{myminted}
-\begin{myminted}{js}{App.controller.js}
-sap.ui.define([
-  "sap/ui/core/mvc/Controller"
-], (Controller) => {
+  "sap/ui/core/mvc/Controller",
+  "sap/m/Button"
+], (Controller, Button) => {
   "use strict";
 
-  return Controller.extend("ui5.example.App", {
-    onInit() {
-      const oData = {
-        value : "World"
-      };
-      const oModel = new JSONModel(oData);
-      this.getView().setModel(oModel);
+  return Controller.extend("ui5.example.AlertButton", {
+    metadata : {
+      properties : {
+        text: 	{type : "string" }
+      },
+      aggregations : {
+        _button : {
+          type : "sap.m.Button", 
+          multiple: false, 
+          visibility : "hidden"
+        }
+      }
+    },
+    init() {
+      this.setAggregation("_button", new Button({
+        text: "Show Alert",
+        press: this._onShowAlert.bind(this)
+      }));
+    },
+    _onShowAlert() {
+        alert(this.getText());
+    },
+    renderer(oRm, oControl) {
+      oRm.openStart("div", oControl).openEnd();
+      oRm.renderControl(oControl.getAggregation("_button"));
+      oRm.close("div");
     }
-    });
+  });
 });
 \end{myminted}
+\caption{Component with a custom Button in UI5.}
+\label{fig:evaluation-component-ui5}
+\end{listing}
 
 \subsection{Routing}
-
 
 \begin{myminted}{json}{manifest.json}
 {
@@ -159,6 +139,10 @@ sap.ui.define([
   }
 }
 \end{myminted}
+
+\subsection{Forms}
+
+\subsection{Tables}
 
 \section{Findings}
 % \begin{itemize}
@@ -193,57 +177,43 @@ SvelteKit provides a command line utility to create new projects (\Cref{fig:proj
     \label{fig:project-setup}
 \end{figure}
 
-\subsection{Syntax}
-We experienced Svelte's syntax as easy to grasp. This is because Svelte's syntax closely adheres to HTML with some added features for templating and reactivity.
+% \subsection{Syntax}
+% We experienced Svelte's syntax as easy to grasp. This is because Svelte's syntax closely adheres to HTML with some added features for templating and reactivity.
 
-Svelte's decision to reuse assignment operators for reactivity, not only makes for a less verbose, but also more intuitive syntax. Something, something code snippet:
-
-
+% Svelte's decision to reuse assignment operators for reactivity, not only makes for a less verbose, but also more intuitive syntax. Something, something code snippet:
 
 
-\begin{myminted}{svelte}{Svelte}
-<script>
-    let count = 0;
-</script>
 
-<button on:click={() => (count++)}>+</button>
-\end{myminted}
 
-\begin{myminted}{jsx}{React}
-import { useState } from 'react';
+% \begin{myminted}{svelte}{Svelte}
+% <script>
+%     let count = 0;
+% </script>
 
-export function Component() {
-    const [count, setCount] = useState(0);
+% <button on:click={() => (count++)}>+</button>
+% \end{myminted}
 
-    return <button onClick={() => setCount(c => c + 1)}>+</button>
-}
-\end{myminted}
+% \begin{myminted}{jsx}{React}
+% import { useState } from 'react';
 
-This example clearly shows how Svelte simplifies a common use case, by utilizing its compiler based approach.
+% export function Component() {
+%     const [count, setCount] = useState(0);
 
-\todo{}
+%     return <button onClick={() => setCount(c => c + 1)}>+</button>
+% }
+% \end{myminted}
 
-Simple Store API:
-\begin{myminted}[escapeinside=||]{svelte}{}
-<script>
-    import { writable } from 'svelte/store';
+% This example clearly shows how Svelte simplifies a common use case, by utilizing its compiler based approach.
 
-    const todos = writable([]);
-</script>
+% \todo{}
 
-<button on:click={() => todos.}>add Todo</button>
-{#each |\$|todos as todo}
-    <div>{todo.text}</div>
-{/each}
-\end{myminted}
-
-Simple Reactive Statements:
-\begin{myminted}[escapeinside=||]{svelte}{}
-<script>
-    let count = 0;
-    |\$|: doubled = count * 2;
-</script>
-\end{myminted}
+% Simple Reactive Statements:
+% \begin{myminted}[escapeinside=||]{svelte}{}
+% <script>
+%     let count = 0;
+%     |\$|: doubled = count * 2;
+% </script>
+% \end{myminted}
 
 % \subsection{Library Interoperability}
 
@@ -264,11 +234,54 @@ It has also to be noted that this filesystem-based approach to routing makes it 
 
 % Clear direction: +page.server.js $\rightarrow$ +page.js $\rightarrow$ +page.svelte.
 
-\subsection{Svelte works best with plain HTML}
+\subsection{Component libraries in Svelte}
 \label{sec:evaluation-ui-libs}
-As described in \Cref{sec:implementation-ui}, the implementation was required to follow the SAP Fiori Design Guidelines. To this end we tried using both UI5 web components and a plain CSS classes approach using SAP Fundamental Styles. In either case we decided to create a library of Svelte components that wraps the actual UI utility. This decision was made to reduce the amount of boilerplate code and repetition required to use some UI elements. Furthermore, this decision made it easier to migrate from UI5 web components to fundamental styles, because only the Component library had to be changed. 
+As described in \Cref{sec:implementation-ui}, the implementation was required to follow the SAP Fiori Design Guidelines. To this end we tried using both UI5 web components and a plain CSS classes approach using SAP Fundamental Styles. In either case we decided to create a library of Svelte components that wraps the actual UI utility. This decision was made to reduce the amount of boilerplate code and repetition required to use some UI elements. Furthermore, this decision made it easier to migrate from UI5 web components to fundamental styles, because only the component library had to be changed. 
 
-\todo{Finish section}
+Custom components can reduce the amount of code duplication by encapsulating UI elements into a reusable block. Therefore, components are an important tool in modern frontend design. Nonetheless, we noticed some shortcomings when working with custom components in Svelte. Notably, directives (\Cref{sec:svelte-directives}) do not work on custom components. One might for example expose \mintinline{bash}{class} and \mintinline{bash}{style}-attributes on a component to make it possible to pass extra styling to it (\Cref{fig:evaluation-svelte-component-style}).
+
+\begin{listing}[H]
+\begin{myminted}{svelte}{MyButton.svelte}
+<script>
+  let clazz;
+  export { clazz as class };
+  export let style;
+</script>
+
+<button class={clazz} {style}><slot/></button>
+\end{myminted}
+\begin{myminted}{svelte}{App.svelte}
+<MyButton class="mt-2" style="background: red">Click me!</MyButton>
+\end{myminted}
+\caption{Svelte Component that provides a class and style attribute.}
+\label{fig:evaluation-svelte-component-style}
+\end{listing}
+
+Because Svelte has no notion that these attributes correspond to \mintinline{bash}{class} and \mintinline{bash}{style}-attributes of an HTML-element, it is not possible to use directives to set these values. This means that the consumer of a component library is missing useful features provided by Svelte. Passing style classes especially, caused further problems. As noted in \Cref{sec:svelte-styling}, Svelte scopes style definitions to the component they are declared in. This means that it is not possible to pass styles down to a child component without explicitly declaring a style as global.
+
+\begin{listing}[H]
+\begin{myminted}{svelte}{App.svelte}
+<MyButton class="highlight">Click me!</MyButton>
+
+<style>
+  .highlight:hover {
+    filter: brightness(150%);
+  }
+</style>
+\end{myminted}
+\caption{The style will not apply to the custom component because it is scoped.}
+\label{fig:evaluation-styling-scope}
+\end{listing}
+
+In \Cref{fig:evaluation-styling-scope} a style is defined to highlight the button on hover. But because Svelte scopes the rule to the component it is defined in, the style will not work. Svelte provides the possibility to mark style as global, but this means that every element in the application could potentially be affected by it. This can cause unintended side effects and is therefore not recommended. Another way to handle this issue would be to use libraries that are designed around global styles. Tailwind CSS\footnote{\url{https://tailwindcss.com/}} for example defines all its styling utilities as global CSS classes and therefore is not affected by this problem (\Cref{fig:evaluation-styling-tailwind}).
+
+\begin{listing}[H]
+\begin{myminted}{svelte}{App.svelte}
+  <MyButton class="hover:brightness-150">Click me!</MyButton>
+\end{myminted}
+\caption{A fixed version of \Cref{fig:evaluation-styling-scope} that uses Tailwind CSS.}
+\label{fig:evaluation-styling-tailwind}
+\end{listing}
 
 % In our implementation we experimented with different approaches to structuring our UI-code
 
@@ -332,33 +345,6 @@ Furthermore, using fetch in universal load functions, requires usage of a specia
 % - SvelteKit fetch weird
 % - auth more complicated
 % - 
-
-\subsection{Reactivity Pitfalls}
-\label{sec:evaluation-reactivity pitfalls}
-While Svelte's reactivity is overall very intuitive, it nonetheless has some pitfalls.
-
-Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at compile time which variables are referenced inside a reactive statement. These variables are tracked as dependencies and every time one of these dependencies changes, Svelte reevaluates the reactive statement. But in cases where the dependency is used indirectly, for example through a function call, the dependency cannot be seen by Svelte's compiler. Therefore, updates to the dependency will not trigger reevaluation of the reactive-statement.
-
-\begin{listing}[h!]
-\begin{myminted}[escapeinside=||, autogobble]{svelte}{}
-<script>
-    let count = 1;
-
-    |\$|: doubled = calcDoubled();
-
-    function calcDoubled() {
-        return count * 2;
-    }
-</script>
-
-<button on:click={() => (count++)}>+</button>
-<div>{count} * 2 = {doubled}</div>
-\end{myminted}
-\caption{\mintinline{bash}{doubled} will not be recalculated when \mintinline{bash}{count} changes.}
-\label{fig:evaluation-reactivity-hidden-dependency}
-\end{listing}
-
-\Cref{fig:evaluation-reactivity-hidden-dependency} illustrates this behavior. In this example, the function \mintinline{svelte}|calcDoubled| calculates the value of \mintinline{svelte}|doubled| in correspondence to \mintinline{svelte}|count|. But, because \mintinline{svelte}|count| is not directly referenced in the reactive statement, it is not tracked as a dependency. Therefore, \mintinline{bash}|doubled| will not be updated when \mintinline{bash}{count} changes.
 
 \subsection{Centralized load function}
 SvelteKit's architecture enforces that all asynchronous data has to be acquired inside a pages load function, for it to be available during server side rendering. This provides a clean and easy to understand flow for simple implementations. But it can increase complexity in cases where a single isolated component has to be reused in multiple different routes.
@@ -449,41 +435,58 @@ export async function Page() {
 
 With this approach, the Twitter component becomes truly isolated from the page, because it can fetch its own data. We expect this architecture to scale better in large applications, than SvelteKit's centralized load function.
 
+\subsection{Reactivity Pitfalls}
+\label{sec:evaluation-reactivity pitfalls}
+While Svelte's reactivity is overall very intuitive, it nonetheless has some pitfalls.
+
+Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at compile time which variables are referenced inside a reactive statement. These variables are tracked as dependencies and every time one of these dependencies changes, Svelte reevaluates the reactive statement. But in cases where the dependency is used indirectly, for example through a function call, the dependency cannot be seen by Svelte's compiler. Therefore, updates to the dependency will not trigger reevaluation of the reactive-statement.
+
+\begin{listing}[h!]
+\begin{myminted}[escapeinside=||, autogobble]{svelte}{}
+<script>
+    let count = 1;
+
+    |\$|: doubled = calcDoubled();
+
+    function calcDoubled() {
+        return count * 2;
+    }
+</script>
+
+<button on:click={() => (count++)}>+</button>
+<div>{count} * 2 = {doubled}</div>
+\end{myminted}
+\caption{\mintinline{bash}{doubled} will not be recalculated when \mintinline{bash}{count} changes.}
+\label{fig:evaluation-reactivity-hidden-dependency}
+\end{listing}
+
+\Cref{fig:evaluation-reactivity-hidden-dependency} illustrates this behavior. In this example, the function \mintinline{svelte}|calcDoubled| calculates the value of \mintinline{svelte}|doubled| in correspondence to \mintinline{svelte}|count|. But, because \mintinline{svelte}|count| is not directly referenced in the reactive statement, it is not tracked as a dependency. Therefore, \mintinline{bash}|doubled| will not be updated when \mintinline{bash}{count} changes.
+
+
 
 \subsection{Deployment}
 SvelteKit provides first-class adapters that automate creating production deployments for various hosting providers such as Vercel\footnote{\url{https://vercel.com/}}, Netlify\footnote{\url{https://www.netlify.com/}}, Cloudflare Pages\footnote{\url{https://pages.cloudflare.com/}}, and Cloudflare Workers\footnote{\url{https://workers.cloudflare.com/}}. Furthermore, adapters exist to create standalone NodeJS server, or generate a static bundle that can be served from a simple file-base web server. Beyond this, a wide range of community plugins exist which further extend the range of platforms, SvelteKit can be deployed to. This means that SvelteKit generally supports great flexibility for deployment with comparatively little effort.  
 
 But, this wide range of supported platforms creates some shortcomings. SvelteKit does mostly not implement features that require platform specific functionality. One such feature would be a hook that is executed when the application shuts down. This can sometimes be required for example to close open connections. While this can be easily worked around in a NodeJS environment, by using \mintinline{js}{process.on('sigint', ...)}, other features are not added this easily. 
 
-Websockets are another feature that is currently not supported out of the box, because some providers such as Vercel have no support for websockets yet \cite{noauthor_vercel_nodate}. While it is possible to add websocket support to the NodeJS platform this is not possible without shortcomings. By default, the NodeJS adapter creates an entry point that starts a web server to host all handlers required by SvelteKit. It is possible to forego this entry point and instead write a custom server that uses the handlers directly. In this way it is possible to create a web server that uses websockets. But, this approach only works for the production build, in development, another workaround is required that works with hot-module replacement. Furthermore, a separate 
+Websockets are another feature that is currently not supported out of the box, because some providers such as Vercel have no support for websockets yet \cite{noauthor_vercel_nodate}. While it is possible to add websocket support to the NodeJS platform this is not possible without shortcomings. By default, the NodeJS adapter creates an entry point that starts a web server to host all handlers required by SvelteKit. It is possible to forgo this entry point and instead write a custom server that uses the handlers directly. In this way it is possible to create a web server that uses websockets. But, this approach only works for the production build, in development, another workaround is required that works with hot-module replacement. Furthermore, a separate 
 
 \todo{SvelteKit wants to be a serverless framework\cite{noauthor_expose_nodate}}
-
-\subsection{Stability}
-\label{sec:evaluation-stability}
-% \begin{itemize}
-%     \item Svelte 2 to 3 was big change
-%     \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
-% \end{itemize}
-Version 1.0 of SvelteKit released only recently in December 2022 \cite{team_announcing_2022}, thus it is not possible to tell how stable the APIs of the framework will be going forward. Svelte on the other hand has reached its fourth major version. So far, version 3 made changes to its API, which caused a need for manual migrations. 
-
-\todo{Finish section}
-
 
 \subsection{Future of Svelte}
 In September 2023, The Svelte team gave a first preview of the next major API revision planned for version 5 of Svelte \cite{team_introducing_2023}. This new Feature is called Runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte (\Cref{sec:svelte-reactivity}). With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune (\Cref{fig:svelte-state-rune}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>
     let count = |\$|state(0);
 </script>
 \end{myminted}
-\caption{The \mintinline{bash}{$state}-rune will be used in Svelte 5 to mark a variable as reactive.}
+\caption{The \mintinline{html}{$state}-rune will be used in Svelte 5 to mark a variable as reactive.}
 \label{fig:svelte-state-rune}
 \end{listing}
 
-While initially being more verbose, this has multiple advantages. Firstly, this syntax is more explicit, clearly marking which variable is reactive and which is not. Secondly, this syntax is not limited to the top-level of a svelte file, further, it will even be possible to place state-runes in JavaScript files. This will make it easier to move out state in to separate files. Whereas before, stores were required to place state in separate files, with this new syntax it will be possible to use the same syntax in Svelte-files and in JS-files.
+While initially being more verbose, this has multiple advantages. Firstly, this syntax is more explicit, clearly marking which variable is reactive and which is not. Secondly, in the current reactivity system of Svelte only top-level variables are reactive. With runes, it will be possible to mark variables as reactive, anywhere in the code. Further, it will even be possible to place state-runes in JavaScript-files. This will make it easier to move out state in to separate files. Whereas before, large rewrites where necessary to move state logic out of a Svelte-file, with this new syntax it will be possible to use the same syntax in Svelte-files and in JS-files.
 
 % \begin{myminted}{svelte}{counter.js}
 % export function createCounter() {
@@ -505,8 +508,9 @@ While initially being more verbose, this has multiple advantages. Firstly, this 
 % <input bind:value={counter.value}>
 % \end{myminted}
 
-Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|$:|-syntax, \mintinline{svelte}|$derived| and \mintinline{svelte}{$effect}:
+Furthermore, Svelte 5 also introduces the \mintinline{svelte}{$derived} and \mintinline{svelte}{$effect} runes which replace the \mintinline{svelte}{$:}-syntax (\Cref{fig:evaluation-effect-rune}). In the current version of Svelte, \mintinline{svelte}{$:} is used to handle two different features, reactive binding of variables and defining side effects.   
 
+\begin{listing}[H]
 \begin{myminted}[escapeinside=||]{svelte}{}
 <script>
     let count = |\$|state(0);
@@ -519,8 +523,21 @@ Furthermore, Svelte 5 introduces two runes that replace the \mintinline{svelte}|
 </script>
 \end{myminted}
 \s{$}
+\caption{Example usage of the \mintinline{html}{$derived} and \mintinline{html}{$effect} runes.}
+\label{fig:evaluation-effect-rune}
+\end{listing}
 
-In the current version of Svelte, \mintinline{svelte}|$:| is used to handle two different problems. Reactive binding of variables and defining side-effects.   
-\todo{Finish section}
+The new rune system will also solve the problems outlined in \Cref{sec:evaluation-reactivity pitfalls}. Currently, reactive dependencies are tracked at compile-time. This makes it impossible to track indirect dependencies. Runes on the other hand, will track their dependencies at run-time, therefore making it possible to also track indirect dependencies. This will make Svelte's system for reactivity overall easier to reason about. 
 
 % svelte likely wont go away
+
+\subsection{Stability}
+\label{sec:evaluation-stability}
+% \begin{itemize}
+%     \item Svelte 2 to 3 was big change
+%     \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
+% \end{itemize}
+
+Historically, the Svelte team did not shy away from innovating the framework. Both Svelte 2 and Svelte 3 introduced major breaking changes \Cite{harris_svelte_2018,harris_svelte_2019}. Furthermore, with runes, Svelte is already receiving the next major breaking change. The old system for reactivity is planned for removal with Svelte 7. In the meantime, Svelte will support both syntaxes in the same code base on a per component basis. This gives projects time to migrate to runes. Nonetheless, especially in large code bases this can cause migration cost. For past breaking changes the Svelte Team provided tools to automate much of the migration work \cite{harris_svelte_2018}. They aim to do the same for runes, hopefully minimizing the effort required to migrate. 
+
+Version 1.0 of SvelteKit released only recently in December 2022 \cite{team_announcing_2022}. It is not possible to say how stable SvelteKit's APIs will be going forward. If Svelte's history is any indication, SvelteKit will probably also receive major API overhauls, should the need arise. Historically, Svelte has proven to be fast moving, therefore projects that use SvelteKit should be ready to put in regular migration work, to prevent the code base from becoming outdated.
