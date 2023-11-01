@@ -10,9 +10,9 @@ Drivers need to be manually assigned to a job by the dispatcher. To this end, th
 The application also provides features to directly interact with drivers, such as broadcasting messages to all drivers, reminding a driver to take their mandatory break, and directly calling a driver.
 
 \section{Current Implementation}
-The current Implementation is realized using a classic frontend-backend architecture. The backend is implemented using the Java web framework Spring\footnote{\url{https://spring.io/}}. It provides a SOAP web server on which new Jobs are submitted from another service. Data is persisted in a MSSQL database. The backend also provides Multiple REST API's and an OData API for communication with the frontend. Furthermore, the backend has to interact with Firebase to trigger push notifications on smartphone devices.
+The current Implementation is realized using a classic frontend-backend architecture. The backend is implemented using the Java web framework Spring\footnote{\url{https://spring.io/}}. It provides a SOAP web server on which new jobs are submitted from another service. Data is persisted in a MSSQL database. The backend also provides Multiple REST APIs and an OData API for communication with the frontend. Furthermore, the backend has to interact with Firebase to trigger push notifications on smartphone devices.
 
-The System provides two frontends, an android application, which is used by the chauffeur drivers to receive jobs and communication from headquarters and a web client which is used by handlers to manage jobs and drivers. The web client is implemented using OpenUI5\footnote{\url{https://openui5.org/}}. OpenUI5 is a frontend framework published by SAP, it is intended for development of enterprise applications which follow SAP's Fiori design guidelines\footnote{\url{https://experience.sap.com/fiori-design/}}. All APIs of the backend require authentication. To this end the frontend has to authenticate with a Keycloak\footnote{\url{https://www.keycloak.org/}} instance using OpenID Connect (OIDC). An overview of the system architecture is provided in \Cref{fig:dswfd-architecture}.
+The system provides two frontends, an android application, which is used by the chauffeur drivers to receive jobs and communication from headquarters, and a web client which is used by handlers to manage jobs and drivers. The web client is implemented using OpenUI5\footnote{\url{https://openui5.org/}}. OpenUI5 is a frontend framework published by SAP, it is intended for development of enterprise applications which follow SAP's Fiori design guidelines\footnote{\url{https://experience.sap.com/fiori-design/}}. All APIs of the backend require authentication. To this end the frontend has to authenticate with a Keycloak\footnote{\url{https://www.keycloak.org/}} instance using OpenID Connect (OIDC). An overview of the system architecture is provided in \Cref{fig:dswfd-architecture}.
 
 \begin{figure}[ht]
     \centering
@@ -22,29 +22,29 @@ The System provides two frontends, an android application, which is used by the 
 \end{figure}
 
 \section{SvelteKit Implementation}
-Our study focused on the core of DSW-FD's system landscape, comprised of the Spring backend and the OpenUI5 web frontend. We experimented with two different implementations. One where SvelteKit replaces both the backend and frontend and one where SvelteKit only replaces the frontend. Both our implementations had to communicate with the Keycloak service to authenticate. The full stack implementation also had to interact with the MSSQL database. As to focus on the most relevant parts, APIs for the android application, Firebase communication, and the SOAP API for ICB were not implemented. We also decided to use TypeScript instead of regular JavaScript. This provided a better developer experience with little extra overhead. Because SvelteKit can infer types for most of its internal functionality extra types had to be only defined for external API's.
+Our study focused on the core of DSW-FD's system landscape, comprised of the Spring backend and the OpenUI5 web frontend. We experimented with two different implementations. One where SvelteKit replaces both the backend and frontend, and one where SvelteKit only replaces the frontend. Both our implementations had to communicate with the Keycloak service to authenticate. The full stack implementation also had to interact with the MSSQL database. As to focus on the most relevant parts, APIs for the android application, Firebase communication, and the SOAP API for ICB were not implemented. We also decided to use TypeScript instead of regular JavaScript. This provided a better developer experience with little extra overhead. Because SvelteKit can infer types for most of its internal functionality, extra types had to be only defined for external APIs.
 
 We focused our implementation on a subset of features required to manage chauffeur jobs. To this end we implemented three pages: the overview page that shows all currently relevant chauffeur jobs (\Cref{fig:current-overview-auftrag}), the detail page for chauffeur jobs (\Cref{fig:current-details-auftrag}), and a view that is used to create new (internal) chauffeur jobs.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{assets/current-auftrag-overview}
-    \caption{Overview of chauffeur jobs in current implementation}
+    \caption{Overview of chauffeur jobs in current implementation filled with dummy data.}
     \label{fig:current-overview-auftrag}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{assets/current-auftrag-details}
-    \caption{Chauffeur job details view in current implementation}
+    \caption{Chauffeur job details view in current implementation for a dummy job.}
     \label{fig:current-details-auftrag}
 \end{figure}
 
 
 \subsection{Full Stack Implementation}
-Our first approach was the full stack implementation. This implementation has to replace the UI5 frontend as well as the Spring backend (\Cref{fig:dswfd-architecture-fullstack}). To this end business logic, database communication and API's all had to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database using introspection. This allowed us to save time on defining models. 
+Our first approach was the full stack implementation. This implementation has to replace the UI5 frontend as well as the Spring backend (\Cref{fig:dswfd-architecture-fullstack}). To this end, business logic, database communication and API's all had to be implemented in SvelteKit. We used Prisma\footnote{\url{https://www.prisma.io}} for object relational mapping to communicate with the database, because Prisma provides functionality to generate its data model from an existing database using introspection. This allowed us to save time on defining models. 
 
-This implementation makes use of SvelteKit's server load functions (\Cref{sec:sveltekit-loading}). The load function for each page calls a separate service function which queries required data from the database. For posting data to the server we used SvelteKit's recommended mechanism, form actions (\Cref{sec:sveltekit-form-actions}). Form actions send \mintinline{bash}{FormData}-objects\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/FormData}} to the server. These objects hold the raw request data as key-value pairs. To validate the correctness of this data we used Zod\footnote{\url{https://zod.dev/}}. Zod is a schema validation library that can be used to define constraints a data structure has to satisfy. Furthermore, with the extension \mintinline{bash}{zod-form-data}\footnote{\url{https://www.npmjs.com/package/zod-form-data}}, Zod can be used to parse \mintinline{bash}{FormData}-objects into a given data structure. This overall improved the ergonomics of using SvelteKit's form-actions.  
+This implementation makes use of SvelteKit's server load functions (\Cref{sec:sveltekit-loading}). The load function for each page calls a separate service function which queries required data from the database. For posting data to the server we used SvelteKit's recommended mechanism, form actions (\Cref{sec:sveltekit-form-actions}). Form actions send \mintinline{text}{FormData} objects\footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/FormData}} to the server. These objects hold the raw request data as key-value pairs. To validate the correctness of this data we used Zod\footnote{\url{https://zod.dev/}}. Zod is a schema validation library that can be used to define constraints that a data structure has to satisfy. Furthermore, with the extension \mintinline{text}{zod-form-data}\footnote{\url{https://www.npmjs.com/package/zod-form-data}}, Zod can be used to parse \mintinline{text}{FormData} objects into a given data structure. This overall improved the ergonomics of using SvelteKit's form actions.  
 
 % Business logic could be ported directly from Java to TypeScript, which made it a primarily laborious task. 
 
@@ -56,22 +56,22 @@ This implementation makes use of SvelteKit's server load functions (\Cref{sec:sv
 \end{figure}
 
 \subsection{Frontend Implementation}
-We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility because backend technology can be chosen individually. Communication to the backend is primarily handled using web API's. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\Cref{sec:sveltekit-loading}). This means that the SvelteKit server is only used during SSR. After the browser has loaded the page, universal load functions are executed client-side and thus the client directs its requests directly to the backend instead of sending  a request to the SvelteKit server, which then requests the data, from the backend, overall saving one step of indirection. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing a dedicated SvelteKit server. This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar.
+We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility because backend technology can be chosen individually. Communication to the backend is primarily handled using web APIs. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\Cref{sec:sveltekit-loading}). This means that the SvelteKit server is only used during SSR. After the browser has loaded the page, universal load functions are executed client-side. The client then directs its requests directly to the backend instead of sending a request to the SvelteKit server which then requests the data from the backend. Therefore, saving one unnecessary hop. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing a dedicated SvelteKit server. This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.6\linewidth]{assets/fe-only-client-takes-over}
+    \includegraphics[width=.9\linewidth]{assets/dswfd-architecture-frontend}
     \caption{Architecture overview of the implementation using SvelteKit only for the frontend}
     \label{fig:dswfd-architecture-fe-only}
 \end{figure}
 
 \subsection{SPA Implementation}
 \label{sec:implementation-redirect}
-But, this approach has several shortcomings explained in \Cref{sec:evaluation-universal}. Therefore, further experimented with an implementation that again uses server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server side code, the server side is primarily used as middleware that sends REST requests to the Spring backend.
+But this approach has several shortcomings explained in \Cref{sec:evaluation-universal}. Therefore, we further experimented with an implementation that again uses server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server side code, the server side is primarily used as middleware that sends REST requests to the Spring backend.
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.6\linewidth]{assets/fe-only-all-server}
+    \includegraphics[width=.8\linewidth]{assets/dswfd-architecture-spa}
     \caption{Architecture overview of the implementation using SvelteKit only as a frontend}
     \label{fig:dswfd-architecture-fe-through-server}
 \end{figure}
@@ -81,9 +81,9 @@ This approach has multiple advantages. It uses much of the built-in functionalit
 
 \subsection{UI Considerations}
 \label{sec:implementation-ui}
-One of the project-clients requirements for the original implementation was that the frontend follows the SAP Fiori design guidelines. While not strictly necessary for our study, we decided to adhere to this requirement in our SvelteKit implementations. We hoped to gain insights into how SvelteKit behaves, when interacting with UI libraries. The current implementation uses UI5 which has SAP Fiori components built into the framework itself. As it is not possible to use these components outside the framework, we had to use alternatives.   
+One of the project client's requirements for the original implementation was that the frontend follows the SAP Fiori design guidelines. While not strictly necessary for our study, we decided to adhere to this requirement in our SvelteKit implementations. We hoped to gain insights into how SvelteKit behaves when interacting with UI libraries. The current implementation uses UI5 which has SAP Fiori components built into the framework itself. As it is not possible to use these components outside the framework, we had to use alternatives.   
 
-We first tried to use UI5 Web Components\footnote{\url{https://sap.github.io/ui5-webcomponents/}}. These premade components promise to be a feature rich and framework-agnostic implementation of the Fiori Design Guidelines. In practice, we noticed issues with this approach which will be discussed in \Cref{sec:evaluation-ui-libs}. Therefore, we decided to use SAP Fundamental Styles\footnote{\url{https://sap.github.io/fundamental-styles/}}, a library that provides CSS-Styles to create Fiori components. We then built a custom UI Component library around these Styles. This had the added benefit of providing insights into how Svelte performs for creating UI-Components.
+We first tried to use UI5 Web Components\footnote{\url{https://sap.github.io/ui5-webcomponents/}}. These premade components promise to be a feature rich and framework-agnostic implementation of the Fiori Design Guidelines. In practice, we noticed issues with this approach which will be discussed in \Cref{sec:evaluation-ui-libs}. Therefore, we decided to use SAP Fundamental Styles\footnote{\url{https://sap.github.io/fundamental-styles/}}, a library that provides CSS styles to create Fiori components. We then built a custom UI Component library around these styles. This had the added benefit of providing insights into how Svelte performs for creating UI components.
 
 
 % Our first approach was to use SAP's UI5 Web components. Web components promise to be a framework-agnostic approach to UI components. But we encountered some problems early on:

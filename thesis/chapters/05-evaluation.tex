@@ -82,7 +82,7 @@ sap.ui.define([
   return Controller.extend("ui5.example.AlertButton", {
     metadata : {
       properties : {
-        text: 	{type : "string" }
+        text: {type : "string" }
       },
       aggregations : {
         _button : {
@@ -145,28 +145,17 @@ sap.ui.define([
 \subsection{Tables}
 
 \section{Findings}
-% \begin{itemize}
-%     \item Both approaches (full stack and frontend only) worked great
-%     \item advantage of full-stack: 
-%     \item no API definition required
-%     \item reuse of models between UI and business logic or even type inference
-% \end{itemize}
-In this section we give our personal experience developing with SvelteKit in an attempt to reason about SvelteKit's expected developer experience. As we noted in \Cref{sec:methodology}, providing a heuristic analysis of SvelteKit's DX is out of scope.
+In this section we discuss further aspects of SvelteKit we discovered during our study. 
 
-In our experience both discussed implementations (full stack in SvelteKit and SvelteKit frontend only) enabled an efficient and pleasant development experience. Especially the full stack approach significantly reduced overhead, because models could be reused between client and server and communication between server and client happened transparently.
+% In this section we discuss our personal experience developing with SvelteKit in an attempt to reason about SvelteKit's expected developer experience. As we noted in \Cref{sec:methodology}, providing a heuristic analysis of SvelteKit's DX is out of scope.
 
-% \begin{itemize}
-%     \item Concise / Intuitive Syntax
-%     \item reduction of client-server waterfalls
-%     \item SPA/SSR/SSG with single framework
-%     \item clear data flow (load function $\rightarrow$ svelte, svelte $\rightarrow$ action)
-% \end{itemize}
+% In our experience, all discussed SvelteKit implementations enabled an efficient and smooth development experience. Especially the full stack approach significantly reduced overhead, because models could be reused between client and server and SvelteKit functionality handled communication.
 
 \subsection{Project Setup}
 SvelteKit provides a command line utility to create new projects (\Cref{fig:project-setup}). This utility provides options to configure TypeScript for type checking, ESLint\footnote{\url{https://eslint.org/}} for code linting, Prettier\footnote{\url{https://prettier.io/}} for code formatting, as well as Vitest\footnote{\url{https://vitest.dev/}} and Playwright\footnote{\url{https://playwright.dev/}} for testing. 
 
 % \begin{itemize}
-%     \item Fast, \mintinline{bash}{npm cgeate svelte@latest}
+%     \item Fast, \mintinline{text}{npm cgeate svelte@latest}
 %     \item missing out-of-the-box features: form validation/parsing
 % \end{itemize}
 
@@ -226,7 +215,7 @@ SvelteKit provides a command line utility to create new projects (\Cref{fig:proj
 
 
 \subsection{Routing}
-SvelteKit decided to integrate a filesystem-based routing system. This comes with some inherit advantages and disadvantages. Probably the biggest advantages is, that this approach makes immediately clear what the purpose of a file is. Especially for simple cases this routing system works with no overhead and makes it possible to work very fast, when adding new routes. But some problems become apparent in more complex examples. Projects with a large amount of routes will inevitably have many files with the same name. In our experience this could make it harder sometimes to use IDE search functions to quickly navigate between many files, because searching most of the time returned more than one \mintinline{bash}|+page.svelte| or \mintinline{bash}{+page.js} file. Furthermore, solutions to some problems can cause a lot of file changes in a version control system. During our implementation efforts, we found the need to wrap multiple routes in a layout group. This meant, all files hat to be moved to a new subdirectory. This caused a lot of noise in the version control system for a change that was simple in nature. With a declarative routing solution the same problem could have been solved by simple changing the router configuration.
+SvelteKit decided to integrate a filesystem-based routing system. This comes with some inherit advantages and disadvantages. Probably the biggest advantages is, that this approach makes immediately clear what the purpose of a file is. Especially for simple cases this routing system works with no overhead and makes it possible to work very fast, when adding new routes. But some problems become apparent in more complex examples. Projects with a large amount of routes will inevitably have many files with the same name. In our experience this could make it harder sometimes to use IDE search functions to quickly navigate between many files, because searching most of the time returned more than one \mintinline{text}|+page.svelte| or \mintinline{text}{+page.js} file. Furthermore, solutions to some problems can cause a lot of file changes in a version control system. During our implementation efforts, we found the need to wrap multiple routes in a layout group. This meant, all files hat to be moved to a new subdirectory. This caused a lot of noise in the version control system for a change that was simple in nature. With a declarative routing solution the same problem could have been solved by simple changing the router configuration.
 
 It has also to be noted that this filesystem-based approach to routing makes it effectively impossible to split a singular SvelteKit application into multiple smaller projects. Because routing is strictly bound to the filesytem, it is only possible to configure routing in the root project.
 
@@ -238,7 +227,7 @@ It has also to be noted that this filesystem-based approach to routing makes it 
 \label{sec:evaluation-ui-libs}
 As described in \Cref{sec:implementation-ui}, the implementation was required to follow the SAP Fiori Design Guidelines. To this end we tried using both UI5 web components and a plain CSS classes approach using SAP Fundamental Styles. In either case we decided to create a library of Svelte components that wraps the actual UI utility. This decision was made to reduce the amount of boilerplate code and repetition required to use some UI elements. Furthermore, this decision made it easier to migrate from UI5 web components to fundamental styles, because only the component library had to be changed. 
 
-Custom components can reduce the amount of code duplication by encapsulating UI elements into a reusable block. Therefore, components are an important tool in modern frontend design. Nonetheless, we noticed some shortcomings when working with custom components in Svelte. Notably, directives (\Cref{sec:svelte-directives}) do not work on custom components. One might for example expose \mintinline{bash}{class} and \mintinline{bash}{style}-attributes on a component to make it possible to pass extra styling to it (\Cref{fig:evaluation-svelte-component-style}).
+Custom components can reduce the amount of code duplication by encapsulating UI elements into a reusable block. Therefore, components are an important tool in modern frontend design. Nonetheless, we noticed some shortcomings when working with custom components in Svelte. Notably, directives (\Cref{sec:svelte-directives}) do not work on custom components. One might for example expose \mintinline{text}{class} and \mintinline{text}{style}-attributes on a component to make it possible to pass extra styling to it (\Cref{fig:evaluation-svelte-component-style}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{MyButton.svelte}
@@ -257,7 +246,7 @@ Custom components can reduce the amount of code duplication by encapsulating UI 
 \label{fig:evaluation-svelte-component-style}
 \end{listing}
 
-Because Svelte has no notion that these attributes correspond to \mintinline{bash}{class} and \mintinline{bash}{style}-attributes of an HTML-element, it is not possible to use directives to set these values. This means that the consumer of a component library is missing useful features provided by Svelte. Passing style classes especially, caused further problems. As noted in \Cref{sec:svelte-styling}, Svelte scopes style definitions to the component they are declared in. This means that it is not possible to pass styles down to a child component without explicitly declaring a style as global.
+Because Svelte has no notion that these attributes correspond to \mintinline{text}{class} and \mintinline{text}{style}-attributes of an HTML-element, it is not possible to use directives to set these values. This means that the consumer of a component library is missing useful features provided by Svelte. Passing style classes especially, caused further problems. As noted in \Cref{sec:svelte-styling}, Svelte scopes style definitions to the component they are declared in. This means that it is not possible to pass styles down to a child component without explicitly declaring a style as global.
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{App.svelte}
@@ -307,7 +296,7 @@ In \Cref{fig:evaluation-styling-scope} a style is defined to highlight the butto
 
 \subsection{Universal vs. Server Load Functions}
 \label{sec:evaluation-universal}
-As noted in \Cref{sec:implementation-redirect}, we encountered multiple problems with the frontend only implementation that utilizes universal. The primary problem is, that SvelteKit provides no help for sending data to the backend. While data loading is streamlined through universal load functions. Server actions, as used in the full stack implementation, can only be used server side. This means, that submitting data has to be handled manually. Furthermore, this means that submitting data will only work when JavaScript is enabled. This is likely the main reason why SvelteKit provides no support for this use case, because prioritizes progressive enhancement.
+As noted in \Cref{sec:implementation-redirect}, we encountered multiple problems with the frontend only implementation that utilizes universal load functions. The primary problem is that SvelteKit provides no support for sending data to the backend. While data loading is streamlined through universal load functions, server actions, as used in the full stack implementation, can only be used server side. This means that submitting data has to be handled manually. Furthermore, submitting data will only work when JavaScript is enabled. This is likely the main reason why SvelteKit provides no support for this use case, because it prioritizes progressive enhancement.
 
 % \begin{myminted}{svelte}{}
 % <script>
@@ -337,7 +326,7 @@ As noted in \Cref{sec:implementation-redirect}, we encountered multiple problems
 % During this approach we also realized further complications. Firstly, authentication with the backend API becomes more complex, because both client and server need the access token for the API.
 % could this be fixed by passing through the api token??
 
-Furthermore, using fetch in universal load functions, requires usage of a special fetch function supplied by SvelteKit. This special fetch function makes sure that fetching data behaves the ame way on the client and server. Additionally, When a page with a universal load function is accessed, the load function is first run on the server during SSR, and the result is sent to the client. During hydration on the client side, the load function is then run again. This means, that ordinarily all fetch calls executed in the load function would run two times, once on the server and once on the client. To prevent this, SvelteKit's implementation inlines fetch responses on the server side, and then uses the inlined response on the client during hydration. This means, that it is necessary to use SvelteKit's fetch implementation. But, as this special fetch function is only exposed as an argument in load functions, one has to always pass this fetch function on any delegates, which require network communication. Furthermore, it is not possible to use custom HTTP-clients, such as Axios\footnote{\url{https://axios-http.com/}}.
+Furthermore, using fetch in universal load functions requires usage of a special fetch function supplied by SvelteKit. This special fetch function makes sure that fetching data behaves the ame way on the client and server. Additionally, when a page with a universal load function is accessed, the load function is first run on the server during SSR, and the result is sent to the client. During hydration on the client side, the load function is then run again. This means, that ordinarily all fetch calls executed in the load function would run two times, once on the server and once on the client. To prevent this, SvelteKit's implementation inlines fetch responses on the server side, and then uses the inlined response on the client during hydration. This means, that it is advisable to use SvelteKit's fetch implementation. But, as this special fetch function is only exposed as an argument in load functions, one has to always pass this fetch function on any delegates, which require network communication. Furthermore, it is not possible to use custom HTTP-clients, such as Axios\footnote{\url{https://axios-http.com/}}.
 
 % Svelte's custom fetch function further increased complexity. SvelteKit's implementation of fetch makes sure that fetch behaves similarly on the client and server. Therefore, it enables relative URL paths on the server, which would ordinarily not be possible.
 
@@ -347,7 +336,7 @@ Furthermore, using fetch in universal load functions, requires usage of a specia
 % - 
 
 \subsection{Centralized load function}
-SvelteKit's architecture enforces that all asynchronous data has to be acquired inside a pages load function, for it to be available during server side rendering. This provides a clean and easy to understand flow for simple implementations. But it can increase complexity in cases where a single isolated component has to be reused in multiple different routes.
+SvelteKit's architecture enforces that all asynchronous data has to be acquired inside a page's load function for it to be available during server side rendering. This provides a clean and easy to understand flow for simple implementations. But it can increase complexity in cases where a single isolated component has to be reused in multiple different routes.
 
 \begin{listing}[h]
 \begin{myminted}{html}{}
@@ -405,12 +394,17 @@ export async function load({ fetch }) {
 
 This pattern needs to be repeated for each route that wants to use the twitter component. This not only results in unnecessary code duplication, but can also cause problems later in a project's lifecycle. If the twitter component is to be removed later on, it is imaginable that one of the fetch calls is left in by accident, because the data fetching is detached from where the data is actually used, thus causing unnecessary traffic.
 
-Other approaches circumvent this problem by coupling data fetching more closely to its usage. For example, a similar implementation using React Server Components could look something like this:
+Other approaches circumvent this problem by coupling data fetching more closely to its usage. For example, a similar implementation using React could fetch the required data inside the component (\Cref{fig:evaluation-reusable-rsc}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}{jsx}{TwitterComponent.jsx}
-export async function TwitterComponent() {
-    const twitterFeed = await (await fetch('/api/twitterfeed')).json();
+export function TwitterComponent() {
+    const [twitterFeed, setTwitterFeed] = useState([]);
+    useEffect(() => {
+      fetch('/api/twitterfeed')
+        .then(res => res.json())
+        .then(data => setTwitterFeed(data))
+    }, []);
 
     return <>
         {twitterFeed.map(tweet => (
@@ -433,7 +427,9 @@ export async function Page() {
 \label{fig:evaluation-reusable-rsc}
 \end{listing}
 
-With this approach, the Twitter component becomes truly isolated from the page, because it can fetch its own data. We expect this architecture to scale better in large applications, than SvelteKit's centralized load function.
+With this approach, the Twitter component becomes truly isolated from the page, because it can fetch its own data. On the other hand, because SvelteKit's architecture enforces such a strict architecture, it is immediately clear where data fetching happens. This can have benefits when trying to understand existing code bases.
+
+% We expect this architecture to scale better in large applications, than SvelteKit's centralized load function. 
 
 \subsection{Reactivity Pitfalls}
 \label{sec:evaluation-reactivity pitfalls}
@@ -456,25 +452,21 @@ Svelte's reactive statements (\Cref{sec:svelte-reactivity}) work by analyzing at
 <button on:click={() => (count++)}>+</button>
 <div>{count} * 2 = {doubled}</div>
 \end{myminted}
-\caption{\mintinline{bash}{doubled} will not be recalculated when \mintinline{bash}{count} changes.}
+\caption{\mintinline{text}{doubled} will not be recalculated when \mintinline{text}{count} changes.}
 \label{fig:evaluation-reactivity-hidden-dependency}
 \end{listing}
 
-\Cref{fig:evaluation-reactivity-hidden-dependency} illustrates this behavior. In this example, the function \mintinline{svelte}|calcDoubled| calculates the value of \mintinline{svelte}|doubled| in correspondence to \mintinline{svelte}|count|. But, because \mintinline{svelte}|count| is not directly referenced in the reactive statement, it is not tracked as a dependency. Therefore, \mintinline{bash}|doubled| will not be updated when \mintinline{bash}{count} changes.
-
-
+\Cref{fig:evaluation-reactivity-hidden-dependency} illustrates this behavior. In this example, the function \mintinline{svelte}|calcDoubled| calculates the value of \mintinline{svelte}|doubled| in correspondence to \mintinline{svelte}|count|. But, because \mintinline{svelte}|count| is not directly referenced in the reactive statement, it is not tracked as a dependency. Therefore, \mintinline{text}|doubled| will not be updated when \mintinline{text}{count} changes.
 
 \subsection{Deployment}
-SvelteKit provides first-class adapters that automate creating production deployments for various hosting providers such as Vercel\footnote{\url{https://vercel.com/}}, Netlify\footnote{\url{https://www.netlify.com/}}, Cloudflare Pages\footnote{\url{https://pages.cloudflare.com/}}, and Cloudflare Workers\footnote{\url{https://workers.cloudflare.com/}}. Furthermore, adapters exist to create standalone NodeJS server, or generate a static bundle that can be served from a simple file-base web server. Beyond this, a wide range of community plugins exist which further extend the range of platforms, SvelteKit can be deployed to. This means that SvelteKit generally supports great flexibility for deployment with comparatively little effort.  
+SvelteKit provides first-class adapters that automate creating production deployments for various hosting providers such as Vercel\footnote{\url{https://vercel.com/}}, Netlify\footnote{\url{https://www.netlify.com/}}, Cloudflare Pages\footnote{\url{https://pages.cloudflare.com/}}, and Cloudflare Workers\footnote{\url{https://workers.cloudflare.com/}}. Furthermore, adapters exist to create standalone Node.js server, or generate a static bundle that can be served from a simple file-base web server. Beyond this, a wide range of community plugins exist which further extend the range of platforms SvelteKit can be deployed to. This means that SvelteKit generally supports great flexibility for deployment with comparatively little effort.  
 
-But, this wide range of supported platforms creates some shortcomings. SvelteKit does mostly not implement features that require platform specific functionality. One such feature would be a hook that is executed when the application shuts down. This can sometimes be required for example to close open connections. While this can be easily worked around in a NodeJS environment, by using \mintinline{js}{process.on('sigint', ...)}, other features are not added this easily. 
+But this wide range of supported platforms has some shortcomings. SvelteKit does mostly not implement features that require platform specific functionality. One such feature would be a hook that is executed when the application shuts down. This can sometimes be required for example to close open connections. While this can be easily worked around in a Node.js environment, by using \mintinline{js}{process.on('sigint', ...)}, other features are not added this easily. 
 
-Websockets are another feature that is currently not supported out of the box, because some providers such as Vercel have no support for websockets yet \cite{noauthor_vercel_nodate}. While it is possible to add websocket support to the NodeJS platform this is not possible without shortcomings. By default, the NodeJS adapter creates an entry point that starts a web server to host all handlers required by SvelteKit. It is possible to forgo this entry point and instead write a custom server that uses the handlers directly. In this way it is possible to create a web server that uses websockets. But, this approach only works for the production build, in development, another workaround is required that works with hot-module replacement. Furthermore, a separate 
-
-\todo{SvelteKit wants to be a serverless framework\cite{noauthor_expose_nodate}}
+SvelteKit wants to be a serverless framework \cite{noauthor_expose_nodate}. With many serverless platforms not having support for websockets yet \cite{noauthor_vercel_nodate}, websockets is a feature that is not yet supported in SvelteKit out of the box. While it is possible to add websocket support to the Node.js platform this has limitations. By default, the Node.js adapter creates an entry point that starts a web server to host all handlers required by SvelteKit. It is possible to forgo this entry point and instead write a custom server that uses the handlers directly. In this way it is possible to create a web server that uses websockets. But, this approach only works for the production build. In development another workaround is required that works with hot-module replacement.
 
 \subsection{Future of Svelte}
-In September 2023, The Svelte team gave a first preview of the next major API revision planned for version 5 of Svelte \cite{team_introducing_2023}. This new Feature is called Runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte (\Cref{sec:svelte-reactivity}). With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune (\Cref{fig:svelte-state-rune}).
+In September 2023, The Svelte team gave a first preview of the next major API version planned for version 5 of Svelte \cite{team_introducing_2023}. This new Feature is called Runes. Runes are a set of compiler instructions that replace the system of reactivity currently used in Svelte (\Cref{sec:svelte-reactivity}). With runes, Reactivity becomes more explicit. Instead of every top level variable in a svelte file being reactive by default, state that should be reactive has to be marked with the \mintinline{svelte}{$state} rune (\Cref{fig:svelte-state-rune}).
 
 \begin{listing}[H]
 \begin{myminted}[escapeinside=||]{svelte}{}
@@ -529,15 +521,8 @@ Furthermore, Svelte 5 also introduces the \mintinline{svelte}{$derived} and \min
 
 The new rune system will also solve the problems outlined in \Cref{sec:evaluation-reactivity pitfalls}. Currently, reactive dependencies are tracked at compile-time. This makes it impossible to track indirect dependencies. Runes on the other hand, will track their dependencies at run-time, therefore making it possible to also track indirect dependencies. This will make Svelte's system for reactivity overall easier to reason about. 
 
-% svelte likely wont go away
-
 \subsection{Stability}
 \label{sec:evaluation-stability}
-% \begin{itemize}
-%     \item Svelte 2 to 3 was big change
-%     \item Svelte 5, while being maintained for 2 major versions, will also come with migrations.
-% \end{itemize}
-
 Historically, the Svelte team did not shy away from innovating the framework. Both Svelte 2 and Svelte 3 introduced major breaking changes \Cite{harris_svelte_2018,harris_svelte_2019}. Furthermore, with runes, Svelte is already receiving the next major breaking change. The old system for reactivity is planned for removal with Svelte 7. In the meantime, Svelte will support both syntaxes in the same code base on a per component basis. This gives projects time to migrate to runes. Nonetheless, especially in large code bases this can cause migration cost. For past breaking changes the Svelte Team provided tools to automate much of the migration work \cite{harris_svelte_2018}. They aim to do the same for runes, hopefully minimizing the effort required to migrate. 
 
-Version 1.0 of SvelteKit released only recently in December 2022 \cite{team_announcing_2022}. It is not possible to say how stable SvelteKit's APIs will be going forward. If Svelte's history is any indication, SvelteKit will probably also receive major API overhauls, should the need arise. Historically, Svelte has proven to be fast moving, therefore projects that use SvelteKit should be ready to put in regular migration work, to prevent the code base from becoming outdated.
+Version 1.0 of SvelteKit was released only recently in December 2022 \cite{team_announcing_2022}. It is not possible to say how stable SvelteKit's APIs will be going forward. If Svelte's history is any indication, SvelteKit will probably also receive major API overhauls, should the need arise. Historically, Svelte has proven to be fast moving, therefore projects that use SvelteKit should be ready to put in regular migration work, to prevent the code base from becoming outdated.

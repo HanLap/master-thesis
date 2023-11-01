@@ -1,7 +1,9 @@
 \section{Svelte}
 \label{sec:svelte}
 
-Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{offerzen_origins_svelte_2022}. It is a framework for developing web user interfaces, similar to React, Angular, and Vue.js. Harris describes Svelte as a framework not to run code but to think about code \cite{offerzen_origins_svelte_2022}. Svelte's key difference compared to other web UI frameworks is, that it uses a compiler. This makes it possible to shift many rendering steps from the run time into the build time. Therefore, Svelte can ship smaller and more efficient bundles. Furthermore, Svelte's syntax can do things which would not be possible in vanilla JavaScript.
+Svelte was created in 2016 by Rich Harris as a successor to Ractive.js \cite{offerzen_origins_svelte_2022}. It is a framework for developing web user interfaces, similar to React, Angular, and Vue.js. Harris describes Svelte as a framework not to run code but to think about code \cite{offerzen_origins_svelte_2022}. Svelte's key difference compared to other web UI frameworks is, that it uses a compiler. This makes it possible to shift many rendering steps from the run time into the build time. Therefore, Svelte can ship smaller and more efficient bundles. 
+
+Svelte uses its compiler to overload existing JavaScript syntax with special meaning. This allows for language extensions while still allowing it to be processed by existing JavaScript tooling (e.g. syntax highlighters).
 
 \subsection{Features}
 
@@ -15,7 +17,7 @@ In the following we provide an overview of how Svelte's syntax is structured and
 % - {} to use js expressions in html, similar to react.
 % - shorthand attribute syntax
 
-Svelte is a custom language that is very similar to HTML, JavaScript, and CSS, which is colocated inside a \mintinline{bash}{.svelte} file. In fact, plain HTML syntax is also valid Svelte syntax (\Cref{fig:svelte-basic-html}).
+Svelte is a custom language that is very similar to HTML, JavaScript, and CSS, which is colocated inside a \mintinline{text}{.svelte} file. In fact, plain HTML syntax is also valid Svelte syntax (\Cref{fig:svelte-basic-html}).
 
 \begin{listing}[h!]
 \begin{myminted}{svelte}{app.svelte}
@@ -64,7 +66,7 @@ Similar to React, variables can also be used in element attributes, and Svelte e
 
 Reactive programming is a programming paradigm that enables development of declarative event-driven applications \cite{bainomugisha_survey_2013}. In reactive programming the developer only declares what to do, whereas when to do it is managed by the language. To this end, the language has to track dependencies and automatically propagate changes across these dependencies when they happen.
 
-Svelte provides a strong system for reactive programming. Variable changes are automatically tracked and triggers UI updates. Therefore, it is possible to use regular assignment operations to mutate variables, which is not possible in frameworks such as React (\Cref{fig:svelte-basic-reactivity}).
+Svelte provides a strong system for reactive programming. Variable changes are automatically tracked and trigger UI updates. Therefore, it is possible to use regular assignment operations to mutate variables, which is not possible in frameworks such as React (\Cref{fig:svelte-basic-reactivity}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -83,7 +85,7 @@ Svelte provides a strong system for reactive programming. Variable changes are a
 \label{fig:svelte-basic-reactivity}
 \end{listing}
 
-To achieve this, Svelte's compiler replaces assignment operations at compile time with operations that automatically trigger changes of the reactive dependency chain. The increment function in the prior example would be compiled to this statement (\Cref{fig:svelte-compiler-output}).
+To achieve this, Svelte's compiler replaces assignment operations with operations that automatically trigger changes of the reactive dependency chain at compile time. The increment function in the prior example would be compiled to an invalidation statement that tell the UI to update (\Cref{fig:svelte-compiler-output}).
 
 \begin{listing}[H]
 \begin{myminted}[escapeinside=||]{js}{}
@@ -91,7 +93,7 @@ function increment() {
   |\$\$|invalidate('count', count += 1)
 }
 \end{myminted}
-\caption{Compiler output for the \mintinline{bash}{increment}-function defined in \Cref{fig:svelte-basic-reactivity}}
+\caption{Compiler output for the \mintinline{text}{increment}-function defined in \Cref{fig:svelte-basic-reactivity}}
 \label{fig:svelte-compiler-output}
 \end{listing}
 % An equivalent React implementation using function components would have to use more verbose semantics, because without a specialized compiler, assignment operations do not have any special meaning:
@@ -113,9 +115,9 @@ function increment() {
 
 % React's code runs every time, a component is updated, this means derived values can just be declared, and they are evaluated every time. Svelte's code on the other hand, only runs once on component initialization. Therefore, Svelte introduces custom syntax for defining reactive statements. To This end, Svelte repurposes labeled statements:
 
-In the prior example, declarative code was defined that triggers reactive UI updates following mutation of a variable. Svelte also provides syntax to trigger computations following mutation of variables (\Cref{fig:svelte-reactive-variable-syntax}) 
+Beyond reactive \textit{UI updates} following mutation of a variable, Svelte also provides syntax to trigger \textit{computations} following mutation of variables (\Cref{fig:svelte-reactive-variable-syntax}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}[highlightlines={4},escapeinside=||]{svelte}{}
 <script>
   let count = 2;
@@ -141,7 +143,7 @@ In the prior example, declarative code was defined that triggers reactive UI upd
 
 \mintinline{js}{$:} marks a statement as reactive. Every time a value, that is used in a reactive statement, changes, the statement is reevaluated. This can be used to declare reactive variables, as seen in the prior example, but it can also be used to run arbitrary code-blocks (\Cref{fig:svelte-reactive-block-syntax}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script>
   let count = 0;
@@ -158,7 +160,7 @@ In the prior example, declarative code was defined that triggers reactive UI upd
 </script>
 \end{myminted}
 \s{$}
-\caption{Svelte-example that runs statements when \mintinline{bash}{count} changes}
+\caption{Svelte-example that runs statements when \mintinline{text}{count} changes}
 \label{fig:svelte-reactive-block-syntax}
 \end{listing}
 
@@ -168,7 +170,7 @@ In the prior example, declarative code was defined that triggers reactive UI upd
 
 HTML does not have a way of expressing logic, thus Svelte introduces its own syntax. To conditionally render some markup, the markup has to be wrapped inside an if-block (\Cref{fig:svelte-if-syntax}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script>
   let count = 0;
@@ -184,9 +186,9 @@ HTML does not have a way of expressing logic, thus Svelte introduces its own syn
 \label{fig:svelte-if-syntax} 
 \end{listing}
 
-UI's also often work with lists of data. To this end, Svelte provides an each-block, which can be used to handle iterable values such as arrays (\Cref{fig:svelte-array-syntax}).
+UIs also often work with lists of data. To this end, Svelte provides an each-block, which can be used to handle iterable values such as arrays (\Cref{fig:svelte-array-syntax}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script>
   let array = [1, 2, 3, 4];
@@ -208,7 +210,7 @@ UI's also often work with lists of data. To this end, Svelte provides an each-bl
 
 Since the emergence of React in 2013 \cite{occhino_js_2013}, component-driven user-interfaces have become a widespread approach to web development. In Svelte, a component is represented by a singular \mintinline{html}{.svelte}-file, where the file name determines the component name (\Cref{fig:svelte-component-basic}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}{html}{MyComponent.svelte}
 <script>
   export let value;
@@ -216,13 +218,13 @@ Since the emergence of React in 2013 \cite{occhino_js_2013}, component-driven us
 
 <div>hello, {value}!</div>
 \end{myminted}
-\caption{Basic Svelte component that defines the input \mintinline{bash}{value}.}
+\caption{Basic Svelte component that defines the input \mintinline{text}{value}.}
 \label{fig:svelte-component-basic}
 \end{listing}
 
-To define inputs that should be passed into the Component, Svelte repurposes the \mintinline{bash}{export}-keyword. In the prior example \mintinline{svelte}{value} is defined as an input of the Component \mintinline{bash}{MyComponent}. The Component can than be imported in another svelte-file and be used like a regular element (\Cref{fig:svelte-component-usage}).
+To define inputs that should be passed into the Component, Svelte repurposes the \mintinline{text}{export}-keyword. In the prior example \mintinline{svelte}{value} is defined as an input of the Component \mintinline{text}{MyComponent}. The Component can than be imported in another Svelte file and be used like a regular element (\Cref{fig:svelte-component-usage}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}{svelte}{app.svelte}
 <script>
   import MyComponent from './MyComponent.svelte';
@@ -238,9 +240,9 @@ To define inputs that should be passed into the Component, Svelte repurposes the
 
 \subsubsection{Events}
 
-In a prior example we already showed usage of \mintinline{svelte}{on:click}. This directive is used to listen to click events. Svelte makes it possible to listen for arbitrary events on an element with the \mintinline{html}{on}-keyword (\Cref{fig:svelte-on-directive}). Furthermore, Svelte provides an event dispatcher to enable components to send their own custom events (\Cref{fig:svelte-custom-event}).
+In a prior example (\Cref{fig:svelte-reactive-variable-syntax}) we already showed usage of \mintinline{svelte}{on:click}. This directive is used to listen to mouse clicks. Svelte makes it possible to listen for arbitrary events on an element with the \mintinline{html}{on}-keyword (\Cref{fig:svelte-on-directive}). Furthermore, Svelte provides an event dispatcher to enable components to send their own custom events (\Cref{fig:svelte-custom-event}).
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}[highlightlines={7}]{html}{}
 <script>
   function handleMove(event) {
@@ -250,12 +252,12 @@ In a prior example we already showed usage of \mintinline{svelte}{on:click}. Thi
 
 <div on:pointermove="{handleMove}" ></div>
 \end{myminted}
-\caption{Usage of the \mintinline{bash}{on:}-directive to listen to \mintinline{bash}{pointermove} events.}
+\caption{Usage of the \mintinline{text}{on:}-directive to listen to \mintinline{text}{pointermove} events.}
 \label{fig:svelte-on-directive}
 \end{listing}
 
 
-\begin{listing}[h!]
+\begin{listing}[H]
 \begin{myminted}{html}{MyComponent.svelte}
 <script>
   import { createEventDispatcher } from 'svelte';
@@ -280,7 +282,7 @@ In a prior example we already showed usage of \mintinline{svelte}{on:click}. Thi
 
 \subsubsection{Styling}
 \label{sec:svelte-styling}
-Like any sane web framework, Svelte uses CSS to style content. To this end, it is possible to use style-tags to define CSS similar to HTML (\Cref{fig:svelte-style-tag}). Svelte automatically scopes defined styles. This means, the style will only affect markup that is in the same file as the style. This can prevent unexpected styling behavior in growing code bases, because one does not have to worry about unexpected styles. 
+Like most web frameworks, Svelte uses CSS to style content. To this end, it is possible to use style-tags to define CSS similar to HTML (\Cref{fig:svelte-style-tag}). Svelte automatically scopes defined styles. This means, the style will only affect markup that is in the same file as the style. This can prevent unexpected styling behavior in growing code bases. 
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -298,10 +300,9 @@ Like any sane web framework, Svelte uses CSS to style content. To this end, it i
 
 \subsubsection{Directives}
 \label{sec:svelte-directives}
-In the previous section we introduced the \mintinline{bash}{on:}-keyword to react to events. This keyword is called a directive. Svelte provides multiple directives to control the behavior of components in some ways.
+In the previous section we introduced the \mintinline{text}{on:} keyword to react to events. This keyword is called a directive. Svelte provides multiple directives to control the behavior of components in some ways.
 
-The \mintinline{svelte}{bind:}-directive can be used to create two-way bindings between parent and child elements. In Svelte, data usually flows from parent to child with the child having no way of directly mutating the data that it is being passed. By passing a property using the \mintinline{svelte}{bind:}-directive, Svelte enables data to flow the other way:
- (\Cref{fig:svelte-bind-directive}).
+The \mintinline{svelte}{bind:} directive can be used to create two-way bindings between parent and child elements. In Svelte, data usually flows from parent to child with the child having no way of directly mutating the data that it is being passed. By passing a property using the \mintinline{svelte}{bind:} directive, Svelte enables data to flow the other way (\Cref{fig:svelte-bind-directive}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -311,11 +312,11 @@ The \mintinline{svelte}{bind:}-directive can be used to create two-way bindings 
 
 <input bind:value={name} />
 \end{myminted}
-\caption{Two-way binding with the \mintinline{bash}{bind:}-directive.}
+\caption{Two-way binding with the \mintinline{text}{bind:}-directive.}
 \label{fig:svelte-bind-directive}
 \end{listing}
 
-The \mintinline{svelte}{class:}-directive is a utility that can be used to dynamically set CSS-classes on an element. This directive takes an expression that when evaluation to true, will set the given class on the element. This directive also provides a shorthand in cases where a variable is used to set a class of the same name (\Cref{fig:svelte-class-directive}).
+The \mintinline{svelte}{class:} directive is a utility that can be used to dynamically set CSS-classes on an element. This directive takes an expression that when evaluation to true, will set the given class on the element. This directive also provides a shorthand in cases where a variable is used to set a class of the same name (\Cref{fig:svelte-class-directive}).
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script>
@@ -327,17 +328,17 @@ The \mintinline{svelte}{class:}-directive is a utility that can be used to dynam
 <div class:active={active} />
 <div class:active />
 \end{myminted}
-\caption{Example usage of the \mintinline{bash}{class:}-directive.}
+\caption{Example usage of the \mintinline{text}{class:}-directive.}
 \label{fig:svelte-class-directive}
 \end{listing}
 
-Similar to the previous directive, the \mintinline{svelte}{style:}-directive provides a utility for dynamically setting CSS-styles on an element. The directive takes a value that is used to set the style attribute, where \mintinline{bash}{undefined} and \mintinline{bash}{null} means that the attribute should not be set. In cases where a variable is used to set a style attribute of the same name, Svelte also provides a shorthand (\Cref{fig:svelte-style-directive}).
+Similar to the previous directive, the \mintinline{svelte}{style:} directive provides a utility for dynamically setting CSS-styles on an element. The directive takes a value that is used to set the style attribute, where \mintinline{text}{undefined} and \mintinline{text}{null} means that the attribute should not be set. In cases where a variable is used to set a style attribute of the same name, Svelte also provides a shorthand (\Cref{fig:svelte-style-directive}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script>
   let color = "red";
-  let color = "20rem";
+  let width = "20rem";
 </script>
 
 <!-- all tree declarations are equivalent -->
@@ -345,11 +346,11 @@ Similar to the previous directive, the \mintinline{svelte}{style:}-directive pro
 <div style:color="red" style:width="20rem" />
 <div style:color style:width />
 \end{myminted}
-\caption{Example usage of the \mintinline{bash}{style:}-directive.}
+\caption{Example usage of the \mintinline{text}{style:}-directive.}
 \label{fig:svelte-style-directive}
 \end{listing}
 
-The \mintinline{bash}{use:}-directive is used to register an action on an HTML-element. An action is a function that is called when the element is created. The function receives a reference to the element and can thus be used to augment behavior of an element. In \Cref{fig:svelte-use-directive} the \mintinline{bash}{use:}-directive is used to register event listeners that log to the console when a mouse enters the element. While this functionality can be easily implemented using the \mintinline{bash}{on:}-directive, actions become especially useful when more complex behavior has to be configured in a reusable way. \Cref{sec:sveltekit-form-actions} will introduce an action that progressively enhances form-elements.
+The \mintinline{text}{use:} directive is used to register an action on an HTML-element. An action is a function that is called when the element is created. The function receives a reference to the element and can thus be used to augment behavior of an element. In \Cref{fig:svelte-use-directive} the \mintinline{text}{use:} directive is used to register event listeners that log to the console when a mouse enters the element. While this functionality can be easily implemented using the \mintinline{text}{on:} directive, actions become especially useful when more complex behavior has to be configured in a reusable way. \Cref{sec:sveltekit-form-actions} will introduce an action that progressively enhances form-elements.
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -368,7 +369,7 @@ The \mintinline{bash}{use:}-directive is used to register an action on an HTML-e
 
 
 \subsubsection{TypeScript}
-TypeScript is a programming language that has gained a lot of popularity in recent years \cite{noauthor_stack_nodate}. It is a super set of JavaScript that adds typing and type annotations to the language. Svelte has out of the box support for TypeScript. TypeScript can be enabled for a Svelte-file by annotating the script block with a \mintinline{bash}{lang}-attribute (\Cref{fig:svelte-ts-usage}). 
+TypeScript is a programming language that has gained a lot of popularity in recent years \cite{noauthor_stack_nodate}. It is a superset of JavaScript that adds typing and type annotations to the language. Svelte has support for TypeScript out of the box. TypeScript can be enabled for a Svelte-file by annotating the script block with a \mintinline{text}{lang} attribute (\Cref{fig:svelte-ts-usage}). 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script lang="ts">
@@ -383,7 +384,7 @@ TypeScript is a programming language that has gained a lot of popularity in rece
 \label{fig:svelte-ts-usage}
 \end{listing}
 
-However, TypeScript currently has technical restrictions. It is not possible to use TypeScript syntax outside the script-block \cite{noauthor_proposal_nodate}. One might for example want to type the parameters of an inline event handler (\Cref{fig:svelte-ts-inline-error}). But, in most cases this can reasonably be fixed by refactoring the inline function to a function definition in the script-block.
+It should be noted that using TypeScript in conjunction with Svelte is currently subject to a technical limitation: it is not possible to use TypeScript syntax outside the \mintinline{text}{<script>} tag \cite{noauthor_proposal_nodate}. One might for example want to type the parameters of an inline event handler (\Cref{fig:svelte-ts-inline-error}). Fortunately, in most cases this can be fixed by refactoring the inline function to a function definition in the \mintinline{text}{<script>} tag.
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
 <input on:change={(e: InputEvent) => {}}> /* Syntax Error */
@@ -403,13 +404,13 @@ SvelteKit is a framework that builds on top of Svelte to provide a toolkit for r
 % Deployable as static files, web server, edge functions
 
 \subsection{Features}
-In the following we give an overview of multiple SvelteKit concepts and features, that will be relevant for the rest of this study.
+In the following we give an overview of multiple SvelteKit concepts and features, which will be relevant for the rest of this study.
 
 
 \subsubsection{Routing}
 \label{sec:sveltekit-routing}
 
-SvelteKit provides out-of-the-box support for routing. To this end, SvelteKit utilizes a file-system-based routing system. This means that the URLs that a user can access on the web application, directly maps to the directory structure in the project's file system. A SvelteKit project contains a \mintinline{bash}|routes|-directory. This directory marks the root of the URL, e.g.: \mintinline{bash}|http://example.com/|. Respectively, the directory structure \mintinline{bash}|routes/about| would map to \mintinline{bash}|http://example.com/about|. This system can also be used to create parameterized routes. The directory structure \mintinline{bash}|routes/blog/[slug]| would create a route, where \mintinline{bash}|slug| serves as a wildcard (e.g.: \mintinline{bash}|/blog/hello-world|, \mintinline{bash}{/blog/123}). The actual content of a page is defined in a \mintinline{bash}{+page.svelte}-file (\Cref{fig:sveltekit-page-file}).
+SvelteKit provides built-in support for routing. To this end, SvelteKit utilizes a file system based routing system. This means that the URLs that a user can access on the web application directly maps to the directory structure in the project's file system. A SvelteKit project contains a \mintinline{text}|routes| directory. This directory marks the root of the URL, e.g.: \mintinline{text}|http://example.com/|. Respectively, the directory structure \mintinline{text}|routes/about| would map to \mintinline{text}|http://example.com/about|. This system can also be used to create parameterized routes using characters that one would not normally expect within a file path. The directory structure \mintinline{text}|routes/blog/[slug]| would create a route, where \mintinline{text}|slug| serves as a wildcard (e.g.: \mintinline{text}|/blog/hello-world|, \mintinline{text}{/blog/123}). The path component matched by this wildcard can then be used in the load function (see \Cref{sec:sveltekit-loading}). The actual content of a page is defined in a \mintinline{text}{+page.svelte} file (\Cref{fig:sveltekit-page-file}).
 
 \begin{listing}[h!]
 \begin{myminted}{svelte}{routes/+page.svelte}
@@ -425,9 +426,9 @@ SvelteKit provides out-of-the-box support for routing. To this end, SvelteKit ut
 \label{fig:sveltekit-page-file}
 \end{listing}
 
-SvelteKit uses the HTML \mintinline{svelte}|<a>|-tag to navigate between pages, rather than a framework specific \mintinline{svelte}{<Link>}-component. This has the advantage of being progressively enhanceable. If JavaScript is not available on the client-side, the anchor-tag's navigation event can be handled by the browser and the browser will do a regular full page reload to reach the navigation target. In the case of JS being available, SvelteKit's runtime router will intercept the navigation event and perform an in-app navigation to the target without causing a full page reload.
+SvelteKit uses the HTML \mintinline{text}|<a>| tag to navigate between pages, rather than a framework specific \mintinline{text}{<Link>} component. This has the advantage of being progressively enhanceable. If JavaScript is not available on the client-side, the anchor tag's navigation event can be handled by the browser and the browser will do a regular full page reload to reach the navigation target. In the case of JS being available, SvelteKit's runtime router will intercept the navigation event and perform an in-app navigation to the target without causing a full page reload.
 
-Most websites have some elements that should be displayed across multiple pages, such as a navigation bar or a footer. To this end, SvelteKit's router has the concept of layouts. A layout is placed alongside the pages inside the \mintinline{bash}{routes}-directory, inside a \mintinline{bash}{+layout.svelte}-file. This layout will automatically be applied to all route and all sub-routes of the directory, where the layout-file is placed. The place where the actual page content should be rendered inside the layout is defined by a \mintinline{svelte}{<slot>}-element (\Cref{fig:sveltekit-layout}).
+Most websites have some elements that should be displayed across multiple pages, such as a navigation bar or a footer. To this end, SvelteKit's router has the concept of layouts. A layout is placed alongside the pages inside the \mintinline{text}{routes} directory, inside a \mintinline{text}{+layout.svelte} file. This layout will automatically be applied to all route and all sub-routes of the directory, where the layout file is placed. The place where the actual page content should be rendered inside the layout is defined by a \mintinline{text}{<slot>} element (\Cref{fig:sveltekit-layout}).
 
 \begin{listing}[h!]
 \begin{myminted}{svelte}{routes/+layout.svelte}
@@ -443,7 +444,7 @@ Most websites have some elements that should be displayed across multiple pages,
 \label{fig:sveltekit-layout}
 \end{listing}
 
-In some cases an application may have multiple routes, that should live on the same route as others, but should have their own shared layout. One could for example imagine an application where the user authentication pages should have a different layout than the authenticated area of the app. Therefore, SvelteKit provides a mechanism to group routes together without this route being reflected in the URL by wrapping the group name in parentheses (\Cref{fig:sveltekit-layout-groups}).
+In some cases an application may have multiple routes, that should live on the same route as others, but should have their own shared layout. One could for example imagine an application where the user authentication pages should have a different layout than the authenticated area of the app. To support this, SvelteKit provides a mechanism to group routes together without this route being reflected in the URL by wrapping the group name in parentheses (\Cref{fig:sveltekit-layout-groups}).
 
 \begin{listing}[h!]
 \begin{myminted}[highlightlines={2,6}]{bash}{}
@@ -461,12 +462,12 @@ routes/
 \label{fig:sveltekit-layout-groups}
 \end{listing}
 
-In this example two new layout groups are introduced (\mintinline{bash}|(restricted)|,\mintinline{bash}|(public)|). Both groups can provide their own layout without having an influence on the URL. For example, the sign-in page is available on \mintinline{bash}{/signin} (not \mintinline{bash}{/(public)/signin}).
+In this example two new layout groups are introduced (\mintinline{text}|(restricted)|,\mintinline{text}|(public)|). Both groups can provide their own layout without having an influence on the URL. For example, the sign-in page is available on \mintinline{text}{/signin} (not \mintinline{text}{/(public)/signin}).
 
 \subsubsection{Loading Data}
 \label{sec:sveltekit-loading}
 
-SvelteKit facilitates a standard way for fetching dynamic content that is to be rendered on a page. This is required to enable server-side Rendering and static-site generation. To this end, every page can have a dedicated load function that is defined in a \mintinline{bash}|+page.js|-file. When a user requests a page, this load function is executed and the returned data is passed to the \mintinline{bash}{+page.svelte}-file as special property \mintinline{bash}{data} (\Cref{fig:sveltekit-loading-data}).
+SvelteKit facilitates a standard way for fetching dynamic content that is to be rendered on a page. This is required to enable server side rendering and static site generation. To this end, every page can have a dedicated load function that is defined in a \mintinline{text}{+page.js} file. When a user requests a page, this load function is executed and the returned data is passed to the \mintinline{text}{+page.svelte} file as special property \mintinline{text}{data} (\Cref{fig:sveltekit-loading-data}).
 
 \begin{listing}[h!]
 \begin{myminted}{js}{routes/+page.js}
@@ -493,7 +494,7 @@ In SSR mode, when a user first requests a page, the load function is executed on
 
 After the app has finished hydrating, all following navigation events will be handled by SvelteKit's runtime router. When the user now navigates to a different page the load function now is invoked on the client-side directly, therefore saving an unnecessary roundtrip to the server. Because these load functions run on both server and the client, they are called universal load functions.
 
-Some data fetching can only take place on the server-side, for example database access. Therefore, SvelteKit also provides an alternative form of load function that is only executed on the server. These server load function are placed in \mintinline{bash}{+page.server.js}-files (\Cref{fig:sveltekit-server-load-function}).
+Some data fetching can only take place on the server side, for example database access. Therefore, SvelteKit also provides an alternative form of load function that is only executed on the server. These server load function are placed in \mintinline{text}{+page.server.js} files (\Cref{fig:sveltekit-server-load-function}).
 
 \begin{listing}[h!]
 \begin{myminted}{js}{routes/+page.server.js}
@@ -535,7 +536,7 @@ export async function load() {
 \subsubsection{Form Actions}
 \label{sec:sveltekit-form-actions}
 
-The previous section discussed how SvelteKit applications send dynamic data to the client. But, many applications also need a way to send data to the server. To this end, SvelteKit provides form actions. \mintinline{bash}|+page.server.js|-files can export actions which make it possible to post data to the server using HTML's \mintinline{svelte}{<form>}-elements (\Cref{fig:sveltekit-server-action}).
+The previous section discussed how SvelteKit applications send dynamic data to the client. But, many applications also need a way to send data to the server. To this end, SvelteKit provides form actions. \mintinline{text}{+page.server.js} files can export actions which make it possible to post data to the server using HTML's \mintinline{svelte}{<form>} elements (\Cref{fig:sveltekit-server-action}).
 
 \begin{listing}[h!]
 \begin{myminted}{svelte}{routes/+page.server.js}
@@ -557,7 +558,7 @@ export const actions = {
 \label{fig:sveltekit-server-action}
 \end{listing}
 
-The name of the action, the form should post to, is specified as a query parameter. This makes it possible to have multiple actions per route. Because the implementation uses only default HTML forms, it is again possible to progressively enhance this feature. In Fact, in the shown implementation, submitting the form would cause a full page reload because the browser is sending the post request to the server. To progressively enhance this form, one can add the \mintinline{bash}{enhance}-action (\Cref{fig:sveltekit-form-action-enhance}):
+The name of the action, the form should post to, is specified as a query parameter. This makes it possible to have multiple actions per route. Because the implementation uses only default HTML forms, it is again possible to progressively enhance this feature. In fact, in the shown implementation, submitting the form would cause a full page reload because the browser is sending the post request to the server. To progressively enhance this form, one can add the \mintinline{text}{enhance} action (\Cref{fig:sveltekit-form-action-enhance}):
 
 \begin{listing}[h!]
 \begin{myminted}{svelte}{routes/+page.svelte}
@@ -576,10 +577,11 @@ This action intercepts form submit events and instead posts them to the server a
 
 \subsubsection{Rendering}
 
-SvelteKit provides the functionality to define the rendering strategy for each route independently. By exporting the constants \mintinline{bash}|ssr|, \mintinline{bash}|csr| and \mintinline{bash}{prerender} in a page or a layout, the rendering behavior can be precisely changed (\Cref{fig:sveltekit-rendering-config}).
+SvelteKit provides the functionality to define the rendering strategy for each route independently. By exporting the constants \mintinline{text}|ssr|, \mintinline{text}|csr| and \mintinline{text}{prerender} in a page or a layout, the rendering behavior can be precisely changed (\Cref{fig:sveltekit-rendering-config}).
 
 \begin{listing}[h!]
-\begin{myminted}{js}{routes/page.js}
+\begin{myminted}{js}{routes/+page.js}
+// default settings:
 export const prerender = false;
 export const ssr = true;
 export const csr = true;
@@ -589,9 +591,9 @@ export const csr = true;
 \end{listing}
 
 \begin{itemize}
-    \item \mintinline{bash}{prerender} determines if the page should be rendered during the build process. If this set to true, SvelteKit will serve the page as static files. While this will improve performance it also means that the page cannot have form actions because SvelteKit will not provide handlers for a pre-rendered route. Furthermore, the pages load function is ran during build-time. Therefore, any external dependencies (e.g.: REST-API) need to be available at this point in time.
+    \item \mintinline{text}{prerender} determines if the page should be rendered during the build process. If this set to true, SvelteKit will serve the page as static files. While this will improve performance it also means that the page cannot have form actions because SvelteKit will not provide handlers for a pre-rendered route. Furthermore, the pages load function is ran during build-time. Therefore, any external dependencies (e.g.: REST API) need to be available at this point in time.
     
-    \item \mintinline{bash}{ssr} determines if the page should be rendered on the server site when the user first requests the page. This does not mean the page cannot specify a server load function. Instead, the client will simply request the data from the server load function as soon as the runtime is initialized on the client side. This option can sometimes be useful, when a page requires certain features that require access to browser exclusive API's to render its content. But, most of the time it is possible to defer access to these browser-specific API's by running the code after the function has been mounted.
+    \item \mintinline{text}{ssr} determines if the page should be rendered on the server site when the user first requests the page. This does not mean the page cannot specify a server load function. Instead, the client will simply request the data from the server load function as soon as the runtime is initialized on the client side. This option can sometimes be useful, when a page requires certain features that require access to browser exclusive API's to render its content. But, most of the time it is possible to defer access to these browser-specific API's by running the code after the function has been mounted.
 
-    \item \mintinline{bash}{csr} configures if SvelteKit should run any JavaScript on the client-side for this page. This way applications that do not require JavaScript in the browser, can completely disable it. But this has certain side effects. For example, given an application has a layout that contains a navigation bar which needs JavaScript to work. If the user first loads the website on a page that has CSR disabled, the navigation bar will not work. On the other hand, if the user loads the website on a page that has CSR enabled and then navigates to a page with CSR set to false, the navigation bar will work.
+    \item \mintinline{text}{csr} configures if SvelteKit should run any JavaScript on the client side for this page. This way applications that do not require JavaScript in the browser, can completely disable it. But this has certain side effects. For example, given an application has a layout that contains a navigation bar which needs JavaScript to work. If the user first loads the website on a page that has CSR disabled, the navigation bar will not work. On the other hand, if the user loads the website on a page that has CSR enabled and then navigates to a page with CSR set to false, the navigation bar will work.
 \end{itemize}

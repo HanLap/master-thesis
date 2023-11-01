@@ -1,6 +1,6 @@
 \chapter{Fundamentals}
 \label{ch:fundamentals}
-In this chapter we provide overviews for multiple different topics which will be relevant in the following thesis. We provide a definition for enterprise applications and their use-case. Furthermore, we provide insights into the history of web development and provide and overview of different rendering strategies used for web applications. Afterwards, we introduce Svelte and SvelteKit which includes an overview of features and concepts used in these technologies. Finally, we lay out our methodology used for this research.
+In this chapter we provide overviews for multiple different topics which will be relevant in the following thesis. We give a definition for enterprise applications and their use-case. Furthermore, present an overview of different rendering strategies used for web applications. Afterwards, we introduce Svelte and SvelteKit, including an overview of features and concepts used in these technologies. Finally, we lay out our methodology used for this research.
 
 \section{Enterprise Applications}
 \label{sec:enterprise-applications}
@@ -12,7 +12,7 @@ In this chapter we provide overviews for multiple different topics which will be
 % - stammdatenverwaltung
 % - custom framework only relevant for use cases not satisfied by of the shelf software
 
-An enterprise application is software which is used by companies, rather than individual users. Their purpose is to alleviate tasks commonly found in the management and organization process of an enterprise. Common tasks for enterprise applications can be:
+An enterprise application is software which is used by companies, rather than individual users. Their purpose is to assist with tasks commonly found in the management and organization process of an enterprise. Common tasks for enterprise applications can be:
 \begin{itemize}
     \item enterprise communication
     \item business intelligence (BI)
@@ -21,81 +21,57 @@ An enterprise application is software which is used by companies, rather than in
     \item enterprise resource planning (ERP)
 \end{itemize}
 
-Requirements of an enterprise application can differ vastly depending on its use case, targeted user group, company size, company location, and scope \cite{noauthor_what_nodate,beal_what_2010}. While many ready-made software solutions exist which provide support for common tasks such as ERP, HRM, and CRM, it is often not possible to map all processes of an enterprise to an of-the-shelf component. To this end custom software is often required, which is specifically developed for the given use-case.
+Requirements of an enterprise application can differ vastly depending on its use case, targeted user group, company size, company location, and scope \cite{noauthor_what_nodate,beal_what_2010}. While many ready-made software solutions exist which provide support for common tasks such as ERP, HRM, and CRM, it is often not possible to map all processes of an enterprise to an off-the-shelf component. To this end custom software is often required, which is specifically developed for the given use-case.
 
-\section{Web Development}
-\label{sec:web-development}
 
-\todo{Somehow integrate introduction to React Server Components / Next.js}
-
-\subsection{Rendering Patterns}
+\section{Rendering Strategies}
 \label{sec:rendering-patterns}
+The rendering of web pages has evolved significantly over the years, with various techniques emerging to enhance user experience. In this section we provide an overview of relevant rendering strategies ordered by historical appearance.
 
-% \begin{itemize}
-%     \item At first only static files
-%     \item later SSR (PHP and stuff)
-%     \item CSR with dominance of SPA's heralded by React
-%     \item now step back to hybrid approach using SSR or SSG with client side hydration.
-% \end{itemize}
-
-The rendering of web pages has evolved significantly over the years, with various techniques emerging to enhance user experience. 
-
-\subsubsection{Static HTML}
+\subsection{Static HTML}
 Static HTML represents the most basic form of web page rendering. In this approach, the entire HTML content is generated on the server and sent to the client as a complete document. Static HTML offers exceptional performance, as there is minimal processing required on the client and server side. However, it lacks dynamic content updates and interactivity, making it suitable primarily for simple, non-interactive websites.
 
-\subsubsection{Server-Side Rendering}
-Server-side Rendering (SSR) involves rendering web pages on the server, where both HTML and initial data are generated. The server delivers a fully populated HTML page to the client, improving initial load times and SEO performance. SSR is well-suited for content-heavy and dynamic websites, as it combines good performance with dynamic data capabilities. However, it may still require additional client-side processing for interactive features.
+\subsection{Server-Side Rendering}
+Server-side Rendering (SSR) involves rendering web pages on the server, where both HTML and initial data are generated. Unlike with the static HTML approach, the server renders the HTML on demand. The server delivers a fully populated HTML page to the client, improving initial load times and search engine optimization (SEO). SSR is well-suited for content-heavy and dynamic websites, as it combines good performance with dynamic data capabilities. However, it may still require additional client-side processing for interactive features.
 
-\subsubsection{Client-Side Rendering}
+\subsection{Client-Side Rendering}
 Client-side rendering (CSR) shifts the rendering process to the client's browser. Initially, the server sends a minimal HTML template and JavaScript code. The browser then takes responsibility for rendering and fetching data, making CSR ideal for highly interactive web applications. However, CSR can result in slower initial page load times and worse SEO due to delayed rendering and indexing.
 
-\subsubsection{Static-Site Generation}
+\subsection{Static-Site Generation}
 Static-site Generation (SSG) is a more extreme form of SSR. Instead of rendering the content when the page is requested, it is instead rendered when the site is initially built. This result in a page with similar performance to static HTML and therefore improved SEO. But, because the page has to be rebuilt, every time content should change, it is only usable for content that rarely changes. This approach can also cause scaling issues in projects with a large amount of different pages. When using SSR these pages could be handled by a dynamic route which fetches the pages content from a headless content management system. With SSG model on the other hand, for each page a separate HTML file is generated during build-time. In extreme cases, this can mean large storage requirements. 
 
-\subsubsection{Hydration}
+\subsection{Hydration}
 When server rendered or static web pages are sent to the client side they initially are not interactive beyond the scope of default HTML functionality. Hydration refers to the process of turning this "dumb" web page into a fully interactive client-side Application. With hydration an application can benefit from the fast render times and improved SEO of SSR and SSG, while simultaneously providing the user experience improvements of client-side applications.
 
-\begin{figure}
-    \centering
-    \begin{sequencediagram}
-      \newthread{A}{Client}{}
-      \newinst[1]{B}{Server}{}
-      \newinst[1]{C}{Database}{}
-      \begin{call}{A}{visit /home}{B}{index.html}
-      \end{call}
-      \begin{call}{A}{request Data}{B}{}
-        \begin{call}{B}{SELECT *}{C}{}
-        \end{call}
-      \end{call}
-      \begin{callself}{A}{render data}{}
-      \end{callself}
-    \end{sequencediagram}
+\subsection{Progressive enhancement}
+Progressive enhancement is a web development strategy that focuses on building web application in a way that ensures a baseline level of functionality and accessibility for all users, regardless of their device, browser, or network capabilities. This approach involves creating a solid foundation of core content and functionality that works on virtually all web environments and then progressively enhancing it with additional features, styles, and interactivity for users with more advanced or modern browsers and devices.
 
-    \label{fig:timing-spa}
-    \caption{Example load timing for an application using client-side rendering.}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \begin{sequencediagram}
+%       \newthread{A}{Client}{}
+%       \newinst[1]{B}{Server}{}
+%       \newinst[1]{C}{Database}{}
+%       \begin{call}{A}{visit /home}{B}{index.html}
+%       \end{call}
+%       \begin{call}{A}{request Data}{B}{}
+%         \begin{call}{B}{SELECT *}{C}{}
+%         \end{call}
+%       \end{call}
+%       \begin{callself}{A}{render data}{}
+%       \end{callself}
+%     \end{sequencediagram}
 
-\subsection{Meta Frameworks}
+%     \label{fig:timing-spa}
+%     \caption{Example load timing for an application using client-side rendering.}
+% \end{figure}
 
 \input{chapters/03-svelte.tex}
 
 \section{UI5}
-UI5 is a JavaScript-based web frontend-framework. It Was Developed by SAP, a German enterprise software company. The framework was first open-sourced in 2013 under the title OpenUI5 \cite{kurz_brief_2020}. It is focused on development of enterprise-ready applications. UI5's main selling points are a wide range of integrated features, such as data-bindings, OData-API\footnote{\url{https://www.odata.org/}} support, and localization. Furthermore, UI5 provides many ready-made UI-Components with support for accessibility, keyboard navigation and right-to-left languages \cite{kunz_what_2013}.   
+UI5 is a JavaScript based web frontend framework. It was developed by SAP, a German enterprise software company. The framework was first open-sourced in 2013 under the title OpenUI5 \cite{kurz_brief_2020}. It is focused on development of enterprise-ready applications. UI5's main selling points are a wide range of integrated features, such as data-bindings, OData API\footnote{\url{https://www.odata.org/}} support, and localization. Furthermore, UI5 provides many ready-made UI-Components with support for accessibility, keyboard navigation and right-to-left languages \cite{kunz_what_2013}.   
 
-UI5's UI-Components are tightly integrated with Fiori\footnote{\url{https://experience.sap.com/fiori-design/}} a set of UI design guidelines that is optimized for the development of enterprise applications.
-
-\begin{figure}
-  \begin{myminted}{xml}{App.view.xml}
-    <blub/>
-  \end{myminted}
-  \begin{myminted}{js}{App.controller.js}
-    sap.m.define([], () => {
-
-    })
-  \end{myminted}
-  \caption{Example of a Component in UI5}
-  \label{fig:ui5-mvc}
-\end{figure}
+UI5's UI components are tightly integrated with Fiori\footnote{\url{https://experience.sap.com/fiori-design/}}, a set of UI design guidelines that is optimized for the development of enterprise applications.
 
 \section{Methodology}
 \label{sec:methodology}
@@ -122,26 +98,17 @@ UI5's UI-Components are tightly integrated with Fiori\footnote{\url{https://expe
 
 % Metrics applied to all implementations
 
-As defined in \Cref{sec:problem-statement} it is unclear if SvelteKit's claimed benefits translate to the development of real-world applications. To this end, this Study tries to provide evidence that validates SvelteKit's claims. Furthermore, we tried to identify potential shortcomings in SvelteKit's design and feature set. We aim to create a knowledge base of SvelteKit's advantages ad disadvantages which can be used for future technology  choices.
+As outlined in \Cref{sec:problem-statement} it is unclear if SvelteKit's claimed benefits translate to the development of real-world business applications. To this end, this study tries to provide evidence that helps in classifying SvelteKit's true real-world strengths and weaknesses. Furthermore, we tried to identify potential shortcomings in SvelteKit's design and feature set. We aim to create a knowledge base of SvelteKit's advantages and disadvantages which can be used for future technology choices.
 
-Our primary methodology for achieving this goal involved gaining insights into how SvelteKit behaves in a real-world software project. Therefore, we decided to write an implementation for a real-world use-case existing in an enterprise in the industry. To this end, a project that already has an implementation, which is used in production, was chosen. This has two advantages. Firstly, this makes sure the chosen project is representative for a real-world scenario. Secondly, the existing implementation could serve as a comparison to the created SvelteKit implementation.
+To achieve these goals we used SvelteKit to implement an application that serves a real-world business use case. To ensure the selected use case is representative, we chose an application that is already used in production. Furthermore, we were then able to compare the created SvelteKit implementations to the existing implementation.
 
-The chosen project had to satisfy multiple requirements:
-\begin{itemize}
-    \item It should have a component responsible for management of datasets.
-    \item The application should require authentication.
-    \item It should require database persistence.
-    \item It should require communication with other services.  
-    \item Furthermore, it should have at least one feature that goes beyond basic management of data.
-\end{itemize}
-These requirements where chosen to make sure the use-case is representative for a wide array of business applications. 
+We chose to implement three different variants of the application using SvelteKit. Firstly, a full stack application that implements frontend and backend in the same code base. Secondly, a frontend implementation that uses server side rendering but is only responsible for the UI, whereas business logic is handled by an existing backend. Finally, a single page application which only handled the UI and produces a static HTML bundle. We expect these application types to be very common in real world use cases.
 
 \subsection{Evaluation}
-\todo{Explain evaluation process}
+When comparing different languages and language frameworks, one can take a practically infinite amount of measurements. Examining these carefully can be very important for fulfilling non-functional system requirements such as performance. However, as we can clearly see by comparing the popularity of C and Python, there is more to the choice of language than simple numbers. We provide some basic metrics as a broad overview and encourage anybody looking for more broad or specific data to conduct further experiments specific to their requirements.
 
-Factual evaluation:
-\begin{enumerate}
-    \item LoC
-    \item performance
-    \item ecosystem size
-\end{enumerate}
+An important factor that cannot be measured easily is developer experience. There is some existing methodology for quantifying this elusive property, but it requires conducting and carefully evaluating large-scale developer surveys, which is beyond the scope of this research \cite{morales_programmer_2019}. And even if the numbers do point a certain way, developer experience may be influenced significantly by factors such as prior experience with similar tools, or the domain of the software to be created. For example, requirements to interact with existing systems may make using a framework much less enjoyable. We therefore focus on highlighting what we believe to be the key differences in the approaches of the discussed frameworks, so the reader can make an educated guess as to which technology would probably fit their use case best.
+
+% Evaluation of a software tool can generally be split into performance and developer experience. While performance can be easily measured in an objective way, using benchmarks. Measuring developer experience (DX) is a hard problem. As examined by Morales et al., the field of developer experience still requires further research \cite{morales_programmer_2019}. The primary approach to measuring DX is done with user surveys. This was out of scope for our project. Therefore, we instead decided to compare the applications on concrete examples we expect to be common when working with the respective technologies. We reason on a case by case basis about the expected experience for the developer. 
+
+% We Furthermore compared all applications in terms of performance. Levlin has already measured Svelte's performance when manipulating the DOM \cite{levlin_dom_2020}. Therefore, we primarily investigated SvelteKit's page load speed and navigation speed. To this end, we ran benchmarks that compare our applications in these points.
