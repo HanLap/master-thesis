@@ -56,24 +56,24 @@ This implementation makes use of SvelteKit's server load functions (\Cref{sec:sv
 \end{figure}
 
 \subsection{Frontend Implementation}
-We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility because backend technology can be chosen individually. Communication to the backend is primarily handled using web APIs. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\Cref{sec:sveltekit-loading}). This means that the SvelteKit server is only used during SSR. After the browser has loaded the page, universal load functions are executed client-side. The client then directs its requests directly to the backend instead of sending a request to the SvelteKit server which then requests the data from the backend. Therefore, saving one unnecessary hop. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing a dedicated SvelteKit server. This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=.9\linewidth]{assets/dswfd-architecture-frontend}
-    \caption{Architecture overview of the implementation using SvelteKit only for the frontend}
-    \label{fig:dswfd-architecture-fe-only}
-\end{figure}
-
-\subsection{SPA Implementation}
-\label{sec:implementation-redirect}
-But this approach has several shortcomings explained in \Cref{sec:evaluation-universal}. Therefore, we further experimented with an implementation that again uses server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server side code, the server side is primarily used as middleware that sends REST requests to the Spring backend.
+We also decided to explore an approach where SvelteKit is only used as a frontend. This approach provides more flexibility because backend technology can be chosen individually. Communication to the backend is primarily handled using web APIs. In our use case we decided to reuse the existing Java backend. The backend's REST API could be queried from SvelteKit. As REST APIs are something which can be called from frontend and backend, this approach can make use of SvelteKit's universal load functions (\Cref{sec:sveltekit-loading}). This means that the SvelteKit server is only used during SSR. After the browser has loaded the page, universal load functions are executed client-side. The client then directs its requests directly to the backend instead of sending a request to the SvelteKit server which then requests the data from the backend. Therefore, saving one unnecessary hop. If loss of SSR is acceptable, this approach would also make it possible to run the application as an SPA, forgoing a dedicated SvelteKit server (\Cref{fig:dswfd-architecture-spa}). This can be useful, as it allows for the SvelteKit application to be served as static files from a web directory or similar.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.8\linewidth]{assets/dswfd-architecture-spa}
-    \caption{Architecture overview of the implementation using SvelteKit only as a frontend}
-    \label{fig:dswfd-architecture-fe-through-server}
+    \caption{Architecture overview of the implementation using SvelteKit as an SPA framework without a dedicated SvelteKit server.}
+    \label{fig:dswfd-architecture-spa}
+\end{figure}
+
+\subsection{SPA Implementation}
+\label{sec:implementation-redirect}
+But this approach has several shortcomings explained in \Cref{sec:evaluation-universal}. Therefore, we further experimented with an implementation that again uses server load functions and server actions. This implementation is very similar to the full stack implementation discussed earlier. But instead of implementing business logic and database access in the SvelteKit server side code, the server side is primarily used as middleware that sends REST requests to the Spring backend \Cref{fig:dswfd-architecture-frontend}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.9\linewidth]{assets/dswfd-architecture-frontend}
+    \caption{Architecture overview of the implementation using SvelteKit only for the frontend where the SvelteKit server serves as a middleware to handle communication with the Spring backend.}
+    \label{fig:dswfd-architecture-frontend}
 \end{figure}
 
 This approach has multiple advantages. It uses much of the built-in functionality of SvelteKit, applications can be progressively enhanced, the client requires fewer dependencies, because functionality such as parsing and validating form data can be handled server side. Furthermore, authentication is simplified, as only the backend needs to communicate with the API. And finally, the outlined problems with fetch in universal load functions is solved, because only the backend uses fetch.

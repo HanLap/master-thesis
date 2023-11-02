@@ -10,6 +10,7 @@ Svelte uses its compiler to overload existing JavaScript syntax with special mea
 In the following we provide an overview of how Svelte's syntax is structured and showcase some of Svelte's features.
 
 \subsubsection{Svelte Files}
+\label{sec:svelte-file}
 % - Files with .svelte ending
 % - Syntax very similar to regular html with some extensions
 % - standard javascript/Typescript $=>$ existing tools can be more easily integrated
@@ -23,11 +24,11 @@ Svelte is a custom language that is very similar to HTML, JavaScript, and CSS, w
 \begin{myminted}{svelte}{app.svelte}
 <h1>Hello World!</h1>
 \end{myminted}
-\caption{HTML is valid Svelte-syntax}
+\caption{HTML is valid Svelte-syntax.}
 \label{fig:svelte-basic-html}
 \end{listing}
 
-Similarly to HTML, JavaScript can be added inside \mintinline{svelte}{<script>}-tags. But Svelte further extends this syntax to enable closer integration between JavaScript and HTML. Outside the script-block it is possible to use curly-braces to write arbitrary JavaScript-expressions. These expressions can reference variables and functions defined inside the script-block (\Cref{fig:svelte-javascript-expression}).
+Similarly to HTML, JavaScript can be added inside \mintinline{text}{<script>} tags. But Svelte further extends this syntax to enable closer integration between JavaScript and HTML. Outside the script-block it is possible to use curly braces to write arbitrary JavaScript expressions. These expressions can reference variables and functions defined inside the script block (\Cref{fig:svelte-javascript-expression}).
 
 % Logic can be added with a \mintinline{svelte}{<script>}-block and variables can be used outside the HTML with curly-braces:
 
@@ -39,7 +40,7 @@ Similarly to HTML, JavaScript can be added inside \mintinline{svelte}{<script>}-
 
 <div>Hello {name.toUpperCase()}!</div>
 \end{myminted}
-\caption{Example for JavaScript-expressions in Svelte.}
+\caption{Example for JavaScript expressions in Svelte.}
 \label{fig:svelte-javascript-expression}
 \end{listing}
 
@@ -54,7 +55,7 @@ Similar to React, variables can also be used in element attributes, and Svelte e
 <img src={src}>
 <img {src}> <!-- equivalent to <img src={src}> -->
 \end{myminted}
-\caption{Syntax for using variables in element-attributes.}
+\caption{Syntax for using variables in element attributes.}
 \label{fig:svelte-attribute-variables}
 \end{listing}
 
@@ -85,7 +86,7 @@ Svelte provides a strong system for reactive programming. Variable changes are a
 \label{fig:svelte-basic-reactivity}
 \end{listing}
 
-To achieve this, Svelte's compiler replaces assignment operations with operations that automatically trigger changes of the reactive dependency chain at compile time. The increment function in the prior example would be compiled to an invalidation statement that tell the UI to update (\Cref{fig:svelte-compiler-output}).
+To achieve this, Svelte's compiler replaces assignment operations with operations that automatically trigger changes of the reactive dependency chain at compile time. The increment function in the prior example would be compiled to an invalidation statement that tells the UI to update (\Cref{fig:svelte-compiler-output}).
 
 \begin{listing}[H]
 \begin{myminted}[escapeinside=||]{js}{}
@@ -93,7 +94,7 @@ function increment() {
   |\$\$|invalidate('count', count += 1)
 }
 \end{myminted}
-\caption{Compiler output for the \mintinline{text}{increment}-function defined in \Cref{fig:svelte-basic-reactivity}}
+\caption{Compiler output for the \mintinline{text}{increment} function defined in \Cref{fig:svelte-basic-reactivity}}
 \label{fig:svelte-compiler-output}
 \end{listing}
 % An equivalent React implementation using function components would have to use more verbose semantics, because without a specialized compiler, assignment operations do not have any special meaning:
@@ -129,11 +130,11 @@ Beyond reactive \textit{UI updates} following mutation of a variable, Svelte als
   }
 </script>
 
-<button on:click="{increment}">click me!</button>
+<button on:click={increment}>click me!</button>
 <div>count: {count}!</div>
 <div>doubled: {doubled}!</div>
 \end{myminted}
-\caption{Example of a reactive-variable in Svelte. Double will automatically be recalculated when count changes.}
+\caption{Example of a reactive variable in Svelte. \mintinline{text}{doubled} will automatically be recalculated when \mintinline{text}{count} changes.}
 \label{fig:svelte-reactive-variable-syntax}
 \end{listing}
 % - $: to make reactive statement
@@ -141,7 +142,7 @@ Beyond reactive \textit{UI updates} following mutation of a variable, Svelte als
 % - used for reactive assignments, conditions, and whole codeblocks
 % - reactive block is rerun everytime a variable used inside the block changes
 
-\mintinline{js}{$:} marks a statement as reactive. Every time a value, that is used in a reactive statement, changes, the statement is reevaluated. This can be used to declare reactive variables, as seen in the prior example, but it can also be used to run arbitrary code-blocks (\Cref{fig:svelte-reactive-block-syntax}).
+\mintinline{js}{$:} marks a statement as reactive. Every time a value, that is used in a reactive statement, changes, the statement is reevaluated. This can be used to declare reactive variables, as seen in the prior example, but it can also be used to run arbitrary code blocks (\Cref{fig:svelte-reactive-block-syntax}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -160,7 +161,7 @@ Beyond reactive \textit{UI updates} following mutation of a variable, Svelte als
 </script>
 \end{myminted}
 \s{$}
-\caption{Svelte-example that runs statements when \mintinline{text}{count} changes}
+\caption{Svelte example that runs statements when \mintinline{text}{count} changes}
 \label{fig:svelte-reactive-block-syntax}
 \end{listing}
 
@@ -168,7 +169,7 @@ Beyond reactive \textit{UI updates} following mutation of a variable, Svelte als
 
 % - Templates for if, each
 
-HTML does not have a way of expressing logic, thus Svelte introduces its own syntax. To conditionally render some markup, the markup has to be wrapped inside an if-block (\Cref{fig:svelte-if-syntax}).
+HTML does not have a way of expressing logic, thus Svelte introduces its own syntax. To conditionally render some markup, the markup has to be wrapped inside an if block (\Cref{fig:svelte-if-syntax}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -182,11 +183,11 @@ HTML does not have a way of expressing logic, thus Svelte introduces its own syn
   <div>The number is pretty low</div>
 {/if}
 \end{myminted}
-\caption{Example usage of Svelte's if-block.}
+\caption{Example usage of Svelte's if block.}
 \label{fig:svelte-if-syntax} 
 \end{listing}
 
-UIs also often work with lists of data. To this end, Svelte provides an each-block, which can be used to handle iterable values such as arrays (\Cref{fig:svelte-array-syntax}).
+UIs also often work with lists of data. To this end, Svelte provides an each block, which can be used to handle iterable values such as arrays (\Cref{fig:svelte-array-syntax}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -198,7 +199,7 @@ UIs also often work with lists of data. To this end, Svelte provides an each-blo
   <div>{value}</div>
 {/each}
 \end{myminted}
-\caption{Example usage of Svelte's each-block.}
+\caption{Example usage of Svelte's each block.}
 \label{fig:svelte-array-syntax} 
 \end{listing}
 
@@ -208,7 +209,7 @@ UIs also often work with lists of data. To this end, Svelte provides an each-blo
 % - in Svelte, one file = one component.
 % - Name = Component Name.
 
-Since the emergence of React in 2013 \cite{occhino_js_2013}, component-driven user-interfaces have become a widespread approach to web development. In Svelte, a component is represented by a singular \mintinline{html}{.svelte}-file, where the file name determines the component name (\Cref{fig:svelte-component-basic}).
+Since the emergence of React in 2013 \cite{occhino_js_2013}, component-driven user interfaces have become a widespread approach to web development. In Svelte, a component is represented by a singular \mintinline{html}{.svelte} file, where the file name determines the component name (\Cref{fig:svelte-component-basic}).
 
 \begin{listing}[H]
 \begin{myminted}{html}{MyComponent.svelte}
@@ -222,7 +223,7 @@ Since the emergence of React in 2013 \cite{occhino_js_2013}, component-driven us
 \label{fig:svelte-component-basic}
 \end{listing}
 
-To define inputs that should be passed into the Component, Svelte repurposes the \mintinline{text}{export}-keyword. In the prior example \mintinline{svelte}{value} is defined as an input of the Component \mintinline{text}{MyComponent}. The Component can than be imported in another Svelte file and be used like a regular element (\Cref{fig:svelte-component-usage}).
+To define inputs that should be passed into the Component, Svelte repurposes the \mintinline{text}{export} keyword. In the prior example \mintinline{svelte}{value} is defined as an input of the Component \mintinline{text}{MyComponent}. The Component can than be imported in another Svelte file and be used like a regular element (\Cref{fig:svelte-component-usage}).
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{app.svelte}
@@ -240,7 +241,7 @@ To define inputs that should be passed into the Component, Svelte repurposes the
 
 \subsubsection{Events}
 
-In a prior example (\Cref{fig:svelte-reactive-variable-syntax}) we already showed usage of \mintinline{svelte}{on:click}. This directive is used to listen to mouse clicks. Svelte makes it possible to listen for arbitrary events on an element with the \mintinline{html}{on}-keyword (\Cref{fig:svelte-on-directive}). Furthermore, Svelte provides an event dispatcher to enable components to send their own custom events (\Cref{fig:svelte-custom-event}).
+In a prior example (\Cref{fig:svelte-reactive-variable-syntax}) we already showed usage of \mintinline{svelte}{on:click}. This directive is used to listen to mouse clicks. Svelte makes it possible to listen for arbitrary events on an element with the \mintinline{html}{on} keyword (\Cref{fig:svelte-on-directive}). Furthermore, Svelte provides an event dispatcher to enable components to send their own custom events (\Cref{fig:svelte-custom-event}).
 
 \begin{listing}[H]
 \begin{myminted}[highlightlines={7}]{html}{}
@@ -252,7 +253,7 @@ In a prior example (\Cref{fig:svelte-reactive-variable-syntax}) we already showe
 
 <div on:pointermove="{handleMove}" ></div>
 \end{myminted}
-\caption{Usage of the \mintinline{text}{on:}-directive to listen to \mintinline{text}{pointermove} events.}
+\caption{Usage of the \mintinline{text}{on:} directive to listen to \mintinline{text}{pointermove} events.}
 \label{fig:svelte-on-directive}
 \end{listing}
 
@@ -282,7 +283,7 @@ In a prior example (\Cref{fig:svelte-reactive-variable-syntax}) we already showe
 
 \subsubsection{Styling}
 \label{sec:svelte-styling}
-Like most web frameworks, Svelte uses CSS to style content. To this end, it is possible to use style-tags to define CSS similar to HTML (\Cref{fig:svelte-style-tag}). Svelte automatically scopes defined styles. This means, the style will only affect markup that is in the same file as the style. This can prevent unexpected styling behavior in growing code bases. 
+Like most web frameworks, Svelte uses CSS to style content. To this end, it is possible to use \mintinline{text}{<style>} tags to define CSS similar to HTML (\Cref{fig:svelte-style-tag}). Svelte automatically scopes defined styles. This means, the style will only affect markup that is in the same file as the style. This can prevent unexpected styling behavior in growing code bases. 
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -294,7 +295,7 @@ Like most web frameworks, Svelte uses CSS to style content. To this end, it is p
   }
 </style>
 \end{myminted}
-\caption{Example usage of style-tag to add CSS.}
+\caption{Example usage of \mintinline{text}{<style>} tag to add CSS.}
 \label{fig:svelte-style-tag}
 \end{listing}
 
@@ -316,7 +317,7 @@ The \mintinline{svelte}{bind:} directive can be used to create two-way bindings 
 \label{fig:svelte-bind-directive}
 \end{listing}
 
-The \mintinline{svelte}{class:} directive is a utility that can be used to dynamically set CSS-classes on an element. This directive takes an expression that when evaluation to true, will set the given class on the element. This directive also provides a shorthand in cases where a variable is used to set a class of the same name (\Cref{fig:svelte-class-directive}).
+The \mintinline{svelte}{class:} directive is a utility that can be used to dynamically set CSS classes on an element. This directive takes an expression that when evaluation to true, will set the given class on the element. This directive also provides a shorthand in cases where a variable is used to set a class of the same name (\Cref{fig:svelte-class-directive}).
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script>
@@ -328,7 +329,7 @@ The \mintinline{svelte}{class:} directive is a utility that can be used to dynam
 <div class:active={active} />
 <div class:active />
 \end{myminted}
-\caption{Example usage of the \mintinline{text}{class:}-directive.}
+\caption{Example usage of the \mintinline{text}{class:} directive.}
 \label{fig:svelte-class-directive}
 \end{listing}
 
@@ -346,11 +347,11 @@ Similar to the previous directive, the \mintinline{svelte}{style:} directive pro
 <div style:color="red" style:width="20rem" />
 <div style:color style:width />
 \end{myminted}
-\caption{Example usage of the \mintinline{text}{style:}-directive.}
+\caption{Example usage of the \mintinline{text}{style:} directive.}
 \label{fig:svelte-style-directive}
 \end{listing}
 
-The \mintinline{text}{use:} directive is used to register an action on an HTML-element. An action is a function that is called when the element is created. The function receives a reference to the element and can thus be used to augment behavior of an element. In \Cref{fig:svelte-use-directive} the \mintinline{text}{use:} directive is used to register event listeners that log to the console when a mouse enters the element. While this functionality can be easily implemented using the \mintinline{text}{on:} directive, actions become especially useful when more complex behavior has to be configured in a reusable way. \Cref{sec:sveltekit-form-actions} will introduce an action that progressively enhances form-elements.
+The \mintinline{text}{use:} directive is used to register an action on an HTML element. An action is a function that is called when the element is created. The function receives a reference to the element and can thus be used to augment behavior of an element. In \Cref{fig:svelte-use-directive} the \mintinline{text}{use:} directive is used to register event listeners that log to the console when a mouse enters the element. While this functionality can be easily implemented using the \mintinline{text}{on:} directive, actions become especially useful when more complex behavior has to be configured in a reusable way. \Cref{sec:sveltekit-form-actions} will introduce an action that progressively enhances form elements.
 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
@@ -369,7 +370,7 @@ The \mintinline{text}{use:} directive is used to register an action on an HTML-e
 
 
 \subsubsection{TypeScript}
-TypeScript is a programming language that has gained a lot of popularity in recent years \cite{noauthor_stack_nodate}. It is a superset of JavaScript that adds typing and type annotations to the language. Svelte has support for TypeScript out of the box. TypeScript can be enabled for a Svelte-file by annotating the script block with a \mintinline{text}{lang} attribute (\Cref{fig:svelte-ts-usage}). 
+TypeScript is a programming language that has gained a lot of popularity in recent years \cite{noauthor_stack_nodate}. It is a superset of JavaScript that adds typing and type annotations to the language. Svelte has support for TypeScript out of the box. TypeScript can be enabled for a Svelte file by annotating the script block with a \mintinline{text}{lang} attribute (\Cref{fig:svelte-ts-usage}). 
 \begin{listing}[H]
 \begin{myminted}{svelte}{}
 <script lang="ts">
@@ -380,7 +381,7 @@ TypeScript is a programming language that has gained a lot of popularity in rece
   }
 </script>
 \end{myminted}
-\caption{Svelte-file that uses TypeScript.}
+\caption{Svelte file that uses TypeScript.}
 \label{fig:svelte-ts-usage}
 \end{listing}
 
@@ -389,7 +390,7 @@ It should be noted that using TypeScript in conjunction with Svelte is currently
 \begin{myminted}{svelte}{}
 <input on:change={(e: InputEvent) => {}}> /* Syntax Error */
 \end{myminted}
-\caption{TypeScript-syntax in inline functions is currently possible.}
+\caption{TypeScript syntax in inline functions is currently not possible.}
 \label{fig:svelte-ts-inline-error}
 \end{listing}
 
@@ -422,7 +423,7 @@ SvelteKit provides built-in support for routing. To this end, SvelteKit utilizes
 <p>about this site...</p>
 <a href="/home">Home</a>
 \end{myminted}
-\caption{Example page-definitions in SvelteKit.}
+\caption{Example page definitions in SvelteKit.}
 \label{fig:sveltekit-page-file}
 \end{listing}
 
@@ -536,7 +537,7 @@ export async function load() {
 \subsubsection{Form Actions}
 \label{sec:sveltekit-form-actions}
 
-The previous section discussed how SvelteKit applications send dynamic data to the client. But, many applications also need a way to send data to the server. To this end, SvelteKit provides form actions. \mintinline{text}{+page.server.js} files can export actions which make it possible to post data to the server using HTML's \mintinline{svelte}{<form>} elements (\Cref{fig:sveltekit-server-action}).
+The previous section discussed how SvelteKit applications send dynamic data to the client. But, many applications also need a way to send data to the server. To this end, SvelteKit provides form actions. \mintinline{text}{+page.server.js} files can export actions which make it possible to post data to the server using HTML's \mintinline{text}{<form>} elements (\Cref{fig:sveltekit-server-action}).
 
 \begin{listing}[h!]
 \begin{myminted}{svelte}{routes/+page.server.js}
