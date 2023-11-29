@@ -1,0 +1,98 @@
+/*
+
+Zenburn style from voldmar.ru (c) Vladimir Epifanov <voldmar@voldmar.ru>
+based on dark.css by Ivan Sagalaev
+
+*/
+
+:root {
+  --sk-code-base: #c4c1bb;
+  --sk-code-comment: #8c8c8c;
+  --sk-code-keyword: #57b5f4;
+  --sk-code-function: #eab095;
+  --sk-code-string: #ccb88f;
+  --sk-code-number: green;
+  --sk-code-template-string: #d81e18;
+  --sk-code-tags: var(--sk-code-function);
+  --sk-code-important: var(--sk-code-string);
+  --sk-code-diff-base: rgba(255, 255, 255, 0.5);
+  --sk-code-diff-inserted: #42b342;
+  --sk-code-diff-removed: #e38582;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #3f3f3f;
+  color: #dcdcdc;
+}
+
+.hljs-tag {
+  color: var(--sk-code-base);
+}
+
+.hljs-keyword,
+.hljs-selector-tag
+{
+  color: var(--sk-code-keyword);
+}
+
+.hljs-template-tag {
+  color: var(--sk-code-tags);
+}
+
+.hljs-number {
+  color: var(--sk-code-tags);
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute {
+  color: #efdcbc;
+}
+
+.hljs-literal {
+  color: var(--sk-code-string);
+}
+
+.hljs-subst {
+  color: #8f8f8f;
+}
+
+.hljs-title,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-section,
+.hljs-type {
+  color: var(--sk-code-tags);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link {
+  color: #dca3a3;
+}
+
+.hljs-deletion,
+.hljs-string,
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #cc9393;
+}
+
+.hljs-addition,
+.hljs-comment,
+.hljs-quote,
+.hljs-meta {
+  color: var(--sk-code-comment);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}

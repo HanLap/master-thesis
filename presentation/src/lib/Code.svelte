@@ -1,20 +1,32 @@
 <script>
-  export let id = undefined;
-  let clazz = "";
-  export { clazz as class };
-  export let trim = false;
-  export let noescape = false;
-  export let lineNumbers = undefined;
-  export let lineStartFrom = undefined;
+  /** 
+   * @type {{ 
+   * id?: string,
+   * class?: string,
+   * children?: any,
+   * trim?: boolean,
+   * noescape?: boolean,
+   * lineNumbers?: string | boolean,
+   * lineStartFrom?: string
+   * }} */
+  let {
+    id = undefined,
+    class: clazz = "",
+    children,
+    trim = false,
+    noescape = false,
+    lineNumbers = undefined,
+    lineStartFrom = undefined,
+  } = $props();
 </script>
 
 <pre data-id={id}>
-		<code
-    class={'!overflow-hidden ' + clazz}
+	<code
+    class={"!overflow-hidden " + clazz}
     data-trim={trim || undefined}
     data-noescape={noescape || undefined}
     data-line-numbers={lineNumbers}
     data-ln-start-from={lineStartFrom}>
-				<slot />
-		</code>
+{@render children()}
+  </code>
 </pre>

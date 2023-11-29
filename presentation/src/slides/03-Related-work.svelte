@@ -1,28 +1,25 @@
 <script>
-  import Slide from "$lib/Slide.svelte";
+  import jsBenchmark from "$assets/js-benchmark.png";
   import stateOfJS from "$assets/stateofjs2022.png";
-  import feExperienceRanking from "$assets/front_end_frameworks_experience_ranking.png";
-  import renderingExperienceRanking from "$assets/rendering_frameworks_experience_ranking.png";
+  import { Slide, SlideTitle, subtitle } from "$lib/slide";
 </script>
 
 <Slide>
-  <div class="flex flex-col items-center">
-    <img
-      class="bg-[radial-gradient(ellipse_at_center,#999_40%,white,white)]"
-      src={stateOfJS}
-      alt=""
-    />
-  </div>
-</Slide>
+  <SlideTitle title="Related Work" />
 
-<Slide>
-  <div class="flex justify-center">
-    <img class="w-[80%] h-[470px] object-cover object-[50%_36%]" src={feExperienceRanking} alt="" />
-  </div>
-</Slide>
+  <section use:subtitle={"State of JS"}>
+    <div class="flex flex-col items-center">
+      <img
+        class="h-[500px] bg-[radial-gradient(ellipse_at_center,#999_40%,transparent,transparent)]"
+        src={stateOfJS}
+        alt=""
+      />
+    </div>
+  </section>
 
-<Slide>
-  <div class="flex justify-center">
-    <img class="w-[80%] h-[350px] object-cover object-[50%_36%]" src={renderingExperienceRanking} alt="" />
-  </div>
+  <section use:subtitle={"JS web frameworks Benchmark"}>
+    <div class="flex justify-center">
+      <img class="h-[520px]" src={jsBenchmark} alt="" />
+    </div>
+  </section>
 </Slide>

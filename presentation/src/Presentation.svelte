@@ -9,7 +9,7 @@
 
 <Intro />
 <Svelte />
-<RelatedWork />
+<!-- <RelatedWork /> -->
 <Implementation />
 <Evaluation />
 <Conclusion />

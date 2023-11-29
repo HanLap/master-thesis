@@ -2,20 +2,22 @@ import Highlight from "reveal.js/plugin/highlight/highlight";
 import HighlightSvelte from "highlightjs-svelte";
 import Markdown from "reveal.js/plugin/markdown/markdown";
 import RevealNotes from "reveal.js/plugin/notes/notes";
+import "@fontsource/overpass";
 
 // Import theme
-import "reveal.js/dist/theme/white.css";
-
-// Import CSS for plugins
-import "reveal.js/plugin/highlight/zenburn.css";
+import "$lib/style/xx-theme.css";
+import "$lib/style/code-theme.css";
 
 export default {
   // App Config
   app: {
-    name: "Reveal.js with Svelte and Vite",
+    name: "Case-study of SvelteKit for a Modern Business Application",
   },
   // Reveal Config
+  /** @type {import('reveal.js').Options} */
   reveal: {
+    width: 1280,
+    height: 720,
     plugins: [Highlight, Markdown, RevealNotes],
     highlight: {
       beforeHighlight: (hljs) => HighlightSvelte(hljs),

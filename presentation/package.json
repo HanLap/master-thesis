@@ -9,14 +9,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^2.5.2",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0-next.3",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
-    "svelte": "^4.2.3",
+    "svelte": "^5.0.0-next.9",
     "tailwindcss": "^3.3.5",
-    "vite": "^4.5.0"
+    "vite": "^5.0.0"
   },
   "dependencies": {
+    "@fontsource/overpass": "^5.0.15",
     "highlightjs-svelte": "^1.0.6",
     "reveal.js": "^5.0.2"
   }
