@@ -80,7 +80,30 @@ ${"<"}/script>
     </Notes>
   </section>
 
-  <section use:subtitle={"Svelte Example"} data-auto-animate>
+  <section use:subtitle={"Features"}>
+    <div class="flex justify-start relative h-[720px] pt-[200px]">
+      <ul>
+        <li class="fragment">HTML/JS/CSS</li>
+        <li class="fragment">Components</li>
+        <li class="fragment">Reactive programming</li>
+      </ul>
+
+      <div class="w-[500px] fixed top-[250px] right-0">
+        <Code id="code" class="hljs svelte" trim noescape lineNumbers>
+          {`<script>
+  let count = 2;
+
+  $: doubled = count * 2;
+${"<"}/script>
+
+<div>{count}</div>
+`}
+        </Code>
+      </div>
+    </div>
+  </section>
+
+  <!-- <section use:subtitle={"Svelte Example"} data-auto-animate>
     <div class="grid grid-cols-2">
       <Code id="code" class="hljs svelte" trim noescape lineNumbers>
         {codeSegments[1]}
@@ -135,7 +158,7 @@ ${"<"}/script>
         <Counter step={4} />
       </div>
     </div>
-  </section>
+  </section> -->
 </Slide>
 
 <Slide type="hero" transition="slide-in zoom-out">
@@ -190,7 +213,7 @@ ${"<"}/script>
     </ul>
   </section>
 
-  <section use:subtitle={"Rendering"}>
+  <!-- <section use:subtitle={"Rendering"}>
     <div class="grid grid-cols-3 h-[400px] gap-12">
       <div
         class="fragment flex flex-col items-start p-4 [background:var(--svelte-gradient)]"
@@ -221,11 +244,11 @@ ${"<"}/script>
           <li class="mt-8">Server sends rendered resources</li>
         </ul>
       </div>
-    </div>
+    </div> 
 
     <Notes>
       <li>SvelteKit 3 rendering modi</li>
       <li>SvelteKit can switch in one app</li>
     </Notes>
-  </section>
+  </section> -->
 </Slide>

@@ -30,7 +30,7 @@
 
     <div class="flex-1" />
     <small class="text-svelte-text2">{slideState.config.presenter}</small>
-    <small class="text-svelte-text2">November 2023</small>
+    <small class="text-svelte-text2">December 2023</small>
   </div>
   <!-- <div class="top-0 left-0 fixed h-full w-screen -z-10 bg-gradient-to-tr from-primary1 to-primary2"></div> -->
 
@@ -45,10 +45,21 @@
   </Notes>
 </Slide>
 
-<!-- <Slide>
+<Slide>
   <SlideTitle title="Motivation" />
+  
+  <section class="flex justify-center">
+    <div class="absolute right-0 -top-8 p-8 bg-white rounded-full drop-shadow">
+      <StackoverflowSurveyLogo class="drop-shadow-2xl" />
+    </div>
+    <img
+      class="mt-12 w-[80%] h-[550px] object-cover object-[50%_9%]"
+      src={stackoverflowSurvey}
+      alt=""
+    />
+  </section>
 
-  <section use:subtitle={"Web Development"}>
+  <!-- <section use:subtitle={"Web Development"}>
     <div class="w-full h-[520px] flex justify-center items-center relative">
       <h2>Web Development</h2>
 
@@ -75,9 +86,9 @@
         <li>etc...</li>
       </ul>
     </Notes>
-  </section>
+  </section> -->
 
-  <section use:subtitle={"Meta Frameworks"}>
+  <!-- <section use:subtitle={"Meta Frameworks"}>
     <div
       class="w-full h-[520px] p-12 pt-40 grid grid-cols-2 grid-rows-2 px-40 justify-center items-center gap-12"
     >
@@ -99,9 +110,9 @@
         <li>We look at SvelteKit</li>
       </ul>
     </Notes>
-  </section>
+  </section> -->
 
-  <section use:subtitle={"Framework Popularity"}>
+  <!-- <section use:subtitle={"Framework Popularity"}>
     <div class="h-[150px] z-1 absolute left-1/3 -top-20 bg-black rounded-full px-4 overflow-hidden">
       <img class="w-[250px] h-[200px] -mt-1 object-cover object-[50%_0%]" src={stateOfJS} alt="" />
     </div>
@@ -119,22 +130,11 @@
     </div>
   </section>
 
-  <section class="flex justify-center">
-    <div class="absolute right-0 -top-8 p-8 bg-white rounded-full drop-shadow">
-      <StackoverflowSurveyLogo class="drop-shadow-2xl" />
-    </div>
-    <img
-      class="mt-12 w-[80%] h-[550px] object-cover object-[50%_9%]"
-      src={stackoverflowSurvey}
-      alt=""
-    />
-  </section>
-
   <section use:subtitle={"Question"}>
     <h3>SvelteKit for Business Applications</h3>
     <ul>
       <li>Pros</li>
       <li>Cons</li>
     </ul>
-  </section>
-</Slide> -->
+  </section> -->
+</Slide>

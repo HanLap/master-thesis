@@ -4,6 +4,7 @@
   import architetureFullstack from "$assets/dswfd-architecture-fullstack.png";
   import architetureSpa from "$assets/dswfd-architecture-spa.png";
   import bwFuhrpark from "$assets/bwfuhrparkService_freistehend.jpg";
+  import currentAuftragDetails from "$assets/current-auftrag-details.png";
   import { Slide, SlideTitle, subtitle } from "$lib/slide";
   import Notes from "$lib/Notes.svelte";
 </script>
@@ -20,12 +21,12 @@
 
 <Slide transition="zoom-in slide-out">
   <SlideTitle title="Implementation" />
+
   <section
     class="flex flex-col justify-center items-center"
-    use:subtitle={"BwFuhrpark"}
+    use:subtitle={"DSW-FD"}
   >
-    <img class="w-1/2" src={bwFuhrpark} alt="" />
-    <h2 class="fragment">DSW-Fahrdienst</h2>
+    <img class="h-[500px]" src={currentAuftragDetails} alt="" />
   </section>
 
   <section

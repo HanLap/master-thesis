@@ -6,7 +6,7 @@ class SlideState {
     title: "Case-Study of SvelteKit in a Modern Business Application",
     shortTitle: "Case-Study of SvelteKit",
     presenter: "Hannah Lappe",
-    date: "24.11.2023",
+    date: "06.12.2023",
     confidentiality: "Masterarbeit",
   });
 
